@@ -1,0 +1,21 @@
+.busy-spinner {
+    position: fixed;
+    z-index: 150;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background: #eee;
+    border-radius: 0.5rem;
+    box-shadow: 1rem 1rem 2rem black;;
+    text-align: center;
+}
+
+.backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 140;
+}
