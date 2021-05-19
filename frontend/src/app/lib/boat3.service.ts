@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, take, tap } from 'rxjs/operators'
 import { of } from 'rxjs';
-import { ContractResponse } from './models/contract-response.model';
+import { ContractResponse } from './models/rest-boat/contract-response.model';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {

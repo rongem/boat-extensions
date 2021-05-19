@@ -1,4 +1,4 @@
-export class Contract {
+export class RestContractSummary {
     bedarfstraeger!: string;
     budgetStatus!: string;
     id!: number;
