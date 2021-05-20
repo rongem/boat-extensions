@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  frontend:
+    image: rongem/boat-frontend
+    ports:
+      - 80:80
+    build:
+      dockerfile: Dockerfile.frontend
+      context: .
+#    restart: always
+  backend:
+    image: rongem/db-ng backend
+    build:
+      dockerfile: Dockerfile.backend
+      context: .
+    environment:
+      - SQL_CONNECTION_STRING
