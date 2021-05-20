@@ -1,0 +1,23 @@
+<div class="card-container">
+    <div class="card"
+        *ngFor="let contract of contracts"
+        [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}"
+        (click)="selectedContract = contract">
+        <div>
+            <b>{{contract.name}}</b>
+        </div>
+        <div>
+            <div>
+                <b>Bezeichnung</b>:
+                {{contract.description}}
+            </div>
+            <div>
+                <b>Verantwortlich</b>: {{contract.responsiblePerson}}
+            </div>
+        </div>
+        <div *ngIf="contract === selectedContract" class="operations">
+            <button type="button" class="selectable">Tabelle f&uuml;r Pr&uuml;fung der sachlichen Richtigkeit</button>
+            <button type="button" class="selectable">Tabelle f&uuml;r Pr&uuml;fung der rechnerischen Richtigkeit</button>
+        </div>
+    </div>
+</div>

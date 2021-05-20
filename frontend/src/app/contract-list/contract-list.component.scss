@@ -1,0 +1,22 @@
+.card {
+    & > div:first-of-type {
+        align-self: center;
+        padding-right: 1rem;
+        font-size: 140%;
+    }
+
+    width: calc(100% - 3rem);
+    align-items: flex-start;
+    justify-content: left;
+    height: unset;
+    margin-right: 0;
+    margin-bottom: 1rem;
+
+    .operations {
+        border-left: double 1px black;
+        height: 100%;
+        button {
+            width: 100%;
+        }
+    }
+}

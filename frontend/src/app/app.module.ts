@@ -5,11 +5,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { BusyComponent } from './busy/busy.component';
+import { ContractListComponent } from './contract-list/contract-list.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    BusyComponent
+    BusyComponent,
+    ContractListComponent
   ],
   imports: [
     BrowserModule,

@@ -19,9 +19,14 @@
         <input type="password" class="selectable" [(ngModel)]="password">
       </div>
     </div>
-    <div>
-      <button type="button" class="selectable" (click)="login()">Anmelden</button>
+    <div class="card-container">
+      <div>
+        <button type="button" class="selectable" (click)="login()">Anmelden</button>
+      </div>
     </div>
+  </ng-container>
+  <ng-container *ngIf="authenticated">
+    <app-contract-list></app-contract-list>
   </ng-container>
   <!-- Footer -->
   <footer>

@@ -11,8 +11,8 @@ export interface RestContract {
         projektTitel: string;
         status: string;
         projektTyp: string;
-        projektbeginn: string;
-        proejktEnde: string;
+        projektBeginn: string;
+        projektEnde: string;
         vorgaenger: {
             id: number;
             projektTitel: string;
