@@ -26,6 +26,7 @@ export class ContractDetailComponent implements OnInit {
   }
   private _selectedMonth: string = '';
   private _deliverables: Deliverable[] = [];
+  private _taxrate = 19;
   private filteredDeliverables: Deliverable[] = [];
   get deliverables(): Deliverable[] {
     switch (this.sort) {
@@ -51,6 +52,33 @@ export class ContractDetailComponent implements OnInit {
   get keysPresent() {
     return this._deliverables.some(d => d.key && d.key !== '');
   }
+  get priceCategorySums() {
+    const map = new Map<string, number>();
+    this.filteredDeliverables.forEach(d => {
+      map.set(d.priceCategory, d.price + (map.get(d.priceCategory) ?? 0));
+    });
+    return [...map.entries()].sort();
+  }
+  get sum() {
+    let sum = 0;
+    this.filteredDeliverables.forEach(d => {
+      sum += d.price;
+    });
+    return sum;
+  }
+  get taxRate() {
+    return this._taxrate;
+  }
+  set taxRate(value: number) {
+    if (isNaN(value) || value < 1 || value > 100) {
+      this._taxrate = 19;
+    } else {
+      this._taxrate = value;
+    }
+  }
+  get tax() {
+    return this._taxrate / 100 * this.sum;
+  }
 
   constructor(private boat: Boat3Service) { }
 
@@ -67,34 +95,33 @@ export class ContractDetailComponent implements OnInit {
 
   exportNames() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNamesLine(d));
-    const sheet = utils.json_to_sheet(sheetContent);
-    sheet['!autofilter']= { ref: sheet['!ref']! };
-    console.log(sheet);
-    const book = utils.book_new();
-    book.Sheets = {
-      [this.selectedMonth]: sheet,
-    };
-    book.SheetNames.push(this.selectedMonth);
-    writeFile(book, 'Sachlich-' + this.contract.name + '-' + this.selectedMonth + '.xlsx');
-    this.show = 'nothing';
+    this.exportSheet(sheetContent, this.selectedMonth);
   }
 
-  exportNumbers() {}
+  exportNumbers() {
+    const sheetContent = this.filteredDeliverables.map(d => this.createNumbersLine(d));
+    this.exportSheet(sheetContent, this.selectedMonth);
+  }
+
+  exportAllNumbers() {
+    const sheetContent = this._deliverables.map(d => this.createNumbersLine(d));
+    this.exportSheet(sheetContent, 'bis-' + this.selectedMonth);
+  }
 
   private createNamesLine(d: Deliverable) {
-    if (d.key && d.key !== '') {
+    if (this.keysPresent) {
       return {
-        'Datum': d.date.toLocaleDateString(),
+        'Datum': d.date,
         'Uhrzeit': d.startTime + ' - ' + d.endTime,
         'Stunden': d.duration * 8,
         'Projektmitarbeiter': d.person,
         'Preisstufe': d.priceCategory,
-        'Schlüssel': d.key && d.key !== '' ? d.key : undefined,
+        'Schlüssel': d.key,
         'Tätigkeit': d.text,
       };
     } else {
       return {
-        'Datum': d.date.toLocaleDateString(),
+        'Datum': d.date,
         'Uhrzeit': d.startTime + ' - ' + d.endTime,
         'Stunden': d.duration * 8,
         'Projektmitarbeiter': d.person,
@@ -102,6 +129,37 @@ export class ContractDetailComponent implements OnInit {
         'Tätigkeit': d.text,
       };
     }
+  }
+
+  private createNumbersLine(d: Deliverable) {
+    if (this.keysPresent) {
+      return {
+        'Datum': d.date,
+        'Stunden': d.duration * 8,
+        'Preisstufe': d.priceCategory,
+        'Schlüssel': d.key,
+        'Kosten (netto)': d.price,
+      };
+    } else {
+      return {
+        'Datum': d.date,
+        'Stunden': d.duration * 8,
+        'Preisstufe': d.priceCategory,
+        'Kosten (netto)': d.price,
+      };
+    }
+  }
+
+  private exportSheet(sheetContent: any[], sheetName: string) {
+    const sheet = utils.json_to_sheet(sheetContent);
+    sheet['!autofilter'] = { ref: sheet['!ref']! };
+    const book = utils.book_new();
+    book.Sheets = {
+      [sheetName]: sheet,
+    };
+    book.SheetNames.push(sheetName);
+    writeFile(book, 'Sachlich-' + this.contract.name + '-' + sheetName + '.xlsx');
+    this.show = 'nothing';
   }
 
 }

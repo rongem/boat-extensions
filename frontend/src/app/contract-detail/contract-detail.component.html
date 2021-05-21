@@ -35,33 +35,35 @@
         <table>
             <thead>
                 <tr>
-                    <th [ngClass]="{selectable: sort !== 'time'}" (click)="sort = 'time'">
-                        Datum<ng-container *ngIf="sort === 'time'">&nbsp;&#8595;</ng-container>
+                    <th [ngClass]="{selectable: sort !== 'time'}" (click)="sort = 'time'" class="no-wrap">
+                        Datum
+                        <ng-container *ngIf="sort === 'time'"> &#8595;</ng-container>
                     </th>
                     <th>Uhrzeit</th>
                     <th>Stunden</th>
-                    <th [ngClass]="{selectable: sort !== 'person'}" (click)="sort = 'person'">
-                        Person<ng-container *ngIf="sort === 'person'">&nbsp;&#8595;</ng-container>
+                    <th [ngClass]="{selectable: sort !== 'person'}" (click)="sort = 'person'" class="no-wrap">
+                        Person
+                        <ng-container *ngIf="sort === 'person'"> &#8595;</ng-container>
                     </th>
-                    <th *ngIf="keysPresent">Schl&uuml;ssel</th>
+                    <th *ngIf="keysPresent" class="no-wrap">Schl&uuml;ssel</th>
                     <th>T&auml;tigkeit</th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let row of deliverables">
-                    <td>
+                    <td class="no-wrap">
                         {{row.date.toLocaleDateString()}}
                     </td>
-                    <td>
+                    <td class="no-wrap">
                         {{row.startTime}} - {{row.endTime}}
                     </td>
-                    <td>
+                    <td class="no-wrap">
                         {{row.duration * 8}}
                     </td>
-                    <td>
+                    <td class="no-wrap">
                         {{row.person}}
                     </td>
-                    <td *ngIf="keysPresent">
+                    <td *ngIf="keysPresent" class="no-wrap">
                         {{row.key}}
                     </td>
                     <td>
@@ -72,6 +74,73 @@
         </table>
     </div>
     <div class="overlay" *ngIf="show === 'numbers'">
-        Test numbers
+        <div>
+            <h1>
+                {{contract.name}}
+            </h1>
+            <p>
+                {{contract.description}}
+            </p>
+            <div class="side-by-side">
+                <div class="card">
+                    Monat:
+                    <select [(ngModel)]="selectedMonth" class="selectable">
+                        <option *ngFor="let month of allowedMonths" [value]="month">
+                            {{month}}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <div class="card selectable" (click)="exportNumbers()">Monat nach Excel exportieren</div>
+                </div>
+                <div>
+                    <div class="card selectable" (click)="exportAllNumbers()">Alles nach Excel exportieren</div>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Preiskategorie</th>
+                        <th>Kosten</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entry of priceCategorySums">
+                        <td>
+                            {{entry[0]}}
+                        </td>
+                        <td style="text-align: right;">
+                            {{entry[1] | number: '1.2-2':'de'}} &#8364;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Summe (netto)</b>
+                        </td>
+                        <td style="text-align: right;">
+                            {{sum | number: '1.2-2':'de'}} &#8364;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            MWSt
+                            <input type="number" required="true" [(ngModel)]="taxRate" style="text-align: right;">
+                            %
+                        </td>
+                        <td style="text-align: right;">
+                            {{tax | number: '1.2-2':'de'}} &#8364;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <b>Summe (brutto)</b>
+                        </td>
+                        <td style="text-align: right;">
+                            <b>{{(sum + tax) | number: '1.2-2':'de'}} &#8364;</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </ng-container>

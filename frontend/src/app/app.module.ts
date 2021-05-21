@@ -8,6 +8,11 @@ import { BusyComponent } from './busy/busy.component';
 import { ContractListComponent } from './contract-list/contract-list.component';
 import { ContractDetailComponent } from './contract-detail/contract-detail.component';
 
+import { registerLocaleData } from '@angular/common';
+import localeDe from '@angular/common/locales/de';
+
+registerLocaleData(localeDe);
+
 @NgModule({
   declarations: [
     AppComponent,
