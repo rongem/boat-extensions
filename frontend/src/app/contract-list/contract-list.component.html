@@ -15,9 +15,6 @@
                 <b>Verantwortlich</b>: {{contract.responsiblePerson}}
             </div>
         </div>
-        <div *ngIf="contract === selectedContract" class="operations">
-            <button type="button" class="selectable">Tabelle f&uuml;r Pr&uuml;fung der sachlichen Richtigkeit</button>
-            <button type="button" class="selectable">Tabelle f&uuml;r Pr&uuml;fung der rechnerischen Richtigkeit</button>
-        </div>
+        <app-contract-detail [contract]="contract" *ngIf="contract === selectedContract" class="operations"></app-contract-detail>
     </div>
 </div>

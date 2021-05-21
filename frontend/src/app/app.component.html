@@ -37,6 +37,10 @@
 
 </div>
 
-<ng-container *ngIf="appBusy">
-  <app-busy>Arbeite...</app-busy>
+<ng-container *ngIf="(appBusy | async) === true">
+  <app-busy>
+    <div class="card">
+      Arbeite...
+    </div>
+  </app-busy>
 </ng-container>

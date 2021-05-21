@@ -1,1 +1,77 @@
-<p>contract-detail works!</p>
+<ng-container *ngIf="allowedMonths.length > 0">
+    <h2>Pr&uuml;fung</h2>
+    <div class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</div>
+    <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
+</ng-container>
+
+<ng-container *ngIf="allowedMonths.length === 0">
+    Keine Leistungsnachweise gefunden
+</ng-container>
+
+<ng-container *ngIf="show !== 'nothing'">
+    <div class="backdrop" (click)="show = 'nothing'"></div>
+    <div class="overlay" *ngIf="show === 'names'">
+        <div>
+            <h1>
+                {{contract.name}}
+            </h1>
+            <p>
+                {{contract.description}}
+            </p>
+            <div class="side-by-side">
+                <div class="card">
+                    Monat:
+                    <select [(ngModel)]="selectedMonth" class="selectable">
+                        <option *ngFor="let month of allowedMonths" [value]="month">
+                            {{month}}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <div class="card selectable" (click)="exportNames()">Nach Excel exportieren</div>
+                </div>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th [ngClass]="{selectable: sort !== 'time'}" (click)="sort = 'time'">
+                        Datum<ng-container *ngIf="sort === 'time'">&nbsp;&#8595;</ng-container>
+                    </th>
+                    <th>Uhrzeit</th>
+                    <th>Stunden</th>
+                    <th [ngClass]="{selectable: sort !== 'person'}" (click)="sort = 'person'">
+                        Person<ng-container *ngIf="sort === 'person'">&nbsp;&#8595;</ng-container>
+                    </th>
+                    <th *ngIf="keysPresent">Schl&uuml;ssel</th>
+                    <th>T&auml;tigkeit</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let row of deliverables">
+                    <td>
+                        {{row.date.toLocaleDateString()}}
+                    </td>
+                    <td>
+                        {{row.startTime}} - {{row.endTime}}
+                    </td>
+                    <td>
+                        {{row.duration * 8}}
+                    </td>
+                    <td>
+                        {{row.person}}
+                    </td>
+                    <td *ngIf="keysPresent">
+                        {{row.key}}
+                    </td>
+                    <td>
+                        {{row.text}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="overlay" *ngIf="show === 'numbers'">
+        Test numbers
+    </div>
+</ng-container>

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { tap } from 'rxjs/operators';
 import { Boat3Service } from './lib/boat3.service';
 
 @Component({
@@ -11,7 +12,9 @@ export class AppComponent {
   username = '';
   password = '';
   get appBusy() {
-    return false;
+    return this.boat.working.pipe(
+      tap(() => this.cd.detectChanges())
+    );
   }
 
   get error() {
@@ -26,7 +29,7 @@ export class AppComponent {
     return this.boat.username;
   }
 
-  constructor(private boat: Boat3Service) {}
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {}
 
   login() {
     this.boat.login(this.username, this.password);
