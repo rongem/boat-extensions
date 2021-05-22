@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
 import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { utils, writeFile } from 'xlsx';
+
 import { ContractResponse } from './models/rest-boat/contract-response.model';
 import { RestContract } from './models/rest-boat/contract.model';
 import { Contract } from './models/contract.model';
@@ -159,5 +161,16 @@ export class Boat3Service {
             }),
             tap(() => this.working.next(false)),
         )
+    }
+
+    exportSheet(sheetContent: any[], sheetName: string, contractName: string) {
+        const sheet = utils.json_to_sheet(sheetContent);
+        sheet['!autofilter'] = { ref: sheet['!ref']! };
+        const book = utils.book_new();
+        book.Sheets = {
+          [sheetName]: sheet,
+        };
+        book.SheetNames.push(sheetName);
+        writeFile(book, 'Sachlich-' + contractName + '-' + sheetName + '.xlsx');
     }
 }

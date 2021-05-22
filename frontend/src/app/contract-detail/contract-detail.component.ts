@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { utils, writeFile, AutoFilterInfo } from 'xlsx';
 import { Boat3Service } from '../lib/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
@@ -103,17 +102,20 @@ export class ContractDetailComponent implements OnInit {
 
   exportNames() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNamesLine(d));
-    this.exportSheet(sheetContent, this.selectedMonth);
+    this.boat.exportSheet(sheetContent, this.selectedMonth, this.contract.name);
+    this.show = 'nothing';
   }
 
   exportNumbers() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNumbersLine(d));
-    this.exportSheet(sheetContent, this.selectedMonth);
+    this.boat.exportSheet(sheetContent, this.selectedMonth, this.contract.name);
+    this.show = 'nothing';
   }
 
   exportAllNumbers() {
     const sheetContent = this._deliverables.map(d => this.createNumbersLine(d));
-    this.exportSheet(sheetContent, 'bis-' + this.selectedMonth);
+    this.boat.exportSheet(sheetContent, 'bis-' + this.selectedMonth, this.contract.name);
+    this.show = 'nothing';
   }
 
   private createNamesLine(d: Deliverable) {
@@ -157,17 +159,4 @@ export class ContractDetailComponent implements OnInit {
       };
     }
   }
-
-  private exportSheet(sheetContent: any[], sheetName: string) {
-    const sheet = utils.json_to_sheet(sheetContent);
-    sheet['!autofilter'] = { ref: sheet['!ref']! };
-    const book = utils.book_new();
-    book.Sheets = {
-      [sheetName]: sheet,
-    };
-    book.SheetNames.push(sheetName);
-    writeFile(book, 'Sachlich-' + this.contract.name + '-' + sheetName + '.xlsx');
-    this.show = 'nothing';
-  }
-
 }
