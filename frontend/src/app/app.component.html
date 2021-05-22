@@ -16,7 +16,7 @@
     <div class="card-container">
       <div>Kennwort:</div>
       <div>
-        <input type="password" class="selectable" [(ngModel)]="password" (key.enter)="login()">
+        <input type="password" class="selectable" [(ngModel)]="password" (keydown.enter)="login()">
       </div>
     </div>
     <div class="card-container">

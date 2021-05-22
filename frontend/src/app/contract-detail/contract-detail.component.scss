@@ -3,8 +3,20 @@ h1, h2 {
     margin-bottom: 1rem;
 }
 
-td {
+td, p {
     text-align: left;
+
+    &.right {
+        text-align: right;
+    }
+
+    &.center {
+        text-align: center;
+    }
+}
+
+table {
+    margin: 1rem;
 }
 
 .selectable {
@@ -33,12 +45,33 @@ td {
     border-radius: 0.5rem;
     box-shadow: 1rem 1rem 2rem black;;
     text-align: center;
-    min-width: 80vw;
-    width: calc(100vw - 3rem);
+    min-width: 30vw;
+    max-width: calc(100vw - 3rem);
     min-height: 50vh;
     max-height: 100vh;
     padding: 1rem;
     overflow: scroll;
+}
+
+.overlay.extended {
+    width: calc(100vw - 3rem);
+    @media (min-width: 64rem) {
+        width: calc(100vw - 5rem);
+    }
+}
+
+.upper-right-corner {
+    position: relative;
+    top: 0.5rem;
+
+    @media (min-width: 40rem) {
+        position: absolute;
+        right: 1rem;
+    }
+}
+
+.center {
+    margin: 1rem auto;
 }
 
 .side-by-side {

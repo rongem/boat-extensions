@@ -53,9 +53,10 @@ export class ContractDetailComponent implements OnInit {
     return this._deliverables.some(d => d.key && d.key !== '');
   }
   get priceCategorySums() {
-    const map = new Map<string, number>();
+    const map = new Map<string, { price: number; days: number; }>();
     this.filteredDeliverables.forEach(d => {
-      map.set(d.priceCategory, d.price + (map.get(d.priceCategory) ?? 0));
+      const val = map.get(d.priceCategory) ?? { price: 0, days: 0 };
+      map.set(d.priceCategory, { price: val.price + d.price, days: val.days + d.duration});
     });
     return [...map.entries()].sort();
   }
@@ -78,6 +79,13 @@ export class ContractDetailComponent implements OnInit {
   }
   get tax() {
     return this._taxrate / 100 * this.sum;
+  }
+  get sumDays() {
+    let sum = 0;
+    this.filteredDeliverables.forEach(d => {
+      sum += d.duration;
+    });
+    return sum;
   }
 
   constructor(private boat: Boat3Service) { }
