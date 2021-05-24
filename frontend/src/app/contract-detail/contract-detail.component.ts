@@ -86,6 +86,20 @@ export class ContractDetailComponent implements OnInit {
     });
     return sum;
   }
+  get totalSum() {
+    let sum = 0;
+    this._deliverables.forEach(d => {
+      sum += d.price;
+    });
+    return sum;
+  }
+  get totalDays() {
+    let sum = 0;
+    this._deliverables.forEach(d => {
+      sum += d.duration;
+    });
+    return sum;
+  }
 
   constructor(private boat: Boat3Service) { }
 

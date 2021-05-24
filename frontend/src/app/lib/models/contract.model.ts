@@ -1,3 +1,4 @@
+import { Budget } from './budget.model';
 import { RestContract } from './rest-boat/contract.model';
 
 export class Contract{
@@ -9,6 +10,8 @@ export class Contract{
     organization: string;
     organizationalUnit: string;
     responsiblePerson: string;
+    budgetDetails: Budget[] = [];
+    completeBudget: Budget;
     constructor(restContract: RestContract) {
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
@@ -20,5 +23,26 @@ export class Contract{
         this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;
         this.organizationalUnit = restContract.stammdaten.orgE;
         this.responsiblePerson = restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname;
+        const map = new Map<number, number>();
+        restContract.stammdaten.rahmenvertrag.preisstufen.forEach(p => map.set(p.id, p.kostenProPT / 100));
+        restContract.budget.budgetdaten.forEach(d => {
+            const budget = new Budget(
+                d.preisstufe.bezeichnung, d.preisstufe.kostenProPT / 100,
+                d.sollPtMinuten / 60 / 8,
+                d.sollBudget / 100,
+                map.get(d.preisstufe.id) ?? 0
+            );
+            this.budgetDetails.push(budget);
+        });
+        let availableFinances = 0;
+        this.budgetDetails.map(d => d.availableFinances).forEach(f => availableFinances += f);
+        let availableUnits = 0;
+        this.budgetDetails.map(d => d.availableUnits).forEach(u => availableUnits += u);
+        let minutesPerDay = 0;
+        this.budgetDetails.map(d => d.minutesPerDay).forEach(m => minutesPerDay += m);
+        if (this.budgetDetails.length > 0) {
+            minutesPerDay /= this.budgetDetails.length;
+        }
+        this.completeBudget = new Budget('Summe', availableFinances / availableUnits, availableUnits, availableFinances, minutesPerDay);
     }
 }

@@ -1,12 +1,12 @@
-<ng-container *ngIf="allowedMonths.length > 0">
-    <h2>Pr&uuml;fung</h2>
-    <div class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</div>
-    <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
-</ng-container>
-
+<h2>Pr&uuml;fung</h2>
 <ng-container *ngIf="allowedMonths.length === 0">
     Keine Leistungsnachweise gefunden
 </ng-container>
+<ng-container *ngIf="allowedMonths.length > 0">
+    <div class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</div>
+    <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
+</ng-container>
+<div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
 
 <ng-container *ngIf="show !== 'nothing'">
     <div class="backdrop" (click)="show = 'nothing'"></div>
@@ -79,95 +79,149 @@
         </table>
     </div>
     <div class="overlay" *ngIf="show === 'numbers'">
-        <div>
-            <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
-            <h1>
-                {{contract.name}}
-            </h1>
-            <p class="center">
-                {{contract.description}}
-            </p>
-            <p>
-                Diese Ansicht erlaubt die Pr&uuml;fung der rechnerischen Richtigkeit einer Rechnung. Sind die angezeigten Summen identisch
-                mit den Summen der Rechnung, wurde durch einen zweiten Rechnungsweg gepr&uuml;ft, dass die Rechnung rechnerisch richtig ist.
-            </p>
-            <p>
-                Voraussetzung ist, dass vorher die Eintr&auml;ge sachlich gepr&uuml;ft und ggf. nicht zutreffende Eintr&auml;ge entfernt wurden.
-            </p>
-            <div class="side-by-side">
-                <div class="card">
-                    Leistungszeitraum:
-                    <select [(ngModel)]="selectedMonth" class="selectable" style="min-width: 6rem;">
-                        <option *ngFor="let month of allowedMonths" [value]="month">
-                            {{month}}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                    <div class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</div>
-                </div>
-                <div>
-                    <div class="card selectable" (click)="exportAllNumbers()">Alle Daten nach Excel exportieren</div>
-                </div>
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <h1>
+            {{contract.name}}
+        </h1>
+        <p class="center">
+            {{contract.description}}
+        </p>
+        <p>
+            Diese Ansicht erlaubt die Pr&uuml;fung der rechnerischen Richtigkeit einer Rechnung. Sind die angezeigten Summen identisch
+            mit den Summen der Rechnung, wurde durch einen zweiten Rechnungsweg gepr&uuml;ft, dass die Rechnung rechnerisch richtig ist.
+        </p>
+        <p>
+            Voraussetzung ist, dass vorher die Eintr&auml;ge sachlich gepr&uuml;ft und ggf. nicht zutreffende Eintr&auml;ge entfernt wurden.
+        </p>
+        <div class="side-by-side">
+            <div class="card">
+                Leistungszeitraum:
+                <select [(ngModel)]="selectedMonth" class="selectable" style="min-width: 6rem;">
+                    <option *ngFor="let month of allowedMonths" [value]="month">
+                        {{month}}
+                    </option>
+                </select>
             </div>
-            <table class="center">
-                <thead>
-                    <tr>
-                        <th>Preiskategorie</th>
-                        <th>PT</th>
-                        <th>Stunden</th>
-                        <th>Kosten</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let entry of priceCategorySums">
-                        <td>
-                            {{entry[0]}}
-                        </td>
-                        <td class="right">
-                            {{entry[1].days | number: '1.3-3':'de'}}
-                        </td>
-                        <td class="right">
-                            {{entry[1].days * 8 | number: '1.2-2':'de'}}
-                        </td>
-                        <td class="right">
-                            {{entry[1].price | number: '1.2-2':'de'}} &#8364;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <b>Summe (netto)</b>
-                        </td>
-                        <td class="right">
-                            {{sumDays | number: '1.3-3':'de'}}
-                        </td>
-                        <td class="right">
-                            {{sumDays * 8 | number: '1.2-2':'de'}}
-                        </td>
-                        <td class="right">
-                            {{sum | number: '1.2-2':'de'}} &#8364;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            MWSt
-                            <input type="number" required="true" [(ngModel)]="taxRate" class="right">
-                            %
-                        </td>
-                        <td class="right">
-                            {{tax | number: '1.2-2':'de'}} &#8364;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <b>Summe (brutto)</b>
-                        </td>
-                        <td class="right">
-                            <b>{{(sum + tax) | number: '1.2-2':'de'}} &#8364;</b>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div>
+                <div class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</div>
+            </div>
+            <div>
+                <div class="card selectable" (click)="exportAllNumbers()">Alle Daten nach Excel exportieren</div>
+            </div>
         </div>
+        <table class="center">
+            <thead>
+                <tr>
+                    <th>Preiskategorie</th>
+                    <th>PT</th>
+                    <th>Stunden</th>
+                    <th>Kosten</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let entry of priceCategorySums">
+                    <td>
+                        {{entry[0]}}
+                    </td>
+                    <td class="right">
+                        {{entry[1].days | number: '1.3-3':'de'}}
+                    </td>
+                    <td class="right">
+                        {{entry[1].days * 8 | number: '1.2-2':'de'}}
+                    </td>
+                    <td class="right">
+                        {{entry[1].price | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Summe (netto)</b>
+                    </td>
+                    <td class="right">
+                        {{sumDays | number: '1.3-3':'de'}}
+                    </td>
+                    <td class="right">
+                        {{sumDays * 8 | number: '1.2-2':'de'}}
+                    </td>
+                    <td class="right">
+                        {{sum | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        MWSt
+                        <input type="number" required="true" [(ngModel)]="taxRate" class="right">
+                        %
+                    </td>
+                    <td class="right">
+                        {{tax | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <b>Summe (brutto)</b>
+                    </td>
+                    <td class="right">
+                        <b>{{(sum + tax) | number: '1.2-2':'de'}} &#8364;</b>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="overlay" *ngIf="show === 'contract'">
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <h1>
+            {{contract.name}}
+        </h1>
+        <p class="center">
+            {{contract.description}}
+        </p>
+        <p>
+            Diese Ansicht erlaubt die Pr&uuml;fung der Daten und der Auslastung des Vertrags.
+        </p>
+        <table class="center">
+            <thead>
+                <tr>
+                    <td rowspan="2">Element</td>
+                    <td colspan="3" class="center">Finanzen</td>
+                    <td colspan="3" class="center">Personentage</td>
+                    <td rowspan="2">Auslastung</td>
+                </tr>
+                <tr>
+                    <td>Obergrenze</td>
+                    <td>Verbraucht</td>
+                    <td>Verf&uuml;gbar</td>
+                    <td>Obergrenze PT</td>
+                    <td>Verbraucht</td>
+                    <td>Verf&uuml;gbar</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Summe</td>
+                    <td class="no-wrap">
+                        {{contract.completeBudget.availableFinances | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                    <td class="no-wrap">
+                        {{totalSum | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                    <td class="no-wrap">
+                        {{contract.completeBudget.availableFinances - totalSum | number: '1.2-2':'de'}} &#8364;
+                    </td>
+                    <td class="no-wrap">
+                        {{contract.completeBudget.availableUnits | number: '1.2-2':'de'}}
+                    </td>
+                    <td class="no-wrap">
+                        {{totalDays | number: '1.2-2':'de'}}
+                    </td>
+                    <td class="no-wrap">
+                        {{contract.completeBudget.availableUnits - totalDays | number: '1.2-2':'de'}}
+                    </td>
+                    <td class="no-wrap">
+                        {{totalSum / contract.completeBudget.availableFinances * 100 | number: '1.1-1':'de'}} %
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </ng-container>

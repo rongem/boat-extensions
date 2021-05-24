@@ -49,27 +49,26 @@ export interface RestContract {
             }
         },
         orgE: string;
-
-    };
-    rahmenvertrag: {
-        id: number;
-        kurzbezeichnung: string;
-        bezeichnung: string;
-        preisstufen: {
-                id: number;
-                bezeichnung: string;
-                kostenProPT: number;
-                aktiv: boolean;
-                rahmenvertragId: number;
-                rahmenvertragBezeichnung: string;
-            }[];
-        zugeordneteTeamleiter: number[];
-        budget: string;
-        totalBudget: string;
-        budgetPuffer: string;
-        budgetStatus: string;
-        zeitStatus: string;
-        projektStatus: string;
+        rahmenvertrag: {
+            id: number;
+            kurzbezeichnung: string;
+            bezeichnung: string;
+            preisstufen: {
+                    id: number;
+                    bezeichnung: string;
+                    kostenProPT: number;
+                    aktiv: boolean;
+                    rahmenvertragId: number;
+                    rahmenvertragBezeichnung: string;
+                }[];
+            zugeordneteTeamleiter: number[];
+            budget: string;
+            totalBudget: string;
+            budgetPuffer: string;
+            budgetStatus: string;
+            zeitStatus: string;
+            projektStatus: string;
+        };
     };
     vertragsdaten: {
         koopVStatus: string;
