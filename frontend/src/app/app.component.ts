@@ -13,7 +13,7 @@ export class AppComponent {
   username = '';
   password = '';
   get error() {
-    return undefined;
+    return this.boat.error;
   }
 
   get authenticated() {

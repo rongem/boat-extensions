@@ -115,10 +115,7 @@ export class Boat3Service {
                 })
             }
             ).pipe(
-                catchError((error: HttpErrorResponse) => {
-                    this.error = error.message;
-                    return of(undefined)
-                }),
+                catchError(this.handleError),
                 switchMap(result => {
                     const observables: Observable<Contract | undefined>[] = [];
                     if (result && result.content) {
@@ -147,10 +144,7 @@ export class Boat3Service {
         ).pipe(
             take(1),
             map(result => new Contract(result)),
-            catchError((error: HttpErrorResponse) => {
-                this.error = error.message;
-                return of(undefined)
-            }),
+            catchError(this.handleError),
             tap(() => this.working = false),
         )
     }
@@ -170,10 +164,7 @@ export class Boat3Service {
         ).pipe(
             take(1),
             map(result => result.content.map(c => new Deliverable(c)) ?? []),
-            catchError((error: HttpErrorResponse) => {
-                this.error = error.message;
-                return of(undefined)
-            }),
+            catchError(this.handleError),
             tap(() => this.working = false),
         )
     }
@@ -187,5 +178,14 @@ export class Boat3Service {
         };
         book.SheetNames.push(sheetName);
         writeFile(book, prefix + '-' + sheetName + '.xlsx');
+    }
+
+    private handleError = (error: HttpErrorResponse) => {
+        this.error = error.message;
+        if (error.status === 401 || error.status === 403) {
+            this.expiryDate = undefined;
+            this.token = undefined;
+        }
+        return of(undefined);
     }
 }
