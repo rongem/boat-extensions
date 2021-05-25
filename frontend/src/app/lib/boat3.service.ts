@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
 import { forkJoin, Observable, of } from 'rxjs';
 import { utils, writeFile } from 'xlsx';
@@ -16,6 +16,7 @@ export class Boat3Service {
     expiryDate?: Date;
     username = '';
     working = false;
+    error = '';
     get authenticated() {
         return !!this.token;
     }
@@ -43,10 +44,11 @@ export class Boat3Service {
                             this.token = token;
                         }
                     }),
-                    catchError(() => {
+                    catchError((error: HttpErrorResponse) => {
                         localStorage.removeItem('BOAT-Login');
                         this.expiryDate = undefined;
                         this.username = '';
+                        this.error = error.message;
                         return of(undefined);
                     }),
                     tap(() => this.working = false),
@@ -60,10 +62,14 @@ export class Boat3Service {
     }
     login(username: string, password:string) {
         this.working = true;
+        this.error = '';
         this.http.post<void>('/auth/login', { email: username, passwort: password }, { observe: 'response'}).pipe(
             take(1),
             map(response => response.headers.get('Authorization')),
-            catchError(() => of(undefined)),
+            catchError((error: HttpErrorResponse) => {
+                this.error = error.message;
+                return of(undefined)
+            }),
             tap(() => this.working = false),
         ).subscribe(token => {
             this.token = token ?? undefined;
@@ -99,6 +105,7 @@ export class Boat3Service {
     
     getContracts() {
         this.working = true;
+        this.error = '';
         return this.http.get<ContractResponse>(
             '/api/meineinzelauftrag?sort=id,desc',
             {
@@ -108,7 +115,10 @@ export class Boat3Service {
                 })
             }
             ).pipe(
-                catchError(() => of(undefined)),
+                catchError((error: HttpErrorResponse) => {
+                    this.error = error.message;
+                    return of(undefined)
+                }),
                 switchMap(result => {
                     const observables: Observable<Contract | undefined>[] = [];
                     if (result && result.content) {
@@ -125,6 +135,7 @@ export class Boat3Service {
 
     getContractDetails(contractId: number) {
         this.working = true;
+        this.error = '';
         return this.http.get<RestContract>(
             '/api/meineinzelauftrag/' + contractId,
             {
@@ -136,13 +147,17 @@ export class Boat3Service {
         ).pipe(
             take(1),
             map(result => new Contract(result)),
-            catchError((reason) => of(undefined)),
+            catchError((error: HttpErrorResponse) => {
+                this.error = error.message;
+                return of(undefined)
+            }),
             tap(() => this.working = false),
         )
     }
 
     getContractDeliverables(contractId: number) {
         this.working = true;
+        this.error = '';
         return this.http.get<DeliverablesResponse>(
             '/api/taetigkeit',
             {
@@ -155,9 +170,9 @@ export class Boat3Service {
         ).pipe(
             take(1),
             map(result => result.content.map(c => new Deliverable(c)) ?? []),
-            catchError((reason) => {
-                console.log(reason);
-                return of(undefined);
+            catchError((error: HttpErrorResponse) => {
+                this.error = error.message;
+                return of(undefined)
             }),
             tap(() => this.working = false),
         )

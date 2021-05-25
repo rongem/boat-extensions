@@ -8,7 +8,9 @@ import { Contract } from '../lib/models/contract.model';
   styleUrls: ['./contract-list.component.scss']
 })
 export class ContractListComponent implements OnInit {
+  // Liste der vorhandenen Verträge
   contracts: Contract[] = [];
+  // Ausgewählter Vertrag
   selectedContract?: Contract;
 
   constructor(private boat: Boat3Service) { }

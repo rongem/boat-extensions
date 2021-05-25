@@ -8,7 +8,8 @@ import { Boat3Service } from './lib/boat3.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'BOAT3 Importer';
+  title = 'BOAT3 Erweiterungen';
+  // Formularfelder
   username = '';
   password = '';
   get error() {
@@ -27,6 +28,8 @@ export class AppComponent {
 
   login() {
     this.boat.login(this.username, this.password);
+    this.username = '';
+    this.password = '';
   }
 
 }

@@ -148,52 +148,19 @@ $dark-blue: darken($main-blue, 20%);
     color: $dark-blue;
   }
 
-  .circle-link {
-    height: 40px;
-    width: 40px;
-    border-radius: 40px;
-    margin: 8px;
-    background-color: white;
-    border: 1px solid #eeeeee;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    transition: 1s ease-out;
-  }
-
-  .ok {
-    background-color: #00bd00;
-  }
-
   .error {
     background-color: #ff0000;
-  }
-  
-  .ok,
-  .error {
     color: white;
-    border-radius: 50%;
+    border-radius: 0.5rem;
     padding: 0 0.2rem;
     margin: 0 0.2rem;
   }
-
-  .circle-link:hover {
-    transform: translateY(-0.25rem);
-    box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.2);
-  }
-
+  
   footer {
     margin-top: 8px;
     display: flex;
     align-items: center;
     line-height: 20px;
-  }
-
-  footer a {
-    display: flex;
-    align-items: center;
   }
 
   /* Responsive Styles */

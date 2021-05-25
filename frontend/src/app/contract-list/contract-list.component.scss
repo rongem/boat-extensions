@@ -2,6 +2,9 @@
     & > div:first-of-type {
         align-self: center;
         padding-right: 1rem;
+        border-right: 1px double black;
+        margin-right: 1rem;
+        height: 100%;
         font-size: 140%;
     }
 
@@ -14,6 +17,8 @@
 
     .operations {
         border-left: double 1px black;
+        margin-left: 1rem;
+        padding-left: 1rem;
         height: 100%;
         button {
             width: 100%;
