@@ -139,21 +139,21 @@ export class ContractDetailComponent implements OnInit {
   // Excel-Export für sachliche Richtigkeit
   exportNames() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNamesLine(d));
-    this.boat.exportSheet(sheetContent, this.selectedMonth, this.contract.name);
+    this.boat.exportSheet(sheetContent, this.selectedMonth, 'Sachlich-' + this.contract.name);
     this.show = 'nothing';
   }
 
   // Excel-Export für rechnerische Richtigkeit
   exportNumbers() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNumbersLine(d));
-    this.boat.exportSheet(sheetContent, this.selectedMonth, this.contract.name);
+    this.boat.exportSheet(sheetContent, this.selectedMonth, 'Rechnerisch-' + this.contract.name);
     this.show = 'nothing';
   }
 
   // Excel-Export aller Leistungsnachweise (anonymisiert) für weitere Berechnungen
   exportAllNumbers() {
     const sheetContent = this._deliverables.map(d => this.createNumbersLine(d));
-    this.boat.exportSheet(sheetContent, 'bis-' + this.selectedMonth, this.contract.name);
+    this.boat.exportSheet(sheetContent, 'bis-' + this.selectedMonth, 'Export-' + this.contract.name);
     this.show = 'nothing';
   }
 

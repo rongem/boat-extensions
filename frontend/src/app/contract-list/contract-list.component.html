@@ -1,4 +1,7 @@
 <div class="card-container">
+    <div class="card selectable" (click)="exportAllContracts()">
+        Alle Vertr&auml;ge nach Excel exportieren
+    </div>
     <div class="card"
         *ngFor="let contract of contracts"
         [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}"

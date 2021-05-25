@@ -178,7 +178,7 @@ export class Boat3Service {
         )
     }
 
-    exportSheet(sheetContent: any[], sheetName: string, contractName: string) {
+    exportSheet(sheetContent: any[], sheetName: string, prefix: string) {
         const sheet = utils.json_to_sheet(sheetContent);
         sheet['!autofilter'] = { ref: sheet['!ref']! };
         const book = utils.book_new();
@@ -186,6 +186,6 @@ export class Boat3Service {
           [sheetName]: sheet,
         };
         book.SheetNames.push(sheetName);
-        writeFile(book, 'Sachlich-' + contractName + '-' + sheetName + '.xlsx');
+        writeFile(book, prefix + '-' + sheetName + '.xlsx');
     }
 }
