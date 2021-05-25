@@ -7,8 +7,9 @@
 
 <div class="content" role="main">
   <ng-container *ngIf="!authenticated">
+    <p>Dieses Werkzeug greift auf Daten aus BOAT zu. Sie melden sich daher mit Ihrer Kennung aus BOAT auch hier an.</p>
     <div class="card-container">
-      <div tooltip="Dieses Werkzeug greift auf Daten aus BOAT zu. Sie melden sich daher mit ihrem Kennwort aus BOAT auch hier an.">BOAT-Benutzername:</div>
+      <div>BOAT-Benutzername:</div>
       <div>
         <input type="text" class="selectable" [(ngModel)]="username" (keydown.enter)="passwd.focus()">
       </div>

@@ -7,6 +7,8 @@
     <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
     <div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
     <div class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</div>
+    <h2>Export</h2>
+    <div class="card selectable" (click)="exportAllNumbers()">Leistungsnachweise nach Excel</div>
 </ng-container>
 
 <ng-container *ngIf="show !== 'nothing'">
@@ -107,9 +109,6 @@
             </div>
             <div>
                 <div class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</div>
-            </div>
-            <div>
-                <div class="card selectable" (click)="exportAllNumbers()">Alle Daten nach Excel exportieren</div>
             </div>
         </div>
         <table class="center">
