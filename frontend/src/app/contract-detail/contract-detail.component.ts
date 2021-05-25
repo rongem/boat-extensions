@@ -17,7 +17,7 @@ export class ContractDetailComponent implements OnInit {
     return this._selectedMonth;
   }
   set selectedMonth(value: string) {
-    const date = value.split('-');
+    const date = value?.split('-') ?? [0, 0];
     const year = +date[0];
     const month = parseInt(date[1]) - 1;
     this.filteredDeliverables = this._deliverables.filter(d => d.date.getFullYear() === year && d.date.getMonth() === month)
@@ -100,6 +100,11 @@ export class ContractDetailComponent implements OnInit {
     });
     return sum;
   }
+  get partOfTime() {
+    // gibt die prozentuale Zeit zurück, die seit dem heutigen Tag Mitternacht für den Vertrag verstrichen ist
+    const value = 100 * (new Date().setHours(0, 0, 0 ,0) - this.contract.start.valueOf()) / (this.contract.end.valueOf() - this.contract.start.valueOf());
+    return value >= 0 ? value : 0;
+  }
 
   constructor(private boat: Boat3Service) { }
 
@@ -130,6 +135,18 @@ export class ContractDetailComponent implements OnInit {
     const sheetContent = this._deliverables.map(d => this.createNumbersLine(d));
     this.boat.exportSheet(sheetContent, 'bis-' + this.selectedMonth, this.contract.name);
     this.show = 'nothing';
+  }
+
+  getTotalForPriceCategory(priceCategoryId: number) {
+    let sum = 0;
+    this._deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.price).forEach(p => sum += p);
+    return sum;
+  }
+
+  getDaysForPriceCategory(priceCategoryId: number) {
+    let sum = 0;
+    this._deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.duration).forEach(d => sum += d);
+    return sum;
   }
 
   private createNamesLine(d: Deliverable) {

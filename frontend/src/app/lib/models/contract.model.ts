@@ -27,7 +27,9 @@ export class Contract{
         restContract.stammdaten.rahmenvertrag.preisstufen.forEach(p => map.set(p.id, p.kostenProPT / 100));
         restContract.budget.budgetdaten.forEach(d => {
             const budget = new Budget(
-                d.preisstufe.bezeichnung, d.preisstufe.kostenProPT / 100,
+                d.preisstufe.id,
+                d.preisstufe.bezeichnung,
+                d.preisstufe.kostenProPT / 100,
                 d.sollPtMinuten / 60 / 8,
                 d.sollBudget / 100,
                 map.get(d.preisstufe.id) ?? 0
@@ -43,6 +45,6 @@ export class Contract{
         if (this.budgetDetails.length > 0) {
             minutesPerDay /= this.budgetDetails.length;
         }
-        this.completeBudget = new Budget('Summe', availableFinances / availableUnits, availableUnits, availableFinances, minutesPerDay);
+        this.completeBudget = new Budget(0, 'Summe', availableFinances / availableUnits, availableUnits, availableFinances, minutesPerDay);
     }
 }

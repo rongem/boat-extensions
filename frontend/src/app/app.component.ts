@@ -11,12 +11,6 @@ export class AppComponent {
   title = 'BOAT3 Importer';
   username = '';
   password = '';
-  get appBusy() {
-    return this.boat.working.pipe(
-      tap(() => this.cd.detectChanges())
-    );
-  }
-
   get error() {
     return undefined;
   }

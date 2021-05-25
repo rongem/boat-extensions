@@ -1,5 +1,6 @@
 export class Budget  {
     constructor(
+        public priceCategoryId: number,
         public priceCategory: string,
         public pricePerUnit: number,
         public availableUnits: number,

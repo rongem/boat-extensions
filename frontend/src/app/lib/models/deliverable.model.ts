@@ -11,6 +11,7 @@ export class Deliverable{
     duration = 0;
     key = '';
     text: string;
+    priceCategoryId: number;
     priceCategory: string;
     price: number;
     constructor(d: RestDeliverable) {
@@ -41,6 +42,7 @@ export class Deliverable{
             }
             this.text = d.beschreibung.substr(this.key.length + 1).trim();
         }
+        this.priceCategoryId = d.preisstufe.id;
         this.priceCategory = d.preisstufe.bezeichnung;
         this.price = d.preisstufe.kostenProPT * this.duration / 100;
     }

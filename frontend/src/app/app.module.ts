@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { BusyComponent } from './busy/busy.component';
 import { ContractListComponent } from './contract-list/contract-list.component';
 import { ContractDetailComponent } from './contract-detail/contract-detail.component';
 
@@ -16,7 +15,6 @@ registerLocaleData(localeDe);
 @NgModule({
   declarations: [
     AppComponent,
-    BusyComponent,
     ContractListComponent,
     ContractDetailComponent
   ],

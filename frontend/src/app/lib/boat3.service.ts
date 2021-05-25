@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
-import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { utils, writeFile } from 'xlsx';
 
 import { ContractResponse } from './models/rest-boat/contract-response.model';
@@ -15,7 +15,7 @@ export class Boat3Service {
     token?: string;
     expiryDate?: Date;
     username = '';
-    working = new Subject<boolean>();
+    working = false;
     get authenticated() {
         return !!this.token;
     }
@@ -29,7 +29,7 @@ export class Boat3Service {
             const d = new Date(details.exp * 1000);
             if (d.valueOf() > Date.now()) {
                 this.expiryDate = d;
-                this.working.next(true);
+                this.working = true;
                 this.http.get<ContractResponse>('/api/meineinzelauftrag?sort=id,desc&page=0&size=10',
                 {
                     headers: new HttpHeaders({
@@ -49,7 +49,7 @@ export class Boat3Service {
                         this.username = '';
                         return of(undefined);
                     }),
-                    tap(() => this.working.next(false)),
+                    tap(() => this.working = false),
                 ).subscribe();
             } else {
                 this.expiryDate = undefined;
@@ -59,12 +59,12 @@ export class Boat3Service {
         }
     }
     login(username: string, password:string) {
-        this.working.next(true);
+        this.working = true;
         this.http.post<void>('/auth/login', { email: username, passwort: password }, { observe: 'response'}).pipe(
             take(1),
             map(response => response.headers.get('Authorization')),
             catchError(() => of(undefined)),
-            tap(() => this.working.next(false)),
+            tap(() => this.working = false),
         ).subscribe(token => {
             this.token = token ?? undefined;
             if (this.token) {
@@ -98,7 +98,7 @@ export class Boat3Service {
     
     
     getContracts() {
-        this.working.next(true);
+        this.working = true;
         return this.http.get<ContractResponse>(
             '/api/meineinzelauftrag?sort=id,desc',
             {
@@ -119,12 +119,12 @@ export class Boat3Service {
                     return forkJoin(observables);
                 }),
                 map(result => result.filter(r => !!r) as Contract[]),
-                tap(() => this.working.next(false)),
+                tap(() => this.working = false),
                 );
     }
 
     getContractDetails(contractId: number) {
-        this.working.next(true);
+        this.working = true;
         return this.http.get<RestContract>(
             '/api/meineinzelauftrag/' + contractId,
             {
@@ -137,12 +137,12 @@ export class Boat3Service {
             take(1),
             map(result => new Contract(result)),
             catchError((reason) => of(undefined)),
-            tap(() => this.working.next(false)),
+            tap(() => this.working = false),
         )
     }
 
     getContractDeliverables(contractId: number) {
-        this.working.next(true);
+        this.working = true;
         return this.http.get<DeliverablesResponse>(
             '/api/taetigkeit',
             {
@@ -159,7 +159,7 @@ export class Boat3Service {
                 console.log(reason);
                 return of(undefined);
             }),
-            tap(() => this.working.next(false)),
+            tap(() => this.working = false),
         )
     }
 

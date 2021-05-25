@@ -74,6 +74,23 @@ table {
     margin: 1rem auto;
 }
 
+.rel {
+    position: relative;
+}
+
+.gauge {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    background-color: lightgreen;
+}
+
+.gauge.red {
+    background-color: #ff7070;
+}
+
 .side-by-side {
     display: flex;
     flex-direction: row;
