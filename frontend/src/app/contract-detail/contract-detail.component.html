@@ -5,11 +5,13 @@
 <ng-container *ngIf="allowedMonths.length > 0">
     <div class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</div>
     <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
+    <div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
+    <div class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</div>
 </ng-container>
-<div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
 
 <ng-container *ngIf="show !== 'nothing'">
     <div class="backdrop" (click)="show = 'nothing'"></div>
+
     <div class="overlay extended" *ngIf="show === 'names'">
         <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
         <div>
@@ -78,6 +80,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="overlay" *ngIf="show === 'numbers'">
         <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
         <h1>
@@ -168,6 +171,7 @@
             </tbody>
         </table>
     </div>
+
     <div class="overlay" *ngIf="show === 'contract'">
         <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
         <h1>
@@ -178,6 +182,8 @@
         </p>
         <p>
             Diese Ansicht erlaubt die Pr&uuml;fung der Daten und der Auslastung des Vertrags.
+            Die angezeigten Prozentzahlen werden in Relation zur Vertragsdauer  bewertet. Rote Balken bedeuten,
+            dass der Vertrag voraussichtlich zu fr&uuml; ausgesch&ouml;pft sein wird.
         </p>
         <table class="center">
             <thead>
@@ -266,4 +272,79 @@
             </tbody>
         </table>
     </div>
+
+    <div class="overlay" *ngIf="show === 'trend'">
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <h1>
+            {{contract.name}}
+        </h1>
+        <p class="center">
+            {{contract.description}}
+        </p>
+        <p>
+            Diese Ansicht zeigt den detaillierten zeitlichen Verlauf der Leistungen und erlaubt, Fehlentwicklungen fr&uuml;zeitig zu erkennen.
+            Die angezeigten Prozentzahlen werden in Relation zur Vertragsdauer  bewertet. Rote Balken bedeuten,
+            dass in diesem Monat das durchschnittlich zur Verf&uuml;gung stehende Budget &uuml;berschritten wurde.
+        </p>
+        <table class="center">
+            <thead>
+                <tr>
+                    <th rowspan="2">Leistungszeitraum</th>
+                    <th rowspan="2" class="no-wrap">geleistete PT</th>
+                    <th class="no-wrap center" [attr.colspan]="contract.budgetDetails.length + 1">% Auslastung</th>
+                </tr>
+                <tr>
+                    <th>Gesamt</th>
+                    <th class="no-wrap" *ngFor="let detail of contract.budgetDetails">
+                        {{detail.priceCategory}}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let month of allowedMonths">
+                    <td>
+                        {{month.split('-')[1]}}/{{month.split('-')[0]}}
+                    </td>
+                    <td class="no-wrap right">
+                        {{getDaysForMonth(month) | number: '1.3-3':'de'}}
+                    </td>
+                    <td class="no-wrap right rel">
+                        {{getDaysPercentageForMonth(month) | number: '1.1-1':'de'}} %
+                        <div class="gauge"
+                            [ngClass]="{red: getDaysPercentageForMonth(month) > getmonthPercentageForContract(month)}"
+                            [ngStyle]="{width: (getDaysPercentageForMonth(month) | number:'1.0-0') + '%'}">
+                        </div>
+                    </td>
+                    <td class="no-wrap right rel" *ngFor="let detail of contract.budgetDetails">
+                        {{getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | number: '1.1-1':'de'}} %
+                        <div class="gauge"
+                            [ngClass]="{red: getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) > getmonthPercentageForContract(month)}"
+                            [ngStyle]="{width: (getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | number:'1.0-0') + '%'}">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><b>Gesamt</b></td>
+                    <td class="no-wrap right">
+                        {{totalDays | number: '1.3-3':'de'}}
+                    </td>
+                    <td class="no-wrap right rel">
+                        {{totalSum / contract.completeBudget.availableFinances * 100 | number: '1.1-1':'de'}} %
+                        <div class="gauge"
+                            [ngClass]="{red: 100 * totalSum / contract.completeBudget.availableFinances > partOfTime}"
+                            [ngStyle]="{width: (100 * totalSum / contract.completeBudget.availableFinances | number:'1.0-0') + '%'}">
+                        </div>
+                    </td>
+                    <td class="no-wrap right rel" *ngFor="let detail of contract.budgetDetails">
+                        {{detail.availableFinances === 0 ? '-' : getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances * 100 | number: '1.1-1':'de'}} %
+                        <div class="gauge"
+                            [ngClass]="{red: 100 * getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances > partOfTime}"
+                            [ngStyle]="{width: (100 * getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances | number:'1.0-0') + '%'}">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 </ng-container>

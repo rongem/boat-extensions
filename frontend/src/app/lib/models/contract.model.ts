@@ -26,15 +26,18 @@ export class Contract{
         const map = new Map<number, number>();
         restContract.stammdaten.rahmenvertrag.preisstufen.forEach(p => map.set(p.id, p.kostenProPT / 100));
         restContract.budget.budgetdaten.forEach(d => {
-            const budget = new Budget(
-                d.preisstufe.id,
-                d.preisstufe.bezeichnung,
-                d.preisstufe.kostenProPT / 100,
-                d.sollPtMinuten / 60 / 8,
-                d.sollBudget / 100,
-                map.get(d.preisstufe.id) ?? 0
-            );
-            this.budgetDetails.push(budget);
+            // Herausfiltern nicht berechenbarer Werte, um die Gesamtauslastung nicht zu verfälschen
+            if (d.preisstufe.bezeichnung !== 'Einarbeitung / nicht fakturierbare Tätigkeiten') {
+                const budget = new Budget(
+                    d.preisstufe.id,
+                    d.preisstufe.bezeichnung,
+                    d.preisstufe.kostenProPT / 100,
+                    d.sollPtMinuten / 60 / 8,
+                    d.sollBudget / 100,
+                    map.get(d.preisstufe.id) ?? 0
+                );
+                this.budgetDetails.push(budget);
+            }
         });
         let availableFinances = 0;
         this.budgetDetails.map(d => d.availableFinances).forEach(f => availableFinances += f);
