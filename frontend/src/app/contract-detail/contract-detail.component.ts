@@ -57,6 +57,10 @@ export class ContractDetailComponent implements OnInit {
   get deliverablesLastDate() {
     return this._deliverables.map(d => d.date).sort().reverse()[0];
   }
+  // Sind im aktuell angezeigten Zeitraum Einträge zurückgewiesen worden?
+  get deliverablesRejected() {
+    return this.filteredDeliverables.some(d => d.rejected);
+  }
   // Prüft, ob spezielle Schlüssel vorhanden sind. Diese sind für das DV3-Reporting am Anfang des Meilensteins relevant
   get keysPresent() {
     return this._deliverables.some(d => d.key && d.key !== '');
@@ -140,6 +144,13 @@ export class ContractDetailComponent implements OnInit {
   exportNames() {
     const sheetContent = this.filteredDeliverables.map(d => this.createNamesLine(d));
     this.boat.exportSheet(sheetContent, this.selectedMonth, 'Sachlich-' + this.contract.name);
+    this.show = 'nothing';
+  }
+
+  // Excel-Export für zurückgewiesene Einträge in der sachlichen Richtigkeit
+  exportRejected() {
+    const sheetContent = this.filteredDeliverables.filter(d => d.rejected).map(d => this.createNamesLine(d));
+    this.boat.exportSheet(sheetContent, this.selectedMonth, 'Zurückgewiesene-' + this.contract.name);
     this.show = 'nothing';
   }
 

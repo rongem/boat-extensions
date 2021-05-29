@@ -14,6 +14,7 @@ export class Deliverable{
     priceCategoryId: number;
     priceCategory: string;
     price: number;
+    rejected = false;
     constructor(d: RestDeliverable) {
         this.id = d.id;
         this.version = d.version;

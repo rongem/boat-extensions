@@ -16,7 +16,7 @@ registerLocaleData(localeDe);
   declarations: [
     AppComponent,
     ContractListComponent,
-    ContractDetailComponent
+    ContractDetailComponent,
   ],
   imports: [
     BrowserModule,

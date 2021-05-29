@@ -27,6 +27,9 @@
                 Diese Ansicht erlaubt die Pr&uuml;fung der sachlichen Richtigkeit einer Rechnung. Sie k&ouml;nnen die Ansicht nach Datum oder nach
                 Person sortieren, oder die Daten f&uuml;r den Monat nach Excel exportieren.
             </p>
+            <p>
+                Au&szlig;erdem k&ouml;nnen Sie einzelne Eintr&auml;ge zur&uuml;ckweisen, und die zur&uuml;gewiesenen Eintr&auml;ge zusammengefasst exportieren.
+            </p>
             <div class="side-by-side">
                 <div class="card">
                     Leistungszeitraum:
@@ -37,7 +40,12 @@
                     </select>
                 </div>
                 <div>
-                    <div class="card selectable" (click)="exportNames()">Nach Excel exportieren</div>
+                    <div class="card selectable" (click)="exportNames()">Monat nach Excel exportieren</div>
+                </div>
+                <div *ngIf="deliverablesRejected">
+                    <div class="card selectable" (click)="exportRejected()" style="margin-left: 1rem;">
+                        Zur&uuml;ckgewiesene Eintr&auml;ge exportieren
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,6 +84,7 @@
                         {{row.key}}
                     </td>
                     <td style="white-space: pre-line;">
+                        <div class="status-button selectable" [ngClass]="{red: row.rejected}" (click)="row.rejected = !row.rejected"></div>
                         {{row.text}}
                     </td>
                 </tr>
