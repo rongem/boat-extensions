@@ -87,7 +87,7 @@
                         <div role="img"
                             class="status-button selectable"
                             [ngClass]="{red: row.rejected}"
-                            [aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
+                            [attr.aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
                             (click)="row.rejected = !row.rejected"></div>
                         {{row.text}}
                     </td>
