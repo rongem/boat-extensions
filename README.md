@@ -1,4 +1,4 @@
-# boat-importer
+# BOAT-Extensions
 Simple tool to view and export BOAT (Bund Online Abrechnungs-Tool) data in different reports.
 
 At the moment, this is a standalone tool that requires internet access.
