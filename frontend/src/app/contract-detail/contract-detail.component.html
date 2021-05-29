@@ -84,7 +84,11 @@
                         {{row.key}}
                     </td>
                     <td style="white-space: pre-line;">
-                        <div class="status-button selectable" [ngClass]="{red: row.rejected}" (click)="row.rejected = !row.rejected"></div>
+                        <div role="img"
+                            class="status-button selectable"
+                            [ngClass]="{red: row.rejected}"
+                            [aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
+                            (click)="row.rejected = !row.rejected"></div>
                         {{row.text}}
                     </td>
                 </tr>
