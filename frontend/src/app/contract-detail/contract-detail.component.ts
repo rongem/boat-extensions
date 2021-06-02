@@ -220,6 +220,7 @@ export class ContractDetailComponent implements OnInit {
 
   // Excel-Hilfsfunktionen
   private createNamesLine(d: Deliverable) {
+    console.log(d.date);
     if (this.keysPresent) {
       return {
         'Datum': d.date,

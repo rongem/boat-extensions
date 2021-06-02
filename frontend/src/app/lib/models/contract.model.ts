@@ -17,9 +17,9 @@ export class Contract{
         this.id = restContract.id;
         this.description = restContract.stammdaten.projektTitel;
         let dateParts = restContract.stammdaten.projektBeginn.split('-').map(x => +x);
-        this.start = new Date(dateParts[0], dateParts[1], dateParts[2]);
+        this.start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         dateParts = restContract.stammdaten.projektEnde.split('-').map(x => +x);
-        this.end = new Date(dateParts[0], dateParts[1], dateParts[2]);
+        this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;
         this.organizationalUnit = restContract.stammdaten.orgE;
         this.responsiblePerson = restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname;

@@ -21,7 +21,7 @@ export class Deliverable{
         this.contract = d.einzelauftrag.id;
         this.person = d.leistungserbringer.nachname + ', ' + d.leistungserbringer.vorname;
         const dateParts = d.datum.split('-').map(x => +x);
-        this.date = new Date(dateParts[0], dateParts[1], dateParts[2]);
+        this.date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         this.startTime = d.startzeit;
         this.endTime = d.endzeit;
         this.text = d.beschreibung;
