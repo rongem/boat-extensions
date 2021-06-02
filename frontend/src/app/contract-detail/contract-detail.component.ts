@@ -229,6 +229,7 @@ export class ContractDetailComponent implements OnInit {
         'Preisstufe': d.priceCategory,
         'Schlüssel': d.key,
         'Tätigkeit': d.text,
+        'Vertrag': this.contract.name,
       };
     } else {
       return {
@@ -238,6 +239,7 @@ export class ContractDetailComponent implements OnInit {
         'Projektmitarbeiter': d.person,
         'Preisstufe': d.priceCategory,
         'Tätigkeit': d.text,
+        'Vertrag': this.contract.name,
       };
     }
   }
@@ -250,6 +252,7 @@ export class ContractDetailComponent implements OnInit {
         'Preisstufe': d.priceCategory,
         'Schlüssel': d.key,
         'Kosten (netto)': d.price,
+        'Vertrag': this.contract.name,
       };
     } else {
       return {
@@ -257,6 +260,7 @@ export class ContractDetailComponent implements OnInit {
         'Stunden': d.duration * 8,
         'Preisstufe': d.priceCategory,
         'Kosten (netto)': d.price,
+        'Vertrag': this.contract.name,
       };
     }
   }
