@@ -1,0 +1,13 @@
+FROM node AS build
+WORKDIR /usr/app
+
+COPY ./frontend/package*.json ./
+#RUN npm update -g # only if image was too old
+RUN npm install
+COPY ./frontend/ ./
+RUN npm run build:prod
+
+FROM httpd
+WORKDIR /usr/local/apache2
+COPY --from=build /usr/app/dist/frontend/ /usr/local/apache2/htdocs/
+COPY ./apache/httpd.conf /usr/local/apache2/conf/httpd.conf
