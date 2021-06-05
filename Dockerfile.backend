@@ -1,20 +1,20 @@
 # specify a base image for compiling
-FROM node:alpine AS build
+FROM node AS build
 WORKDIR /usr/app
 
 # install dependencies
-COPY ./njs-backend/package*.json ./
+COPY ./backend/package*.json ./
 #RUN npm update -g # only if image was too old
 RUN npm install
-COPY ./njs-backend/ ./
+COPY ./backend/ ./
 RUN npm run comp
 
 # specify base image
-FROM node:alpine
+FROM node
 WORKDIR /usr/app
 
 # install dependencies
-COPY ./njs-backend/package*.json ./
+COPY ./backend/package*.json ./
 COPY --from=build /usr/app/dist ./dist
 #RUN npm update -g # only if image was too old
 RUN npm ci --only-production
