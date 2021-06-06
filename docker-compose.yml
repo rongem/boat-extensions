@@ -22,8 +22,6 @@ services:
       - LDAP_SERVER
   apache-ds:
     image: tgbyte/apacheds
-  database:
-    image: fosibyte/sqlexpress-2019
 
 
     
