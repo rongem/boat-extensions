@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { IUser } from '../models/objects/user.model';
 
 import { HttpError } from '../models/rest-api/httpError.model';
 import { serverError } from './error.controller';
@@ -17,6 +18,7 @@ export function getAuthentication(req: Request, res: Response, next: NextFunctio
         if (error.message !== 'Ungültige Authentifizierung') {
             throw error;
         }
+        return {name: ''} as IUser;
     }).then((user) => {
         req.userName = user.name;
         next();
@@ -25,9 +27,10 @@ export function getAuthentication(req: Request, res: Response, next: NextFunctio
 
 async function getUser(name: string): Promise<IUser> {
     const filter = { name };
-    const user = await userModel.findOne(filter);
-    if (!user) {
-        throw new HttpError(401, 'Benutzer hat keine Berechtigung');
-    }
-    return user;
+    // const user = await userModel.findOne(filter);
+    // if (!user) {
+    //     throw new HttpError(401, 'Benutzer hat keine Berechtigung');
+    // }
+    // return user;
+    return {name} as IUser;
 }

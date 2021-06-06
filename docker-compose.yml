@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   frontend:
-    image: rongem/boat-frontend
+    image: rongem/boat3-extensions:frontend
     ports:
       - 80:80
     build:
@@ -9,9 +9,21 @@ services:
       context: .
 #    restart: always
   backend:
-    image: rongem/db-ng backend
+    image: rongem/boat3-extensions:backend
     build:
       dockerfile: Dockerfile.backend
       context: .
     environment:
-      - SQL_CONNECTION_STRING
+      - DB_NAME
+      - DB_SERVER
+      - DB_USER
+      - DB_PWD
+      - LDAP_DOMAIN
+      - LDAP_SERVER
+  apache-ds:
+    image: tgbyte/apacheds
+  database:
+    image: fosibyte/sqlexpress-2019
+
+
+    
