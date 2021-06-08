@@ -7,7 +7,7 @@ import { error404 } from './controllers/error.controller';
 import { getAuthentication } from './controllers/authentication.controller';
 import { HttpError } from './models/rest-api/httpError.model';
 import { EnvironmentController } from './controllers/environment.controller';
-import { checkTables } from './models/db';
+import { checkDatabase } from './models/db';
 
 const app = express();
 let exp: any;
@@ -34,7 +34,7 @@ app.use((error: ErrorRequestHandler, req: Request, res: Response, next: NextFunc
     res.status(status).json({message, data});
 });
 
-checkTables().then(() => {
+checkDatabase().then(() => {
     const server = app.listen(8000);
     exp = server;
 });

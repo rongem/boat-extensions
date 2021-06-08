@@ -31,7 +31,7 @@ export const pool = new ConnectionPool(sqlConfig)
         return undefined;
     });
 
-export const checkTables = async () => {
+export const checkDatabase = async () => {
     const expectedTables = [
         'BoatExt_Contracts',
         'BoatExt_PriceCategories',
