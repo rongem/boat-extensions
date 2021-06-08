@@ -8,6 +8,7 @@ import { getAuthentication } from './controllers/authentication.controller';
 import { HttpError } from './models/rest-api/httpError.model';
 import { EnvironmentController } from './controllers/environment.controller';
 import { checkDatabase } from './models/db';
+import restRouter from './routes/rest.routes';
 
 const app = express();
 let exp: any;
@@ -23,7 +24,7 @@ app.use(cors(), ntlm({
     domaincontroller: env.ldapServer,
 }));
 
-app.use('/rest', express.json(), getAuthentication,);
+app.use('/rest', express.json(), getAuthentication, restRouter);
 
 app.use('/', error404);
 
