@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[BoatExt_Deliverables]
+﻿CREATE TABLE [BoatExt_Deliverables]
 (
 	[Id] INT NOT NULL PRIMARY KEY, 
     [Version] INT NOT NULL, 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[BoatExt_PriceCategoriesForContract]
+﻿CREATE TABLE [DV5].[BoatExt_PriceCategoriesForContract]
 (
 	[ContractId] INT NOT NULL , 
     [PriceCategoryId] INT NOT NULL, 

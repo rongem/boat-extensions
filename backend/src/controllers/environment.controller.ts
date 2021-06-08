@@ -41,6 +41,14 @@ export class EnvironmentController {
         return process.env.DB_SERVER ?? '';
     }
 
+    get dbPort() {
+        return process.env.DB_PORT ?? '1433';
+    } 
+
+    get dbInstance() {
+        return process.env.DB_INSTANCE ?? '';
+    }
+
     get ldapDomain() {
         return process.env.LDAP_DOMAIN ?? '';
     }

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[BoatExt_Contracts]
+﻿CREATE TABLE [BoatExt_Contracts]
 (
 	[Id] INT NOT NULL PRIMARY KEY, 
     [Description] NVARCHAR(200) NOT NULL, 
