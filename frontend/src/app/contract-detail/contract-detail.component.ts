@@ -23,8 +23,8 @@ export class ContractDetailComponent implements OnInit {
   set selectedMonth(value: string) {
     const date = value?.split('-') ?? [0, 0];
     const year = +date[0];
-    const month = parseInt(date[1]) - 1;
-    this.filteredDeliverables = this._deliverables.filter(d => d.date.getFullYear() === year && d.date.getMonth() === month)
+    const month = parseInt(date[1]);
+    this.filteredDeliverables = this._deliverables.filter(d => d.date.getFullYear() === year && d.date.getMonth() + 1 === month)
     this._selectedMonth = value;
   }
   private _selectedMonth: string = '';
@@ -186,7 +186,7 @@ export class ContractDetailComponent implements OnInit {
   getDaysPercentageForPriceCategoryAndMonth(priceCategoryId: number, monthAndYear: string) {
     const [year, month] = monthAndYear.split('-').map(x => +x);
     let sum = 0;
-    this._deliverables.filter(d => d.priceCategoryId === priceCategoryId && d.date.getMonth() === month && d.date.getFullYear() === year)
+    this._deliverables.filter(d => d.priceCategoryId === priceCategoryId && d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
       .map(d => d.duration).forEach(d => sum += d);
     return 100 * sum / this.contract.budgetDetails.find(b => b.priceCategoryId === priceCategoryId)!.availableUnits;
   }
@@ -195,7 +195,7 @@ export class ContractDetailComponent implements OnInit {
   getDaysForMonth(monthAndYear: string) {
     const [year, month] = monthAndYear.split('-').map(x => +x);
     let sum = 0;
-    this._deliverables.filter(d => d.date.getMonth() === month && d.date.getFullYear() === year)
+    this._deliverables.filter(d => d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
       .map(d => d.duration).forEach(d => sum += d);
     return sum;
   }
@@ -204,7 +204,7 @@ export class ContractDetailComponent implements OnInit {
   getDaysPercentageForMonth(monthAndYear: string) {
     const [year, month] = monthAndYear.split('-').map(x => +x);
     let sum = 0;
-    this._deliverables.filter(d => d.date.getMonth() === month && d.date.getFullYear() === year)
+    this._deliverables.filter(d => d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
       .map(d => d.duration).forEach(d => sum += d);
     return 100 * sum / this.contract.completeBudget.availableUnits;
   }
