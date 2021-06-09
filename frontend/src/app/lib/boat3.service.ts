@@ -76,15 +76,10 @@ export class Boat3Service {
             if (this.token) {
                 this.username = username;
                 localStorage.setItem('BOAT-Login', this.token);
-                // this.getContracts().subscribe();
-                // this.getContractDetails(4059).subscribe();
-                // this.getContractDeliverables(4059).subscribe();
                 // const parts = this.token.split(' ')[1].split('.');
                 // const obj = JSON.parse(atob(parts[1]));
                 // this.expiryDate = new Date(0);
                 // this.expiryDate.setUTCSeconds(obj.exp);
-                // console.log(this.expiryDate.toISOString());
-
             } else {
                 // this.expiryDate = undefined;
                 this.username = '';
