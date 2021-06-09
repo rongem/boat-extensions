@@ -21,7 +21,9 @@ const sqlConfig: config = {
     }
 }
 
-export const pool = new ConnectionPool(sqlConfig)
+const poolPromise = new ConnectionPool(sqlConfig);
+
+export const pool = poolPromise
     .connect()
     .then(pool => {
         console.debug('Connected to', sqlConfig.server, sqlConfig.options?.instanceName, sqlConfig.database);
@@ -31,6 +33,9 @@ export const pool = new ConnectionPool(sqlConfig)
         return undefined;
     });
 
+export const request = pool.then(connection => new Request(connection));
+
+// preflight check if connection works and all tables and stored procedures exist
 export const checkDatabase = async () => {
     const expectedTables = [
         'BoatExt_Contracts',
@@ -38,24 +43,54 @@ export const checkDatabase = async () => {
         'BoatExt_PriceCategoriesForContract',
         'BoatExt_Deliverables'
     ];
-    const connection = await pool;
-    const request = new Request(connection);
-    const result = (await request.query('select TABLE_NAME from INFORMATION_SCHEMA.TABLES')).recordset.map(r => r.TABLE_NAME as string);
-    expectedTables.forEach(t => {
-        if (!result.includes(t)) {
-            throw new Error('Missing table ' + t);
-        }
-    });
-    const expectedProcedures = [
-        'BoatExt_Import'
-    ];
-    const procResult = (await request.query(
-        'select ROUTINE_NAME from INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = \'PROCEDURE\'')).recordset.map(r => r.ROUTINE_NAME as string);
-    expectedProcedures.forEach(p => {
-        if (!procResult.includes(p)) {
-            throw new Error('Missing procedure ' + p);
-        }
-    })
-    console.debug('Database ready!');
+    const req = await request;
+    try {
+        let result = (await req.query('select TABLE_NAME from INFORMATION_SCHEMA.TABLES')).recordset.map(r => r.TABLE_NAME as string);
+        expectedTables.forEach(t => {
+            if (!result.includes(t)) {
+                throw new Error('Missing table ' + t);
+            }
+        });
+        const expectedProcedures = [
+            'BoatExt_Import'
+        ];
+        result = (await req.query(
+            'select ROUTINE_NAME from INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = \'PROCEDURE\'')).recordset.map(r => r.ROUTINE_NAME as string);
+        expectedProcedures.forEach(p => {
+            if (!result.includes(p)) {
+                throw new Error('Missing procedure ' + p);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+    return true;
+}
 
+// testing only: delete database contents before starting test
+export const deleteDatabaseContents = async () => {
+    const req = await request;
+    try {
+        let result = await req.query('TRUNCATE TABLE BoatExt_Deliverables;');
+        result = await req.query('TRUNCATE TABLE BoatExt_PriceCategoriesForContract;');
+        result = await req.query('DELETE FROM BoatExt_PriceCategories;');
+        result = await req.query('DELETE FROM BoatExt_Contracts;');
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+    return true;
+};
+
+// testing only: close database connection
+export const disconnectDatabase = async () => {
+    try {
+        await poolPromise.close();
+        console.log('Connection to database closed!');
+        return true;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 }

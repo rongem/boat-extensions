@@ -15,16 +15,17 @@ let exp: any;
 
 const env = EnvironmentController.instance;
 
-app.use(cors(), ntlm({
-    // debug: function() {
-    // const args = Array.prototype.slice.apply(arguments);
-    // console.log(args);
-    // },
-    domain: env.ldapDomain,
-    domaincontroller: env.ldapServer,
-}));
-
-app.use('/rest', express.json(), getAuthentication, restRouter);
+app.use(cors());
+// app.use(cors(), ntlm({
+//     // debug: function() {
+//     // const args = Array.prototype.slice.apply(arguments);
+//     // console.log(args);
+//     // },
+//     domain: env.ldapDomain,
+//     domaincontroller: env.ldapServer,
+// }));
+// , getAuthentication
+app.use('/rest', express.json(), restRouter);
 
 app.use('/', error404);
 
@@ -35,9 +36,11 @@ app.use((error: ErrorRequestHandler, req: Request, res: Response, next: NextFunc
     res.status(status).json({message, data});
 });
 
-checkDatabase().then(() => {
-    const server = app.listen(8000);
-    exp = server;
+checkDatabase().then((result) => {
+    if (result === true) {
+        const server = app.listen(8000);
+        exp = server;
+    }
 });
 
 export default () => exp;
