@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
-import { forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { utils, writeFile } from 'xlsx';
 
 import { ContractResponse } from './models/rest-boat/contract-response.model';
@@ -15,7 +15,7 @@ export class Boat3Service {
     token?: string;
     expiryDate?: Date;
     username = '';
-    working = false;
+    working = new BehaviorSubject(false);
     error = '';
     get authenticated() {
         return !!this.token;
@@ -30,7 +30,7 @@ export class Boat3Service {
             const d = new Date(details.exp * 1000);
             if (d.valueOf() > Date.now()) {
                 this.expiryDate = d;
-                this.working = true;
+                this.working.next(true);
                 this.http.get<ContractResponse>('/api/meineinzelauftrag?sort=id,desc&page=0&size=10',
                 {
                     headers: new HttpHeaders({
@@ -51,7 +51,7 @@ export class Boat3Service {
                         this.error = error.message;
                         return of(undefined);
                     }),
-                    tap(() => this.working = false),
+                    tap(() => this.working.next(false)),
                 ).subscribe();
             } else {
                 this.expiryDate = undefined;
@@ -61,7 +61,7 @@ export class Boat3Service {
         }
     }
     login(username: string, password:string) {
-        this.working = true;
+        this.working.next(true);
         this.error = '';
         this.http.post<void>('/auth/login', { email: username, passwort: password }, { observe: 'response'}).pipe(
             take(1),
@@ -70,7 +70,7 @@ export class Boat3Service {
                 this.error = error.message;
                 return of(undefined)
             }),
-            tap(() => this.working = false),
+            tap(() => this.working.next(false)),
         ).subscribe(token => {
             this.token = token ?? undefined;
             if (this.token) {
@@ -99,17 +99,15 @@ export class Boat3Service {
     
     
     getContracts() {
-        this.working = true;
+        this.working.next(true);
         this.error = '';
         return this.http.get<ContractResponse>(
-            '/api/meineinzelauftrag?sort=id,desc',
-            {
+            '/api/meineinzelauftrag?sort=id,desc', {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': this.token!,
                 })
-            }
-            ).pipe(
+            }).pipe(
                 catchError(this.handleError),
                 switchMap(result => {
                     const observables: Observable<Contract | undefined>[] = [];
@@ -121,12 +119,12 @@ export class Boat3Service {
                     return forkJoin(observables);
                 }),
                 map(result => result.filter(r => !!r) as Contract[]),
-                tap(() => this.working = false),
-                );
+                tap(() => this.working.next(false)),
+            );
     }
 
     getContractDetails(contractId: number) {
-        this.working = true;
+        this.working.next(true);
         this.error = '';
         return this.http.get<RestContract>(
             '/api/meineinzelauftrag/' + contractId,
@@ -140,12 +138,12 @@ export class Boat3Service {
             take(1),
             map(result => new Contract(result)),
             catchError(this.handleError),
-            tap(() => this.working = false),
+            tap(() => this.working.next(false)),
         )
     }
 
     getContractDeliverables(contractId: number) {
-        this.working = true;
+        this.working.next(true);
         this.error = '';
         return this.http.get<DeliverablesResponse>(
             '/api/taetigkeit',
@@ -160,7 +158,7 @@ export class Boat3Service {
             take(1),
             map(result => result.content.map(c => new Deliverable(c)) ?? []),
             catchError(this.handleError),
-            tap(() => this.working = false),
+            tap(() => this.working.next(false)),
         )
     }
 
