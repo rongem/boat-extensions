@@ -7,7 +7,7 @@ let chai = require('chai');
 
 chai.use(chaihttp);
 
-describe('Contract', function() {
+describe('Contracts', function() {
     it('should accept valid sync request for contracts', function(done) {
         server = serverexp.default()
         chai.request(server)
@@ -143,7 +143,7 @@ describe('Contract', function() {
             });
     });
 
-    it('should not accept sync request for contracts with invalid data', function(done) {
+    it('should not accept sync request for deliverables with invalid data', function(done) {
         server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
@@ -159,7 +159,6 @@ describe('Contract', function() {
             }])
             .end((err, res) => {
                 expect(err).to.be.null;
-                console.log(res.body.data.errors);
                 expect(res.status).to.be.equal(400);
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');

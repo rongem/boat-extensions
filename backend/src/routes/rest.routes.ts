@@ -46,15 +46,24 @@ router.post('/contracts', [
 
 router.post('/deliverables', [
     body().isArray({min: 0}).withMessage('Kein Array von Leistungszeiten übergeben').bail().toArray(),
-    body('*.id', 'Fehlende oder falsche Id').isInt({min: 1}).bail().toInt(),
-    body('*.version', 'Fehlende oder falsche Version').isInt({min: 1}).bail().toInt(),
-    body('*.contract', 'Fehlender oder falscher Vertrag').isInt({min: 1}).bail().toInt(),
-    body('*.date', 'Fehlendes oder falsches Datum').isDate().bail().toDate(),
-    body('*.duration', 'Fehlende oder falsche Anzahl von PT').isDecimal({blacklisted_chars: '-'}).bail().toFloat()
+    body('*.id', 'Fehlende oder falsche Id').if(body().isArray({min: 1}))
+        .isInt({min: 1}).bail().toInt(),
+    body('*.version', 'Fehlende oder falsche Version').if(body().isArray({min: 1}))
+        .isInt({min: 1}).bail().toInt(),
+    body('*.contract', 'Fehlender oder falscher Vertrag').if(body().isArray({min: 1}))
+        .isInt({min: 1}).bail().toInt(),
+    body('*.date', 'Fehlendes oder falsches Datum').if(body().isArray({min: 1}))
+        .custom(value => !!Date.parse(value)).bail().toDate(),
+    body('*.duration', 'Fehlende oder falsche Anzahl von PT').if(body().isArray({min: 1}))
+        .isDecimal({blacklisted_chars: '-'}).bail().toFloat()
         .custom(value => value > 0),
-    body('*.key', 'Falscher Schlüssel').optional().isString().bail().trim().isLength({min: 18, max: 18})
-        .custom(value => new RegExp('^[0-9]{15}[A-Z]{3}').test(value)),
-    body('*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').isInt({min: 1}).bail().toInt(),
+    body('*.key', 'Falscher Datentyp für Schlüssel').if(body().isArray({min: 1}))
+        .optional({checkFalsy: true})
+        .isString().trim()
+        .isLength({min: 18, max: 18}).withMessage('Schlüssel hat die falsche Länge')
+        .custom(value => new RegExp('^[0-9]{15}[A-Z]{3}').test(value)).withMessage('Schlüssel entspricht nicht den Vorgaben'),
+    body('*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').if(body().isArray({min: 1}))
+        .isInt({min: 1}).bail().toInt(),
 ], validate, syncDeliverables);
 
 export default router;
