@@ -12,6 +12,7 @@ export class AppComponent {
   // Formularfelder
   username = '';
   password = '';
+  busy: boolean;
   get error() {
     return this.boat.error;
   }
@@ -24,7 +25,12 @@ export class AppComponent {
     return this.boat.username;
   }
 
-  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {}
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {
+    this.busy = this.boat.working.value;
+    this.boat.working.subscribe(value => {
+      this.busy = value;
+    });
+  }
 
   login() {
     this.boat.login(this.username, this.password);

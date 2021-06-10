@@ -1,6 +1,6 @@
 <div class="toolbar" role="banner">
   <span>BOAT</span>
-  <span>BOAT3 Erweiterungen</span>
+  <span>BOAT3 Erweiterungen v1.0</span>
   <div class="spacer"></div>
   <div>{{authenticatedUser}}</div>
 </div>
@@ -37,3 +37,8 @@
   </footer>
 
 </div>
+
+<ng-container *ngIf="busy === true">
+  <div class="backdrop"></div>
+  <div class="busy">Arbeite...</div>
+</ng-container>
