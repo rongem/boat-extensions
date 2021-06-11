@@ -238,6 +238,7 @@ describe('Contracts', function() {
                 expect(res.body).to.have.property('created', 0);
                 expect(res.body).to.have.property('updated', 2);
                 expect(res.body).to.have.property('deleted', 0);
+                expect(res.body).to.have.property('unchanged', 0);
                 expect(res.body.budgets).to.be.a('object');
                 expect(res.body.budgets).to.have.property('created', 0);
                 expect(res.body.budgets).to.have.property('updated', 2);
@@ -246,6 +247,55 @@ describe('Contracts', function() {
                 expect(res.body.priceCategories).to.be.a('object');
                 expect(res.body.priceCategories).to.have.property('created', 0);
                 expect(res.body.priceCategories).to.have.property('updated', 1);
+                expect(res.body.priceCategories).to.have.property('deleted', 0);
+                expect(res.body.priceCategories).to.have.property('unchanged', 1);
+                done();
+            });
+    });
+
+    it('should update an existing contract remove a budget and add new one', function(done) {
+        server = serverexp.default()
+        chai.request(server)
+            .post('/rest/contracts')
+            .send([{
+                id: 1234,
+                description: 'updated test description',
+                start: new Date(2021, 0, 1),
+                end: new Date(2021, 11, 31),
+                organization: 'Test-Org',
+                organizationalUnit: 'OU',
+                responsiblePerson: 'Person Name',
+                budgets: [{
+                    priceCategoryId: 12,
+                    priceCategory: 'Preisstufe Ia',
+                    pricePerUnit: 125.5,
+                    availableUnits: 100.6,
+                    minutesPerDay: 480,
+                }, {
+                    priceCategoryId: 16,
+                    priceCategory: 'Preisstufe IIa',
+                    pricePerUnit: 200.5,
+                    availableUnits: 70.8,
+                    minutesPerDay: 480,
+                }]
+            }])
+            .end((err, res) => {
+                expect(err).to.be.null;
+                console.log(res.body);
+                expect(res.status).to.be.equal(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('created', 0);
+                expect(res.body).to.have.property('updated', 0);
+                expect(res.body).to.have.property('deleted', 0);
+                expect(res.body).to.have.property('unchanged', 1);
+                expect(res.body.budgets).to.be.a('object');
+                expect(res.body.budgets).to.have.property('created', 1);
+                expect(res.body.budgets).to.have.property('updated', 0);
+                expect(res.body.budgets).to.have.property('deleted', 1);
+                expect(res.body.budgets).to.have.property('unchanged', 1);
+                expect(res.body.priceCategories).to.be.a('object');
+                expect(res.body.priceCategories).to.have.property('created', 1);
+                expect(res.body.priceCategories).to.have.property('updated', 0);
                 expect(res.body.priceCategories).to.have.property('deleted', 0);
                 expect(res.body.priceCategories).to.have.property('unchanged', 1);
                 done();

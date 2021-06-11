@@ -6,4 +6,8 @@ export interface Deliverable {
     duration: number;
     key?: string;
     priceCategoryId: number;
+    startTime?: string;
+    endTime?: string;
+    text?: string;
+    person?: string;
 }

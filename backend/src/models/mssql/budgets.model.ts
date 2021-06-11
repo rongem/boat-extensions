@@ -8,8 +8,8 @@ import { readPriceCategories } from './pricecategories.model';
 
 export const dbSyncBudgets = async (budgets: Budget[], contractId: number, result: ContractResult) => {
     try {
+        const existingBudgets = await readBudgets(contractId.toString());
         if (budgets.length > 0) { // creating and updating only makes sense when there are budgets in contract
-            const existingBudgets = await readBudgets(contractId.toString());
             for (let index = 0; index < budgets.length; index++) {
                 const budget = budgets[index];
                 const existingBudget = existingBudgets.find(b => b.priceCategoryId === budget.priceCategoryId);
@@ -20,13 +20,17 @@ export const dbSyncBudgets = async (budgets: Budget[], contractId: number, resul
                     } else {
                         result.budgets.unchanged++;
                     }
+                    existingBudgets.splice(existingBudgets.findIndex(b => b.priceCategoryId === budget.priceCategoryId), 1);
                 } else { // create new budget
                     await createBudget(budget)
                     result.budgets.created++;
                 }
             }
         }
-        return result;
+        if (existingBudgets.length > 0) { // bugdets in database still left were deleted in origin
+            const obsoleteBudgetPriceCategoryIds = existingBudgets.map(b => b.priceCategoryId);
+            result.budgets.deleted = await deleteBudgets(contractId, obsoleteBudgetPriceCategoryIds);
+        }
     } catch (error) {
         console.log('dbSyncBudgets', error);
         throw new HttpError(500, error.message ?? error.toString());
@@ -36,7 +40,7 @@ export const dbSyncBudgets = async (budgets: Budget[], contractId: number, resul
 export const readBudgets = async (contractIds: string): Promise<Budget[]> => {
     try {
         const req = await pool.then(connection => new mssql.Request(connection));
-        const result = await req.query(`SELECT * FROM BoatExt_Budgets WHERE ContractId IN (${contractIds})`);
+        const result = await req.query(`SELECT * FROM [BoatExt_Budgets] WHERE [ContractId] IN (${contractIds})`);
         const priceCategories = await readPriceCategories();
         return result.recordset.map(r => ({
             contractId: r.ContractId,
@@ -59,7 +63,7 @@ const createBudget = async (budget: Budget) => {
             VALUES (@contractId, @priceCategoryId, @availableUnits)`;
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
-            throw new Error('INSERT PriceCategoriesForContract: Daten wurden nicht geschrieben.');
+            throw new Error('INSERT Budgets: Daten wurden nicht geschrieben.');
         }
     } catch (error) {
         console.log('createBudgets', error);
@@ -75,20 +79,27 @@ const updateBudget = async (budget: Budget) => {
             WHERE [ContractId] = @contractId AND [PriceCategoryId] = @priceCategoryId`;
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
-            throw new Error('UPDATE PriceCategoriesForContract: Daten wurden nicht geschrieben.');
+            throw new Error('UPDATE Budgets: Daten wurden nicht geschrieben.');
         }
-        } catch (error) {
+    } catch (error) {
         console.log('updateBudgets', error);
         throw new HttpError(500, error.message ?? error.toString(), budget);
     }
 };
 
-const deleteBudget = async (budget: Budget) => {
+const deleteBudgets = async (contractId: number, priceCategoryIds: number[]) => {
     try {
-        
+        const req = await pool.then(connection => new mssql.Request(connection));
+        req.input('id', mssql.Int, contractId);
+        const sql = `DELETE FROM [BoatExt_Budgets] WHERE [ContractId]=@id AND [PriceCategoryId] IN (${priceCategoryIds.join(', ')})`;
+        const result = await req.query(sql);
+        if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== priceCategoryIds.length) {
+            throw new Error('DELETE Budgets: Daten wurden nicht gelöscht (nur ' + result.rowsAffected[0] + ' von ' + priceCategoryIds.length + ')' );
+        }
+        return result.rowsAffected[0];
     } catch (error) {
         console.log('deleteBudgets', error);
-        throw new HttpError(500, error.message ?? error.toString(), budget);
+        throw new HttpError(500, error.message ?? error.toString(), contractId);
     }
 };
 

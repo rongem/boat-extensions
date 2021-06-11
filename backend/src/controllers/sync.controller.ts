@@ -18,7 +18,7 @@ export const syncContracts = (req: Request, res: Response, next: NextFunction) =
 
 export const syncDeliverables = (req: Request, res: Response, next: NextFunction) => {
     const deliverables = req.body as Deliverable[];
-    dbSyncDeliverables(deliverables).then(result => {
+    dbSyncDeliverables(deliverables, deliverables[0].contract).then(result => {
         res.json(result);
     }).catch((error: HttpError) => res.status(error.httpStatusCode).json({
         error: error.message,

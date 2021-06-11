@@ -1,6 +1,6 @@
 import * as mssql from 'mssql';
 
-import { dateToSql, pool } from '../db';
+import { pool } from '../db';
 import { Contract } from '../objects/contract.model';
 import { dbSyncBudgets, readBudgets } from './budgets.model';
 import { HttpError } from '../rest-api/httpError.model';
@@ -101,8 +101,8 @@ const contractRequest = async (contract: Contract) => {
     const req = await pool.then(connection => new mssql.Request(connection));
     req.input('id', mssql.Int, contract.id);
     req.input('description', mssql.NVarChar(200), contract.description);
-    req.input('start', mssql.Date, dateToSql(contract.start));
-    req.input('end', mssql.Date, dateToSql(contract.end));
+    req.input('start', mssql.Date, contract.start);
+    req.input('end', mssql.Date, contract.end);
     req.input('organization', mssql.NVarChar(50), contract.organization);
     req.input('organizationalUnit', mssql.NVarChar(20), contract.organizationalUnit);
     req.input('responsiblePerson', mssql.NVarChar(20), contract.responsiblePerson);

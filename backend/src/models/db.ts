@@ -96,6 +96,5 @@ export const disconnectDatabase = async () => {
     }
 }
 
-export const dateToSql = (date: Date) => date.toISOString().slice(0, 10);
-
+// not necessary for mssql, but intersting
 export const dateTimeToSql = (date: Date) => date.toISOString().slice(0, 19).replace('T', ' ');

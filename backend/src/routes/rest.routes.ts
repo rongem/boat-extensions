@@ -5,6 +5,15 @@ import { validate } from './validator';
 
 const router = express.Router();
 
+const dateParser = (value: string) => {
+    if (value.includes('T')) {
+        value = value.split('T')[0];
+    }
+    const dateParts = value.split('-');
+    const date = new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2], 1);
+    return date;
+}
+
 router.post('/contracts', [
     body().isArray({min: 1}).withMessage('Kein Array von Verträgen übergeben').bail().toArray(),
     body('*.id', 'Keine gültige ID vorhanden').if(body().isArray({min: 1}))
@@ -13,9 +22,9 @@ router.post('/contracts', [
         .isString().bail().trim()
         .isLength({min: 1, max: 200}).withMessage('Mindestlänge: 1, Maximallänge: 200'),
     body('*.start', 'Falsches StartDatum').if(body().isArray({min: 1}))
-        .custom(value => !!Date.parse(value)).bail().toDate(),
+        .custom(value => !!Date.parse(value)).bail().customSanitizer(dateParser),
     body('*.end', 'Falsches Endedatum').if(body().isArray({min: 1}))
-        .custom(value => !!Date.parse(value)).bail().toDate(),
+        .customSanitizer(dateParser),
     body('*', 'Startdatum darf nicht größer sein als Endedatum').if(body().isArray({min: 1})).
         custom(value => Date.parse(value.start) < Date.parse(value.end)),
     body('*.organization', 'Organisation ist falsch').if(body().isArray({min: 1}))
@@ -51,7 +60,7 @@ router.post('/deliverables', [
     body('*.contract', 'Fehlender oder falscher Vertrag').if(body().isArray({min: 1}))
         .isInt({min: 1}).bail().toInt(),
     body('*.date', 'Fehlendes oder falsches Datum').if(body().isArray({min: 1}))
-        .custom(value => !!Date.parse(value)).bail().toDate(),
+        .custom(value => !!Date.parse(value)).bail().customSanitizer(dateParser),
     body('*.duration', 'Fehlende oder falsche Anzahl von PT').if(body().isArray({min: 1}))
         .isDecimal({blacklisted_chars: '-'}).bail().toFloat()
         .custom(value => value > 0),
