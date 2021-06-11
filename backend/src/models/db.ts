@@ -33,7 +33,7 @@ export const pool = poolPromise
         return undefined;
     });
 
-export const request = pool.then(connection => new Request(connection));
+export const requestPromise = pool.then(connection => new Request(connection));
 
 // preflight check if connection works and all tables and stored procedures exist
 export const checkDatabase = async () => {
@@ -43,7 +43,7 @@ export const checkDatabase = async () => {
         'BoatExt_PriceCategoriesForContract',
         'BoatExt_Deliverables'
     ];
-    const req = await request;
+    const req = await requestPromise;
     try {
         let result = (await req.query('select TABLE_NAME from INFORMATION_SCHEMA.TABLES')).recordset.map(r => r.TABLE_NAME as string);
         expectedTables.forEach(t => {
@@ -70,7 +70,7 @@ export const checkDatabase = async () => {
 
 // testing only: delete database contents before starting test
 export const deleteDatabaseContents = async () => {
-    const req = await request;
+    const req = await requestPromise;
     try {
         let result = await req.query('TRUNCATE TABLE BoatExt_Deliverables;');
         result = await req.query('TRUNCATE TABLE BoatExt_PriceCategoriesForContract;');
@@ -94,3 +94,7 @@ export const disconnectDatabase = async () => {
         return false;
     }
 }
+
+export const dateToSql = (date: Date) => date.toISOString().slice(0, 10);
+
+export const dateTimeToSql = (date: Date) => date.toISOString().slice(0, 19).replace('T', ' ');

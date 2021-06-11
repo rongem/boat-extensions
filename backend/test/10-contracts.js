@@ -58,6 +58,10 @@ describe('Contracts', function() {
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res.status).to.be.equal(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('created', 2);
+                expect(res.body).to.have.property('updated', 0);
+                expect(res.body).to.have.property('deleted', 0);
                 done();
             });
     });
@@ -165,6 +169,64 @@ describe('Contracts', function() {
                 expect(res.body.data.errors.length).to.be.equal(1);
                 const params = res.body.data.errors.map(e => e.param);
                 expect(params).to.include('[0].budget');
+                done();
+            });
+    });
+
+    it('should update an existing contract and prevent SQL injection', function(done) {
+        server = serverexp.default()
+        chai.request(server)
+            .post('/rest/contracts')
+            .send([{
+                id: 1234,
+                description: 'updated test description',
+                start: new Date(2021, 0, 1),
+                end: new Date(2021, 11, 31),
+                organization: 'Test-Org',
+                organizationalUnit: 'OU',
+                responsiblePerson: 'Person Name',
+                budget: [{
+                    priceCategoryId: 12,
+                    priceCategory: 'Preisstufe I',
+                    pricePerUnit: 125.5,
+                    availableUnits: 100.5,
+                    minutesPerDay: 480,
+                }, {
+                    priceCategoryId: 15,
+                    priceCategory: 'Preisstufe II',
+                    pricePerUnit: 200.5,
+                    availableUnits: 70.8,
+                    minutesPerDay: 480,
+                }]
+            },{
+                id: 4536,
+                description: 'next contract\';\nDELETE FROM BoatExt_Contracts;\nSELECT \'',
+                start: new Date(2020, 1, 1),
+                end: new Date(2022, 11, 31),
+                organization: 'Test-Org1',
+                organizationalUnit: 'OU1',
+                responsiblePerson: 'Updated Person Name',
+                budget: [{
+                    priceCategoryId: 12,
+                    priceCategory: 'Preisstufe I',
+                    pricePerUnit: 125.5,
+                    availableUnits: 100.5,
+                    minutesPerDay: 480,
+                }, {
+                    priceCategoryId: 15,
+                    priceCategory: 'Preisstufe II',
+                    pricePerUnit: 200.5,
+                    availableUnits: 70.8,
+                    minutesPerDay: 480,
+                }]
+            }])
+            .end((err, res) => {
+                expect(err).to.be.null;
+                expect(res.status).to.be.equal(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('created', 0);
+                expect(res.body).to.have.property('updated', 2);
+                expect(res.body).to.have.property('deleted', 0);
                 done();
             });
     });
