@@ -158,7 +158,7 @@ describe('Contracts', function() {
             });
     });
 
-    it('should not accept sync request for deliverables with invalid data', function(done) {
+    it('should not accept sync request for contracts with invalid data', function(done) {
         server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
@@ -281,7 +281,6 @@ describe('Contracts', function() {
             }])
             .end((err, res) => {
                 expect(err).to.be.null;
-                console.log(res.body);
                 expect(res.status).to.be.equal(200);
                 expect(res.body).to.be.a('object');
                 expect(res.body).to.have.property('created', 0);

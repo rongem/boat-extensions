@@ -9,7 +9,10 @@ const dateParser = (value: string) => {
     if (value.includes('T')) {
         value = value.split('T')[0];
     }
-    const dateParts = value.split('-');
+    let dateParts = value.split('-');
+    if (dateParts[0].length === 2 && dateParts[2].length === 4) {
+        dateParts = dateParts.reverse();
+    }
     const date = new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2], 1);
     return date;
 }

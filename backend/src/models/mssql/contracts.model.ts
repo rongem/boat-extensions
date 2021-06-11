@@ -93,7 +93,7 @@ const updateContract = async (contract: Contract) => {
 };
 
 const contractsEqual = (contract1: Contract, contract2: Contract) => contract1.description === contract2.description &&
-    contract1.start === contract2.start && contract1.end === contract2.end &&
+    contract1.start.valueOf() === contract2.start.valueOf() && contract1.end.valueOf() === contract2.end.valueOf() &&
     contract1.organization === contract2.organization && contract1.organizationalUnit === contract2.organizationalUnit &&
     contract1.responsiblePerson === contract2.responsiblePerson;
 
