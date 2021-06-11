@@ -9,32 +9,41 @@ import { Budget } from '../objects/budget.model';
 import { dbSyncPriceCategorys } from './pricecategories.model';
 
 export const dbSyncContracts = async (contracts: Contract[]) => {
-    const result = new ContractResult();
-    const contractIds = contracts.map(c => c.id).join(', ');
-    const existingContracts = await readContracts(contractIds);
-    // first make sure that all price categories exist
-    const budgets = new Array<Budget>().concat(...contracts.map(c => c.budgets));
-    const uniquePriceCategoryIds = [...new Set(budgets.map(b => b.priceCategoryId))];
-    const priceCategories = uniquePriceCategoryIds.map(id => budgets.find(b => b.priceCategoryId === id)!);
-    await dbSyncPriceCategorys(priceCategories, result);
-    // then iterate through contacts and check for changes
-    for (let index = 0; index < contracts.length; index++) {
-        const contract = contracts[index];
-        const existingContract = existingContracts.find(c => c.id === contract.id);
-        if (existingContract) { // update contract if necessary
-            if (!contractsEqual(existingContract, contract)) {
-                await updateContract(contract);
-                result.updated++;
-            } else {
-                result.unchanged++;
+    try {
+        const result = new ContractResult();
+        const contractIds = contracts.map(c => c.id).join(', ');
+        const existingContracts = await readContracts(contractIds);
+        // first make sure that all price categories exist
+        const budgets = new Array<Budget>().concat(...contracts.map(c => c.budgets));
+        const uniquePriceCategoryIds = [...new Set(budgets.map(b => b.priceCategoryId))];
+        const priceCategories = uniquePriceCategoryIds.map(id => budgets.find(b => b.priceCategoryId === id)!);
+        await dbSyncPriceCategorys(priceCategories, result);
+        // then iterate through contacts and check for changes
+        for (let index = 0; index < contracts.length; index++) {
+            const contract = contracts[index];
+            const existingContract = existingContracts.find(c => c.id === contract.id);
+            if (existingContract) { // update contract if necessary
+                if (!contractsEqual(existingContract, contract)) {
+                    await updateContract(contract);
+                    result.updated++;
+                } else {
+                    result.unchanged++;
+                }
+            } else { // no contract with that id yet
+                await createContract(contract);
+                result.created++;
             }
-        } else { // no contract with that id yet
-            await createContract(contract);
-            result.created++;
+            await dbSyncBudgets(contract.budgets, contract.id, result);
         }
-        await dbSyncBudgets(contract.budgets, contract.id, result);
+        return result;
+    } catch (error) {
+        if (error instanceof HttpError) {
+            throw error;
+        }
+        console.log('dbSyncContracts', error);
+        throw new HttpError(500, error.message ?? error.toString());
+        
     }
-    return result;
 };
 
 const readContracts = async (contractIds: string) => {

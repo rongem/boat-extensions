@@ -253,7 +253,7 @@ describe('Contracts', function() {
             });
     });
 
-    it('should update an existing contract remove a budget and add new one', function(done) {
+    it('should update an existing contract, remove a budget and add new one', function(done) {
         server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')

@@ -25,6 +25,9 @@ export const dbSyncPriceCategorys = async (priceCategories: PriceCategory[], res
             }
         }
     } catch (error) {
+        if (error instanceof HttpError) {
+            throw error;
+        }
         console.log('dbSyncPriceCategorys', error);
         throw new HttpError(500, error.message ?? error.toString());
     }

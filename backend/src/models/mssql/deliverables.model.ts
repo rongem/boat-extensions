@@ -6,10 +6,36 @@ import { HttpError } from '../rest-api/httpError.model';
 import { Result } from '../rest-api/result.model';
 
 export const dbSyncDeliverables = async (deliverables: Deliverable[], contractId: number) => {
-    const result = new Result();
-    const existingDeliverables = await readDeliverables(contractId);
-    if (deliverables.length > 0) {}
-    return result;
+    try {
+        const result = new Result();
+        const existingDeliverables = await readDeliverables(contractId);
+        if (deliverables.length > 0) {
+            for (let index = 0; index < deliverables.length; index++) {
+                const deliverable = deliverables[index];
+                const existingDeliverable = existingDeliverables.find(d => d.id === deliverable.id);
+                if (existingDeliverable) { // check if to update
+                    if(!deliverablesEqual(deliverable, existingDeliverable)) {
+                        await updateDeliverable(deliverable);
+                        result.updated++;
+                    } else {
+                        result.unchanged++;
+                    }
+                    existingDeliverables.splice(existingDeliverables.findIndex(d => d.id === deliverable.id), 1);
+                } else {
+                    await createDeliverable(deliverable);
+                    result.created++;
+                }
+            }
+        }
+        if (existingDeliverables.length > 0) {
+            const obsoleteDeliverableIds = existingDeliverables.map(d => d.id);
+            result.deleted = await deleteDeliverables(obsoleteDeliverableIds);
+        }
+        return result;
+    } catch (error) {
+        console.log('dbSyncDeliverables', error);
+        throw new HttpError(500, error.message ?? error.toString());
+    }
 };
 
 const readDeliverables = async (contractId: number): Promise<Deliverable[]> => {
@@ -41,22 +67,54 @@ const createDeliverable = async (deliverable: Deliverable) => {
         const req = await deliverableRequest(deliverable);
         const sql = `INSERT INTO [BoatExt_Deliverables] ([Id], [Version], [ContractId], [PriceCategoryId], [Date], [Duration], [Key])
             VALUES (@id, @version, @contractId, @priceCategoryId, @date, @duration, @key)`;
-            // , [Start], [End], [Text] | @startTime, @endTime, @text, @person
+            // , [Start], [End], [Text], [Person] | @startTime, @endTime, @text, @person
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Deliverables: Daten wurden nicht geschrieben.');
         }
     } catch (error) {
+        if (error instanceof HttpError) {
+            throw error;
+        }
         console.log('createDeliverable', error);
         throw new HttpError(500, error.message ?? error.toString(), deliverable);
     }
 };
 
-const updateDeliverable = async (deliverables: Deliverable[]) => {};
+const updateDeliverable = async (deliverable: Deliverable) => {
+    try {
+        const req = await deliverableRequest(deliverable);
+        const sql=`UPDATE [TEST].[BoatExt_Deliverables]
+            SET [Version]=@version, [ContractId]=@contractId, [PriceCategoryId]=@priceCategoryId, [Date]=@date,
+            [StartTime]=@startTime, [EndTime]=@endTime, [Duration]=@duration, [Key]=@key, [Text]=@text
+            WHERE [Id]=@id`;
+            // , [Start]=@startTime, [End]=@endTime, [Text]=@text, [Person]= @person
+        const result=await req.query(sql);
+        if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
+            throw new Error('UPDATE Deliverables: Daten wurden nicht geschrieben.');
+        }
+    } catch (error) {
+        console.log('updateDeliverable', error);
+        throw new HttpError(500, error.message ?? error.toString(), deliverable);
+    }
+};
 
-const deleteDeliverable = async (deliverables: Deliverable[]) => {};
+const deleteDeliverables = async (ids: number[]) => {
+    try {
+        const req = await pool.then(connection => new mssql.Request(connection));
+        const sql = `DELETE FROM [BoatExt_Deliverables] WHERE [Id] IN (${ids.join(', ')})`;
+        const result = await req.query(sql);
+        if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== ids.length) {
+            throw new Error('DELETE Budgets: Daten wurden nicht gelöscht (nur ' + result.rowsAffected[0] + ' von ' + ids.length + ')' );
+        }
+        return result.rowsAffected[0];
+    } catch (error) {
+        console.log('deleteDeliverables', error);
+        throw new HttpError(500, error.message ?? error.toString());
+    }
+};
 
-const priceCategoriesEqual = (d1: Deliverable, d2: Deliverable) => d1.version === d2.version && d1.duration === d2.duration &&
+const deliverablesEqual = (d1: Deliverable, d2: Deliverable) => d1.version === d2.version && d1.duration === d2.duration &&
     d1.key === d2.key && d1.priceCategoryId === d2.priceCategoryId;
 
 const deliverableRequest = async (deliverable: Deliverable) => {

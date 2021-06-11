@@ -32,6 +32,9 @@ export const dbSyncBudgets = async (budgets: Budget[], contractId: number, resul
             result.budgets.deleted = await deleteBudgets(contractId, obsoleteBudgetPriceCategoryIds);
         }
     } catch (error) {
+        if (error instanceof HttpError) {
+            throw error;
+        }
         console.log('dbSyncBudgets', error);
         throw new HttpError(500, error.message ?? error.toString());
     }
