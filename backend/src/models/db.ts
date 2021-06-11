@@ -38,9 +38,10 @@ export const requestPromise = pool.then(connection => new Request(connection));
 // preflight check if connection works and all tables and stored procedures exist
 export const checkDatabase = async () => {
     const expectedTables = [
+        'BoatExt_Authorizations',
         'BoatExt_Contracts',
         'BoatExt_PriceCategories',
-        'BoatExt_PriceCategoriesForContract',
+        'BoatExt_Budgets',
         'BoatExt_Deliverables'
     ];
     const req = await requestPromise;
@@ -73,7 +74,7 @@ export const deleteDatabaseContents = async () => {
     const req = await requestPromise;
     try {
         let result = await req.query('TRUNCATE TABLE BoatExt_Deliverables;');
-        result = await req.query('TRUNCATE TABLE BoatExt_PriceCategoriesForContract;');
+        result = await req.query('TRUNCATE TABLE BoatExt_Budgets;');
         result = await req.query('DELETE FROM BoatExt_PriceCategories;');
         result = await req.query('DELETE FROM BoatExt_Contracts;');
     } catch (error) {

@@ -4,12 +4,20 @@ import { dateToSql, pool } from '../db';
 import { Contract } from '../objects/contract.model';
 import { dbSyncBudgets, readBudgets } from './budgets.model';
 import { HttpError } from '../rest-api/httpError.model';
-import { Result } from '../rest-api/result.model';
+import { ContractResult } from '../rest-api/contract-result.model';
+import { Budget } from '../objects/budget.model';
+import { dbSyncPriceCategorys } from './pricecategories.model';
 
 export const dbSyncContracts = async (contracts: Contract[]) => {
-    const result = new Result();
+    const result = new ContractResult();
     const contractIds = contracts.map(c => c.id).join(', ');
     const existingContracts = await readContracts(contractIds);
+    // first make sure that all price categories exist
+    const budgets = new Array<Budget>().concat(...contracts.map(c => c.budgets));
+    const uniquePriceCategoryIds = [...new Set(budgets.map(b => b.priceCategoryId))];
+    const priceCategories = uniquePriceCategoryIds.map(id => budgets.find(b => b.priceCategoryId === id)!);
+    await dbSyncPriceCategorys(priceCategories, result);
+    // then iterate through contacts and check for changes
     for (let index = 0; index < contracts.length; index++) {
         const contract = contracts[index];
         const existingContract = existingContracts.find(c => c.id === contract.id);
@@ -17,62 +25,69 @@ export const dbSyncContracts = async (contracts: Contract[]) => {
             if (!contractsEqual(existingContract, contract)) {
                 await updateContract(contract);
                 result.updated++;
+            } else {
+                result.unchanged++;
             }
         } else { // no contract with that id yet
             await createContract(contract);
             result.created++;
         }
-        await dbSyncBudgets(contract.budget);
+        await dbSyncBudgets(contract.budgets, contract.id, result);
     }
     return result;
 };
 
 const readContracts = async (contractIds: string) => {
-    const req = await pool.then(connection => new mssql.Request(connection));
-    const [result, budgets] = await Promise.all([
-        req.query(`SELECT * FROM BoatExt_Contracts WHERE Id IN (${contractIds})`),
-        readBudgets(contractIds),
-    ]);
-    const existingContracts: Contract[] = result.recordset.map(r => ({
-        id: r.Id,
-        description: r.Description,
-        start: r.Start,
-        end: r.End,
-        organization: r.Organization,
-        organizationalUnit: r.OrganizationalUnit,
-        responsiblePerson: r.ResponsiblePerson,
-        budget: budgets.filter(b => b.contractId === r.Id),
-    }));
-    return existingContracts;
+    try {
+        const req = await pool.then(connection => new mssql.Request(connection));
+        const [result, budgets] = await Promise.all([
+            req.query(`SELECT * FROM BoatExt_Contracts WHERE Id IN (${contractIds})`),
+            readBudgets(contractIds),
+        ]);
+        const existingContracts: Contract[] = result.recordset.map(r => ({
+            id: r.Id,
+            description: r.Description,
+            start: r.Start,
+            end: r.End,
+            organization: r.Organization,
+            organizationalUnit: r.OrganizationalUnit,
+            responsiblePerson: r.ResponsiblePerson,
+            budgets: budgets.filter(b => b.contractId === r.Id),
+        }));
+        return existingContracts;
+    } catch (error) {
+        console.log('readContracts', error);
+        throw new HttpError(500, error.message ?? error.toString());
+    }
 };
 
 const createContract = async (contract: Contract) => {
-    const req = await contractRequest(contract);
-    const sql = `INSERT INTO BoatExt_Contracts ([Id], [Description], [Start], [End], [Organization], [OrganizationalUnit], [ResponsiblePerson])
-        VALUES (@id, @description, @start, @end, @organization, @organizationalUnit, @responsiblePerson)`;
     try {
+        const req = await contractRequest(contract);
+        const sql = `INSERT INTO BoatExt_Contracts ([Id], [Description], [Start], [End], [Organization], [OrganizationalUnit], [ResponsiblePerson])
+            VALUES (@id, @description, @start, @end, @organization, @organizationalUnit, @responsiblePerson)`;
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Contracts: Daten wurden nicht geschrieben: ' + contract.id);
         }
     } catch (error) {
-        console.log(error);
+        console.log('createContracts', error);
         throw new HttpError(500, error.message ?? error.toString(), contract);
     }
 };
 
 const updateContract = async (contract: Contract) => {
-    const req = await contractRequest(contract);
-    const sql = `UPDATE BoatExt_Contracts SET [Description]=@description, [Start]=@start, [End]=@end, [Organization]=@organization,
-        [OrganizationalUnit]=@organizationalUnit, [ResponsiblePerson]=@responsiblePerson
-        WHERE [Id]=@id`;
     try {
+        const req = await contractRequest(contract);
+        const sql = `UPDATE BoatExt_Contracts SET [Description]=@description, [Start]=@start, [End]=@end, [Organization]=@organization,
+            [OrganizationalUnit]=@organizationalUnit, [ResponsiblePerson]=@responsiblePerson
+            WHERE [Id]=@id`;
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE Contracts: Daten wurden nicht geschrieben: ' + contract.id);
         }
     } catch (error) {
-        console.log(error);
+        console.log('udpateContracts', error);
         throw new HttpError(500, error.message ?? error.toString(), contract);
     }
 };

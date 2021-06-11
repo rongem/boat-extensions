@@ -8,5 +8,5 @@ export interface Contract {
     organization: string;
     organizationalUnit: string;
     responsiblePerson: string;
-    budget: Budget[];
+    budgets: Budget[];
 }

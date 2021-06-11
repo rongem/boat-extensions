@@ -1,25 +1,104 @@
-import { requestPromise } from '../db';
+import * as mssql from 'mssql';
+
+import { pool } from '../db';
 import { Budget } from '../objects/budget.model';
+import { ContractResult } from '../rest-api/contract-result.model';
+import { HttpError } from '../rest-api/httpError.model';
 import { readPriceCategories } from './pricecategories.model';
 
-export const dbSyncBudgets = async (budgets: Budget[]) => {};
-
-export const readBudgets = async (contractIds: string): Promise<Budget[]> => {
-    const req = await requestPromise;
-    const result = await req.query(`SELECT * FROM BoatExt_PriceCategoriesForContract WHERE ContractId IN (${contractIds})`);
-    const priceCategories = await readPriceCategories();
-    return result.recordset.map(r => ({
-        contractId: r.ContractId,
-        priceCategoryId: r.PriceCategoryId,
-        availableUnits: r.AvailableUnits,
-        name: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.name,
-        minutesPerDay: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.minutesPerDay,
-        pricePerUnit: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.pricePerUnit,
-    }));
+export const dbSyncBudgets = async (budgets: Budget[], contractId: number, result: ContractResult) => {
+    try {
+        if (budgets.length > 0) { // creating and updating only makes sense when there are budgets in contract
+            const existingBudgets = await readBudgets(contractId.toString());
+            for (let index = 0; index < budgets.length; index++) {
+                const budget = budgets[index];
+                const existingBudget = existingBudgets.find(b => b.priceCategoryId === budget.priceCategoryId);
+                if (existingBudget) { // check if to update
+                    if (!budgetsEqual(budget, existingBudget)) {
+                        await updateBudget(budget);
+                        result.budgets.updated++;
+                    } else {
+                        result.budgets.unchanged++;
+                    }
+                } else { // create new budget
+                    await createBudget(budget)
+                    result.budgets.created++;
+                }
+            }
+        }
+        return result;
+    } catch (error) {
+        console.log('dbSyncBudgets', error);
+        throw new HttpError(500, error.message ?? error.toString());
+    }
 };
 
-const createBudget = async (budget: Budget) => {};
+export const readBudgets = async (contractIds: string): Promise<Budget[]> => {
+    try {
+        const req = await pool.then(connection => new mssql.Request(connection));
+        const result = await req.query(`SELECT * FROM BoatExt_Budgets WHERE ContractId IN (${contractIds})`);
+        const priceCategories = await readPriceCategories();
+        return result.recordset.map(r => ({
+            contractId: r.ContractId,
+            priceCategoryId: r.PriceCategoryId,
+            availableUnits: r.AvailableUnits,
+            priceCategory: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.priceCategory,
+            minutesPerDay: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.minutesPerDay,
+            pricePerUnit: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.pricePerUnit,
+        }));
+    } catch(error) {
+        console.log('readBudgets', error);
+        throw new HttpError(500, error.message ?? error.toString(), contractIds);
+    }
+};
 
-const updateBudget = async (budgets: Budget[]) => {};
+const createBudget = async (budget: Budget) => {
+    try {
+        const req = await budgetRequest(budget);
+        const sql = `INSERT INTO [BoatExt_Budgets] ([ContractId], [PriceCategoryId], [AvailableUnits])
+            VALUES (@contractId, @priceCategoryId, @availableUnits)`;
+        const result = await req.query(sql);
+        if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
+            throw new Error('INSERT PriceCategoriesForContract: Daten wurden nicht geschrieben.');
+        }
+    } catch (error) {
+        console.log('createBudgets', error);
+        throw new HttpError(500, error.message ?? error.toString(), budget);
+    }
+};
 
-const deleteBudget = async (budgets: Budget[]) => {};
+const updateBudget = async (budget: Budget) => {
+    try {
+        const req = await budgetRequest(budget);
+        const sql = `UPDATE [BoatExt_Budgets]
+            SET  [AvailableUnits] = @availableUnits
+            WHERE [ContractId] = @contractId AND [PriceCategoryId] = @priceCategoryId`;
+        const result = await req.query(sql);
+        if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
+            throw new Error('UPDATE PriceCategoriesForContract: Daten wurden nicht geschrieben.');
+        }
+        } catch (error) {
+        console.log('updateBudgets', error);
+        throw new HttpError(500, error.message ?? error.toString(), budget);
+    }
+};
+
+const deleteBudget = async (budget: Budget) => {
+    try {
+        
+    } catch (error) {
+        console.log('deleteBudgets', error);
+        throw new HttpError(500, error.message ?? error.toString(), budget);
+    }
+};
+
+const budgetsEqual= (budget1: Budget, budget2: Budget) => budget1.availableUnits === budget2.availableUnits;
+
+const budgetRequest = async (budget: Budget) => {
+    const req = await pool.then(connection => new mssql.Request(connection));
+    req.input('contractId', mssql.Int, budget.contractId);
+    req.input('priceCategoryId', mssql.Int, budget.priceCategoryId);
+    req.input('availableUnits', mssql.Float, budget.availableUnits);
+    return req;
+}
+

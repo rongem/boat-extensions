@@ -1,3 +1,6 @@
 export class Result{
-    constructor(public created: number = 0, public updated: number = 0, public deleted: number = 0) {}
+    created = 0;
+    updated = 0;
+    deleted = 0;
+    unchanged = 0;
 }

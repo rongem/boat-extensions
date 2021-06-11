@@ -1,6 +1,6 @@
 export interface PriceCategory {
     priceCategoryId: number;
-    name: string;
+    priceCategory: string;
     pricePerUnit: number;
     minutesPerDay: number;
 }

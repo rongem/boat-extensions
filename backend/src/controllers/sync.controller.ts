@@ -7,6 +7,7 @@ import { HttpError } from '../models/rest-api/httpError.model';
 
 export const syncContracts = (req: Request, res: Response, next: NextFunction) => {
     const contracts = req.body as Contract[];
+    contracts.forEach(c => c.budgets.forEach(b => b.contractId = c.id));
     dbSyncContracts(contracts).then(result => {
         res.json(result);
     }).catch((error: HttpError) => res.status(error.httpStatusCode).json({

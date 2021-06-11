@@ -20,7 +20,7 @@ describe('Contracts', function() {
                 organization: 'Test-Org',
                 organizationalUnit: 'OU',
                 responsiblePerson: 'Person Name',
-                budget: [{
+                budgets: [{
                     priceCategoryId: 12,
                     priceCategory: 'Preisstufe I',
                     pricePerUnit: 125.5,
@@ -41,7 +41,7 @@ describe('Contracts', function() {
                 organization: 'Test-Org',
                 organizationalUnit: 'OU',
                 responsiblePerson: 'Person Name',
-                budget: [{
+                budgets: [{
                     priceCategoryId: 12,
                     priceCategory: 'Preisstufe I',
                     pricePerUnit: 125.5,
@@ -62,6 +62,17 @@ describe('Contracts', function() {
                 expect(res.body).to.have.property('created', 2);
                 expect(res.body).to.have.property('updated', 0);
                 expect(res.body).to.have.property('deleted', 0);
+                expect(res.body).to.have.property('unchanged', 0);
+                expect(res.body.budgets).to.be.a('object');
+                expect(res.body.budgets).to.have.property('created', 4);
+                expect(res.body.budgets).to.have.property('updated', 0);
+                expect(res.body.budgets).to.have.property('deleted', 0);
+                expect(res.body.budgets).to.have.property('unchanged', 0);
+                expect(res.body.priceCategories).to.be.a('object');
+                expect(res.body.priceCategories).to.have.property('created', 2);
+                expect(res.body.priceCategories).to.have.property('updated', 0);
+                expect(res.body.priceCategories).to.have.property('deleted', 0);
+                expect(res.body.priceCategories).to.have.property('unchanged', 0);
                 done();
             });
     });
@@ -109,7 +120,7 @@ describe('Contracts', function() {
                 end: new Date(2019, 11, 31),
                 organizationalUnit: 1,
                 responsiblePerson: 2,
-                budget: [{
+                budgets: [{
                     priceCategoryId: -12,
                     priceCategory: 1,
                     pricePerUnit: -125.5,
@@ -135,14 +146,14 @@ describe('Contracts', function() {
                 expect(params).to.include('[0].organization');
                 expect(params).to.include('[0].organizationalUnit');
                 expect(params).to.include('[0].responsiblePerson');
-                expect(params).to.include('[0].budget[0].priceCategoryId');
-                expect(params).to.include('[0].budget[1].priceCategoryId');
-                expect(params).to.include('[0].budget[0].priceCategory');
-                expect(params).to.include('[0].budget[0].pricePerUnit');
-                expect(params).to.include('[0].budget[0].availableUnits');
-                expect(params).to.include('[0].budget[1].availableUnits');
-                expect(params).to.include('[0].budget[0].minutesPerDay');
-                expect(params).to.include('[0].budget[1].minutesPerDay');
+                expect(params).to.include('[0].budgets[0].priceCategoryId');
+                expect(params).to.include('[0].budgets[1].priceCategoryId');
+                expect(params).to.include('[0].budgets[0].priceCategory');
+                expect(params).to.include('[0].budgets[0].pricePerUnit');
+                expect(params).to.include('[0].budgets[0].availableUnits');
+                expect(params).to.include('[0].budgets[1].availableUnits');
+                expect(params).to.include('[0].budgets[0].minutesPerDay');
+                expect(params).to.include('[0].budgets[1].minutesPerDay');
                 done();
             });
     });
@@ -159,7 +170,7 @@ describe('Contracts', function() {
                 organization: 'Test-Org',
                 organizationalUnit: 'OU',
                 responsiblePerson: 'Person Name',
-                budget: []
+                budgets: []
             }])
             .end((err, res) => {
                 expect(err).to.be.null;
@@ -168,7 +179,7 @@ describe('Contracts', function() {
                 expect(res.body.data.errors).to.be.a('array');
                 expect(res.body.data.errors.length).to.be.equal(1);
                 const params = res.body.data.errors.map(e => e.param);
-                expect(params).to.include('[0].budget');
+                expect(params).to.include('[0].budgets');
                 done();
             });
     });
@@ -185,11 +196,11 @@ describe('Contracts', function() {
                 organization: 'Test-Org',
                 organizationalUnit: 'OU',
                 responsiblePerson: 'Person Name',
-                budget: [{
+                budgets: [{
                     priceCategoryId: 12,
-                    priceCategory: 'Preisstufe I',
+                    priceCategory: 'Preisstufe Ia',
                     pricePerUnit: 125.5,
-                    availableUnits: 100.5,
+                    availableUnits: 100.6,
                     minutesPerDay: 480,
                 }, {
                     priceCategoryId: 15,
@@ -206,11 +217,11 @@ describe('Contracts', function() {
                 organization: 'Test-Org1',
                 organizationalUnit: 'OU1',
                 responsiblePerson: 'Updated Person Name',
-                budget: [{
+                budgets: [{
                     priceCategoryId: 12,
-                    priceCategory: 'Preisstufe I',
+                    priceCategory: 'Preisstufe Ia',
                     pricePerUnit: 125.5,
-                    availableUnits: 100.5,
+                    availableUnits: 120.5,
                     minutesPerDay: 480,
                 }, {
                     priceCategoryId: 15,
@@ -227,6 +238,16 @@ describe('Contracts', function() {
                 expect(res.body).to.have.property('created', 0);
                 expect(res.body).to.have.property('updated', 2);
                 expect(res.body).to.have.property('deleted', 0);
+                expect(res.body.budgets).to.be.a('object');
+                expect(res.body.budgets).to.have.property('created', 0);
+                expect(res.body.budgets).to.have.property('updated', 2);
+                expect(res.body.budgets).to.have.property('deleted', 0);
+                expect(res.body.budgets).to.have.property('unchanged', 2);
+                expect(res.body.priceCategories).to.be.a('object');
+                expect(res.body.priceCategories).to.have.property('created', 0);
+                expect(res.body.priceCategories).to.have.property('updated', 1);
+                expect(res.body.priceCategories).to.have.property('deleted', 0);
+                expect(res.body.priceCategories).to.have.property('unchanged', 1);
                 done();
             });
     });

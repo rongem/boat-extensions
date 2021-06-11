@@ -27,21 +27,19 @@ router.post('/contracts', [
     body('*.responsiblePerson', 'Falsche oder fehlende Verantwortliche').if(body().isArray({min: 1}))
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
-    body('*.budget', 'Keine Preisstufen angegeben').if(body().isArray({min: 1}))
+    body('*.budgets', 'Keine Preisstufen angegeben').if(body().isArray({min: 1}))
         .isArray({min: 1}).toArray(),
-    body('*.budget.*.priceCategoryId', 'Fehlende Id für die Preisstufe').if(body().isArray({min: 1}))
+    body('*.budgets.*.priceCategoryId', 'Fehlende Id für die Preisstufe').if(body().isArray({min: 1}))
         .isInt({min: 1}).bail().toInt(),
-    body('*.budget.*.priceCategory', 'Fehlender Name für die Preiskategorie').if(body().isArray({min: 1}))
+    body('*.budgets.*.priceCategory', 'Fehlender Name für die Preiskategorie').if(body().isArray({min: 1}))
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
-    body('*.budget.*.pricePerUnit', 'Fehlender Preis für die Preiskategorie').if(body().isArray({min: 1}))
-        .isFloat({min: 1}).bail().toFloat()
-        .custom(value => value > 1),
-    body('*.budget.*.availableUnits', 'Fehlende Anzahl von Personentagen für die Preiskategorie').if(body().isArray({min: 1}))
+    body('*.budgets.*.pricePerUnit', 'Fehlender Preis für die Preiskategorie').if(body().isArray({min: 1}))
         .isFloat({min: 1}).bail().toFloat(),
-    body('*.budget.*.minutesPerDay', 'Fehlende Arbeitstaglänge').if(body().isArray({min: 1}))
-        .isFloat({min: 1}).bail().toFloat()
-        .custom(value => value > 1),
+    body('*.budgets.*.availableUnits', 'Fehlende Anzahl von Personentagen für die Preiskategorie').if(body().isArray({min: 1}))
+        .isFloat({min: 1}).bail().toFloat(),
+    body('*.budgets.*.minutesPerDay', 'Fehlende Arbeitstaglänge').if(body().isArray({min: 1}))
+        .isFloat({min: 1}).bail().toFloat(),
 ], validate, syncContracts);
 
 router.post('/deliverables', [
