@@ -9,6 +9,7 @@ import { serverError } from './error.controller';
 
 export const getAuthentication = (req: Request, res: Response, next: NextFunction) => {
     let name: string;
+    console.log('dom', req.ntlm);
     if (!req.ntlm) {
         throw new HttpError(401, 'Fehlende Authentifizierung');
     }

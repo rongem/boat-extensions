@@ -15,17 +15,17 @@ let exp: any;
 
 const env = EnvironmentController.instance;
 
-app.use(cors());
-// app.use(cors(), ntlm({
-//     // debug: function() {
-//     // const args = Array.prototype.slice.apply(arguments);
-//     // console.log(args);
-//     // },
-//     domain: env.ldapDomain,
-//     domaincontroller: env.ldapServer,
-// }));
-// , getAuthentication
-app.use('/rest', express.json(), restRouter);
+// app.use(cors());
+app.use(cors(), ntlm({
+    // debug: function() {
+    //     const args = Array.prototype.slice.apply(arguments);
+    //     console.log('debug-ntlm', args);
+    // },
+    // domain: env.ldapDomain,
+    // domaincontroller: env.ldapServer,
+}));
+
+app.use('/rest', express.json(), getAuthentication, restRouter);
 
 app.use('/', error404);
 
