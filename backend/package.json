@@ -1,10 +1,16 @@
 {
   "name": "backend",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "BOAT3 importer backend",
-  "main": "index.ts",
+  "main": "src/app.ts",
   "scripts": {
-    "test": "mocha --timeout 5000"
+    "test": "mocha --timeout 5000",
+    "prep": "tsc --declaration && mocha --timeout 5000 && grunt bump",
+    "comp": "tsc --declaration",
+    "dev": "ts-node-dev -r dotenv/config --respawn --transpile-only ./src/app.ts",
+    "prod": "tsc && node ./build/app.js",
+    "docker": "docker build -t rongem/cmdb-backend .",
+    "start": "node dist/app.js"
   },
   "keywords": [
     "BOAT"
@@ -12,22 +18,25 @@
   "author": "Michael Ronge",
   "license": "ISC",
   "devDependencies": {
-    "@types/express": "^4.17.11",
+    "@types/cors": "^2.8.10",
+    "@types/express": "^4.17.12",
     "@types/express-ntlm": "^2.3.2",
     "@types/mssql": "^6.0.8",
-    "@types/node": "^15.3.0",
+    "@types/node": "^15.12.2",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "dotenv": "^10.0.0",
-    "grunt": "^1.4.0",
+    "grunt": "^1.4.1",
     "grunt-bump": "^0.8.0",
-    "mocha": "^8.4.0",
-    "typescript": "^4.2.4"
+    "mocha": "^9.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-ntlm": "^2.5.2",
     "express-validator": "^6.11.1",
-    "mssql": "^7.1.0"
+    "mssql": "^7.1.1"
   }
 }

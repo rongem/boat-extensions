@@ -5,11 +5,11 @@ Einfaches Werkzeug, um aus BOAT (Bund Online Abrechnungs-Tool) in der Version 3 
 
 Momentan existiert mit dem Tag *latest* eine alleinstehende Version, die direkten Internetzugang benötigt.
 
-Das Tag *enterprise-proxy* enthält eine auf Apache aufgebautet Version, die einen Unternehmensproxy verwenden kann. Angesteuert wird dieser mit der Variable *HTTP_PROXY*, die das Schema, einen Hostnamen und einen optionalen Port (z. B. http://mein-proxy:8000) enthalten muss.
+Das Tag *frontend-enterprise-proxy-v2* enthält eine auf Apache aufgebautet Variante des Frontends, die einen Unternehmensproxy verwenden kann. Angesteuert wird dieser mit der Variable *HTTP_PROXY*, die das Schema, einen Hostnamen und einen optionalen Port (z. B. http://mein-proxy:8000) enthalten muss.
 
-Beide funktionieren als Reverse Proxy, damit es keine Probleme CORS gibt.
+Beide Frontend-Varianten funktionieren als Reverse Proxy für BOAT, damit es keine Probleme CORS gibt.
 
-Später soll er Import von Datensätzen in MS SQL Datenbanken möglich werden. Dann wird neben dem Frontend auch ein Backend auf Basis von NodeJS existieren.
+Der Import von Datensätzen in eine MS SQL Datenbank wird durch das Backend auf Basis von NodeJS/Express ermöglicht. Dies geschieht über das jeweilige Frontend, das einerseits aus BOAT die Daten holt und diese dann an das Backend übergibt, das sie in der Datenbank ablegt. Die Synchronisierung erkennt auch gelöschte Datensätze in den Leistungsmeldungen.
 
 Docker-Adresse: https://hub.docker.com/r/rongem/boat3-extensions
 
