@@ -78,7 +78,6 @@ describe('Contracts', function() {
     });
 
     it('should not accept sync request for contracts with empty array', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send([])
@@ -94,7 +93,6 @@ describe('Contracts', function() {
     });
 
     it('should not accept sync request for contracts with object instead of array', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send({contracts: []})
@@ -110,7 +108,6 @@ describe('Contracts', function() {
     });
 
     it('should not accept sync request for contracts with invalid data', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send([{
@@ -159,7 +156,6 @@ describe('Contracts', function() {
     });
 
     it('should not accept sync request for contracts with invalid data', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send([{
@@ -185,7 +181,6 @@ describe('Contracts', function() {
     });
 
     it('should update an existing contract and prevent SQL injection', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send([{
@@ -254,7 +249,6 @@ describe('Contracts', function() {
     });
 
     it('should update an existing contract, remove a budget and add new one', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/contracts')
             .send([{

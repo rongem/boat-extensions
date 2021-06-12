@@ -2,6 +2,7 @@ import express from 'express';
 import { syncContracts, syncDeliverables } from '../controllers/sync.controller';
 import { body } from 'express-validator'
 import { validate } from './validator';
+import { getAuthorization } from '../controllers/authentication.controller';
 
 const router = express.Router();
 
@@ -75,5 +76,7 @@ router.post('/deliverables', [
     body('*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').if(body().isArray({min: 1}))
         .isInt({min: 1}).bail().toInt(),
 ], validate, syncDeliverables);
+
+router.get('/auth', getAuthorization);
 
 export default router;

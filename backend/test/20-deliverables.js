@@ -31,12 +31,16 @@ describe('Deliverables', function() {
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res.status).to.be.equal(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('created', 2);
+                expect(res.body).to.have.property('updated', 0);
+                expect(res.body).to.have.property('deleted', 0);
+                expect(res.body).to.have.property('unchanged', 0);
                 done();
             });
     });
 
     it('should not accept sync request for object', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/deliverables')
             .send({
@@ -60,7 +64,6 @@ describe('Deliverables', function() {
     });
 
     it('should not accept sync request for object', function(done) {
-        server = serverexp.default()
         chai.request(server)
             .post('/rest/deliverables')
             .send([{
@@ -99,6 +102,37 @@ describe('Deliverables', function() {
                 expect(params).to.include('[1].priceCategoryId');
                 expect(params).to.include('[2].key');
                 expect(params).not.to.include('[3].key');
+                done();
+            });
+    });
+
+    it('should accept valid sync request for deliverables and upate 2 items', function(done) {
+        chai.request(server)
+            .post('/rest/deliverables')
+            .send([{
+                id: 23456,
+                version: 1,
+                contract: 1234,
+                date: new Date('2021-11-01'),
+                duration: 4,
+                key: '012341000000000XXX',
+                priceCategoryId: 12,
+            }, {
+                id: 23457,
+                version: 1,
+                contract: 1234,
+                date: new Date('2021-11-02'),
+                duration: 4,
+                priceCategoryId: 12,
+            }])
+            .end((err, res) => {
+                expect(err).to.be.null;
+                expect(res.status).to.be.equal(200);
+                expect(res.body).to.be.a('object');
+                expect(res.body).to.have.property('created', 0);
+                expect(res.body).to.have.property('updated', 2);
+                expect(res.body).to.have.property('deleted', 0);
+                expect(res.body).to.have.property('unchanged', 0);
                 done();
             });
     });

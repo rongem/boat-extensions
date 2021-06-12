@@ -73,10 +73,11 @@ export const checkDatabase = async () => {
 export const deleteDatabaseContents = async () => {
     const req = await requestPromise;
     try {
-        let result = await req.query('TRUNCATE TABLE BoatExt_Deliverables;');
-        result = await req.query('TRUNCATE TABLE BoatExt_Budgets;');
-        result = await req.query('DELETE FROM BoatExt_PriceCategories;');
-        result = await req.query('DELETE FROM BoatExt_Contracts;');
+        let result = await req.query('TRUNCATE TABLE [BoatExt_Deliverables];');
+        result = await req.query('TRUNCATE TABLE [BoatExt_Budgets];');
+        result = await req.query('DELETE FROM [BoatExt_PriceCategories];');
+        result = await req.query('DELETE FROM [BoatExt_Contracts];');
+        result = await req.query('TRUNCATE TABLE [BoatExt_Authorizations]')
     } catch (error) {
         console.log(error);
         return false;

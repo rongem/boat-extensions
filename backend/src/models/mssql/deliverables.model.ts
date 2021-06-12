@@ -51,10 +51,10 @@ const readDeliverables = async (contractId: number): Promise<Deliverable[]> => {
             date: r.Date,
             duration: r.Duration,
             key: r.Key ?? undefined,
-            // startTime: r.StartTime ?? undefined,
-            // endTime: r.EndTime ?? undefined,
-            // text: r.Text ?? undefined,
-            // person: r.Person ?? undefined,
+            startTime: r.StartTime ?? undefined,
+            endTime: r.EndTime ?? undefined,
+            text: r.Text ?? undefined,
+            person: r.Person ?? undefined,
         }));
     } catch(error) {
         console.log('readDeliverables', error);
@@ -65,9 +65,9 @@ const readDeliverables = async (contractId: number): Promise<Deliverable[]> => {
 const createDeliverable = async (deliverable: Deliverable) => {
     try {
         const req = await deliverableRequest(deliverable);
-        const sql = `INSERT INTO [BoatExt_Deliverables] ([Id], [Version], [ContractId], [PriceCategoryId], [Date], [Duration], [Key])
-            VALUES (@id, @version, @contractId, @priceCategoryId, @date, @duration, @key)`;
-            // , [Start], [End], [Text], [Person] | @startTime, @endTime, @text, @person
+        const sql = `INSERT INTO [BoatExt_Deliverables]
+            ([Id], [Version], [ContractId], [PriceCategoryId], [Date], [Duration], [Key], [StartTime], [EndTime], [Text], [Person])
+            VALUES (@id, @version, @contractId, @priceCategoryId, @date, @duration, @key, @startTime, @endTime, @text, @person)`;
         const result = await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Deliverables: Daten wurden nicht geschrieben.');
@@ -86,9 +86,8 @@ const updateDeliverable = async (deliverable: Deliverable) => {
         const req = await deliverableRequest(deliverable);
         const sql=`UPDATE [TEST].[BoatExt_Deliverables]
             SET [Version]=@version, [ContractId]=@contractId, [PriceCategoryId]=@priceCategoryId, [Date]=@date,
-            [StartTime]=@startTime, [EndTime]=@endTime, [Duration]=@duration, [Key]=@key, [Text]=@text
+            [StartTime]=@startTime, [EndTime]=@endTime, [Duration]=@duration, [Key]=@key, [Text]=@text, [Person]= @person
             WHERE [Id]=@id`;
-            // , [Start]=@startTime, [End]=@endTime, [Text]=@text, [Person]= @person
         const result=await req.query(sql);
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE Deliverables: Daten wurden nicht geschrieben.');
@@ -126,9 +125,9 @@ const deliverableRequest = async (deliverable: Deliverable) => {
     req.input('date', mssql.Date, deliverable.date);
     req.input('duration', mssql.Float, deliverable.duration);
     req.input('key', mssql.NVarChar(50), deliverable.key ?? '');
-    // req.input('startTime', mssql.Time, deliverable.startTime);
-    // req.input('endTime', mssql.Time, deliverable.endTime);
-    // req.input('text', mssql.NVarChar(200), deliverable.text);
-    // req.input('person', mssql.NVarChar(200), deliverable.person);
+    req.input('startTime', mssql.Time, deliverable.startTime ?? null);
+    req.input('endTime', mssql.Time, deliverable.endTime ?? null);
+    req.input('text', mssql.NVarChar(200), deliverable.text ?? null);
+    req.input('person', mssql.NVarChar(200), deliverable.person ?? null);
     return req;
 }

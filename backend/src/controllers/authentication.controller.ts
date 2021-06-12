@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { readUser } from '../models/mssql/authorization.model';
 import { IUser } from '../models/objects/user.model';
 
 import { HttpError } from '../models/rest-api/httpError.model';
@@ -6,7 +7,7 @@ import { serverError } from './error.controller';
 // import endpointConfig from '../../util/endpoint.config';
 
 
-export function getAuthentication(req: Request, res: Response, next: NextFunction) {
+export const getAuthentication = (req: Request, res: Response, next: NextFunction) => {
     let name: string;
     if (!req.ntlm) {
         throw new HttpError(401, 'Fehlende Authentifizierung');
@@ -23,14 +24,18 @@ export function getAuthentication(req: Request, res: Response, next: NextFunctio
         req.userName = user.name;
         next();
     }).catch((error: any) => serverError(next, error));
-}
+};
 
-async function getUser(name: string): Promise<IUser> {
-    const filter = { name };
-    // const user = await userModel.findOne(filter);
-    // if (!user) {
-    //     throw new HttpError(401, 'Benutzer hat keine Berechtigung');
-    // }
-    // return user;
-    return {name} as IUser;
-}
+export const getAuthorization = (req: Request, res: Response, next: NextFunction) => {
+    getUser(req.userName ?? 'test').then(user => {
+        res.json(user);
+    }).catch((error: HttpError) => res.status(error.httpStatusCode).json({
+        error: error.message,
+        data: error.data,
+    }));
+};
+
+const getUser = async (name: string): Promise<IUser> => {
+    const user = await readUser(name);
+    return user;
+};
