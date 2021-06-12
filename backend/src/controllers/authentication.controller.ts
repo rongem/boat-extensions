@@ -9,7 +9,6 @@ import { serverError } from './error.controller';
 
 export const getAuthentication = (req: Request, res: Response, next: NextFunction) => {
     let name: string;
-    console.log('dom', req.ntlm);
     if (!req.ntlm) {
         throw new HttpError(401, 'Fehlende Authentifizierung');
     }
@@ -20,8 +19,9 @@ export const getAuthentication = (req: Request, res: Response, next: NextFunctio
         if (error.message !== 'Ungültige Authentifizierung') {
             throw error;
         }
-        return {name: ''} as IUser;
+        return {name: '', isAuthorized: false} as IUser;
     }).then((user) => {
+        req.userAuthorized = user.isAuthorized;
         req.userName = user.name;
         next();
     }).catch((error: any) => serverError(next, error));
