@@ -7,6 +7,10 @@ var proxyConfig = [{
     context: '/auth',
     target: 'https://www.boat.bva.bund.de/',
     secure: false
+}, {
+    context: '/rest',
+    target: 'http://localhost:8000/',
+    secure: false
 }];
 
 function setupForCorporateProxy(proxyConfig) {

@@ -13,7 +13,6 @@ export const readUser = async (name: string): Promise<IUser> => {
             createUser(name);
             return {name, isAuthorized: false};
         }
-        console.log(name, result);
         const user: IUser = { name: result.recordset[0].Username, isAuthorized: result.recordset[0].Allowed };
         return user;
     } catch (error) {

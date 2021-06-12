@@ -16,7 +16,15 @@ let exp: any;
 const env = EnvironmentController.instance;
 
 // app.use(cors());
-app.use(cors(), ntlm({
+app.use(cors({
+    origin: (requestOrigin, callback) => {
+        if (env.corsOrigin && requestOrigin?.startsWith(env.corsOrigin))
+            callback(null, requestOrigin);
+        else
+            callback(new Error(requestOrigin + ' ist kein erlaubter Host'));
+    },
+    credentials: true,
+}), ntlm({
     // debug: function() {
     //     const args = Array.prototype.slice.apply(arguments);
     //     console.log('debug-ntlm', args);

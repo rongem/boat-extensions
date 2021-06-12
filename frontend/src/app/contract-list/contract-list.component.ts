@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BackendService } from '../lib/backend.service';
 import { Boat3Service } from '../lib/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
@@ -16,14 +17,15 @@ export class ContractListComponent implements OnInit {
   // Ausgewählter Vertrag
   selectedContract?: Contract;
 
-  constructor(private boat: Boat3Service) { }
+  constructor(private boat: Boat3Service, private backend: BackendService) { }
 
   ngOnInit(): void {
     this.boat.getContracts().subscribe(contracts => {
       if (contracts) {
         this.contracts = contracts;
       }
-    })
+    });
+    this.backend.checkAuthorization();
   }
 
   exportAllContracts() {

@@ -49,6 +49,10 @@ export class EnvironmentController {
         return process.env.DB_INSTANCE ?? '';
     }
 
+    get corsOrigin() {
+        return process.env.CORS_ORIGIN ?? '*';
+    }
+
     get ldapDomain() {
         return process.env.LDAP_DOMAIN ?? '';
     }

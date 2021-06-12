@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Boat3Service } from './lib/boat3.service';
 
 @Component({
@@ -7,12 +6,12 @@ import { Boat3Service } from './lib/boat3.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
   // Formularfelder
   username = '';
   password = '';
-  busy: boolean;
+  busy = false;
   get error() {
     return this.boat.error;
   }
@@ -25,13 +24,16 @@ export class AppComponent {
     return this.boat.username;
   }
 
-  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
     this.busy = this.boat.working.value;
     this.boat.working.subscribe(value => {
       this.busy = value;
+      this.cd.detectChanges();
     });
   }
-
+  
   login() {
     this.boat.login(this.username, this.password);
     this.username = '';
