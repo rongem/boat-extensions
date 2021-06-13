@@ -33,8 +33,8 @@ export class BackendService {
     synchronizeContracts = (contracts: Contract[]) => {
         const restContracts: BackendContract[] = contracts.map(contract => ({
             id: contract.id,
-            start: contract.start,
-            end: contract.end,
+            start: contract.startDate,
+            end: contract.endDate,
             description: contract.description,
             organization: contract.organization,
             organizationalUnit: contract.organizationalUnit,
@@ -53,7 +53,7 @@ export class BackendService {
                 concatMap(contract => this.boat.getContractDeliverables(contract.id).pipe(
                     concatMap(deliverables => {
                         if (deliverables && deliverables.length > 0) {
-                            return this.synchronizeDeliverables(deliverables);
+                            return this.synchronizeDeliverables(deliverables, contract.id);
                         }
                         return of(null);
                     })
@@ -63,25 +63,36 @@ export class BackendService {
         );
     }
 
-    synchronizeDeliverables = (deliverables: Deliverable[]) => {
-        const restDeliverables: BackendDeliverable[] = deliverables.map(d => ({
-            id: d.id,
-            contract: d.contract,
-            date: d.date,
-            duration: d.duration,
-            priceCategoryId: d.priceCategoryId,
-            version: d.version,
-            key: d.key,
-            startTime: this.settings.withTimes ? d.startTime : undefined,
-            endTime: this.settings.withTimes ? d.endTime : undefined,
-            person: this.settings.withPersons ? d.person : undefined,
-            text: this.settings.withText ? d.text : undefined,
-        }));
-        console.log('syncing ' + restDeliverables.length + ' deliverables with length: ' + JSON.stringify(restDeliverables).length);
-        return this.http.post<Result>(this.baseUrl + 'deliverables', restDeliverables, { withCredentials: true }).pipe(
-            take(1),
-            catchError(this.handleError),
-        )
+    synchronizeDeliverables = (deliverables: Deliverable[], contractId: number) => {
+        const body = {
+            contractId,
+            deliverables: deliverables.map(d => ({
+                id: d.id,
+                contract: d.contract,
+                date: d.dateString,
+                duration: d.duration,
+                priceCategoryId: d.priceCategoryId,
+                version: d.version,
+                key: d.key,
+                startTime: this.settings.withTimes ? d.startTime : undefined,
+                endTime: this.settings.withTimes ? d.endTime : undefined,
+                person: this.settings.withPersons ? d.person : undefined,
+                text: this.settings.withText ? d.text : undefined,
+            })) as BackendDeliverable[]
+        };
+        const bodySize = JSON.stringify(body).length;
+        if (bodySize < 50000000000) {
+            return this.http.post<Result>(this.baseUrl + 'deliverables', body, { withCredentials: true }).pipe(
+                take(1),
+                catchError(this.handleError),
+            );
+        } else {
+            return of(new HttpErrorResponse({
+                error: new Error('Size exceeds 50MB'),
+                status: 500,
+                statusText: 'Size: ' + bodySize,
+            }));
+        }
     }
 
     private handleError = (error: HttpErrorResponse) => {

@@ -3,8 +3,8 @@ import { BackendBudget } from './budget.model';
 export interface BackendContract {
     id: number;
     description: string;
-    start: Date;
-    end: Date;
+    start: string;
+    end: string;
     organization: string;
     organizationalUnit: string;
     responsiblePerson: string;

@@ -7,6 +7,8 @@ export class Contract{
     description: string;
     start: Date;
     end: Date;
+    startDate: string;
+    endDate: string;
     organization: string;
     organizationalUnit: string;
     responsiblePerson: string;
@@ -16,8 +18,10 @@ export class Contract{
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
         this.description = restContract.stammdaten.projektTitel;
+        this.startDate = restContract.stammdaten.projektBeginn;
         let dateParts = restContract.stammdaten.projektBeginn.split('-').map(x => +x);
         this.start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        this.endDate = restContract.stammdaten.projektEnde;
         dateParts = restContract.stammdaten.projektEnde.split('-').map(x => +x);
         this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;

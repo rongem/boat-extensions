@@ -17,8 +17,9 @@ export const syncContracts = (req: Request, res: Response, next: NextFunction) =
 };
 
 export const syncDeliverables = (req: Request, res: Response, next: NextFunction) => {
-    const deliverables = req.body as Deliverable[];
-    dbSyncDeliverables(deliverables, deliverables[0].contract).then(result => {
+    const {contractId, deliverables} = req.body as {contractId: number, deliverables: Deliverable[]};
+    deliverables.forEach(d => d.contract = contractId);
+    dbSyncDeliverables(deliverables, contractId).then(result => {
         res.json(result);
     }).catch((error: HttpError) => res.status(error.httpStatusCode).json({
         error: error.message,

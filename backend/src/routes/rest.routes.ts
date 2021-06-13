@@ -56,40 +56,40 @@ router.post('/contracts', [
 ], validate, syncContracts);
 
 router.post('/deliverables', [
-    body().isArray({min: 0}).withMessage('Kein Array von Leistungszeiten übergeben').bail().toArray(),
-    body('*.id', 'Fehlende oder falsche Id').if(body().isArray({min: 1}))
+    body('contractId', 'Fehlender oder falscher Vertrag')
         .isInt({min: 1}).bail().toInt(),
-    body('*.version', 'Fehlende oder falsche Version').if(body().isArray({min: 1}))
+    body('deliverables').isArray({min: 0}).withMessage('Kein Array von Leistungszeiten übergeben').bail().toArray(),
+    body('deliverables.*.id', 'Fehlende oder falsche Id').if(body('deliverables').isArray({min: 1}))
+        .isInt({min: 1}).bail().toInt(),
+    body('deliverables.*.version', 'Fehlende oder falsche Version').if(body('deliverables').isArray({min: 1}))
         .isInt({min: 0}).bail().toInt(),
-    body('*.contract', 'Fehlender oder falscher Vertrag').if(body().isArray({min: 1}))
-        .isInt({min: 1}).bail().toInt(),
-    body('*.date', 'Fehlendes oder falsches Datum').if(body().isArray({min: 1}))
-        .custom(value => !!Date.parse(value)).bail().customSanitizer(dateParser),
-    body('*.duration', 'Fehlende oder falsche Anzahl von PT').if(body().isArray({min: 1}))
+    body('deliverables.*.date', 'Fehlendes oder falsches Datum').if(body('deliverables').isArray({min: 1}))
+        .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}')).bail().customSanitizer(dateParser),
+    body('deliverables.*.duration', 'Fehlende oder falsche Anzahl von PT').if(body('deliverables').isArray({min: 1}))
         .isDecimal({blacklisted_chars: '-'}).bail().toFloat()
         .custom(value => value > 0),
-    body('*.key', 'Falscher Datentyp für Schlüssel').if(body().isArray({min: 1}))
+    body('deliverables.*.key', 'Falscher Datentyp für Schlüssel').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
         .isLength({min: 18, max: 18}).withMessage('Schlüssel hat die falsche Länge')
         .custom(value => new RegExp('^[0-9]{15}[A-Z]{3}').test(value)).withMessage('Schlüssel entspricht nicht den Vorgaben'),
-    body('*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').if(body().isArray({min: 1}))
+    body('deliverables.*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').if(body('deliverables').isArray({min: 1}))
         .isInt({min: 1}).bail().toInt(),
-    body('*.person', 'Falscher Datentyp für Person').if(body().isArray({min: 1}))
+    body('deliverables.*.person', 'Falscher Datentyp für Person').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
         .isLength({min: 1, max: 100}).withMessage('Person hat die falsche Länge'),
-    body('*.text', 'Falscher Datentyp für Text').if(body().isArray({min: 1}))
+    body('deliverables.*.text', 'Falscher Datentyp für Text').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
         .isLength({min: 1, max: 1000}).withMessage('Text hat die falsche Länge'),
-    body('*.startTime', 'Falscher Datentyp für startTime').if(body().isArray({min: 1}))
+    body('deliverables.*.startTime', 'Falscher Datentyp für startTime').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
         .isLength({min: 8, max: 8}).withMessage('startTime hat die falsche Länge')
         .custom(value => new RegExp('^[0-9]{2}:[0-9]{2}(:[0-9]{2})?').test(value)).withMessage('startTime ist keine gültige Uhrzeit')
         .customSanitizer((value: string) => value.substring(0, 5)),
-    body('*.endTime', 'Falscher Datentyp für endTime').if(body().isArray({min: 1}))
+    body('deliverables.*.endTime', 'Falscher Datentyp für endTime').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
         .isLength({min: 8, max: 8}).withMessage('endTime hat die falsche Länge')

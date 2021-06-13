@@ -2,7 +2,7 @@ export interface BackendDeliverable {
     id: number;
     version: number;
     contract: number;
-    date: Date;
+    date: string;
     duration: number;
     key?: string;
     priceCategoryId: number;

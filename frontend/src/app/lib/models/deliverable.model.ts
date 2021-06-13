@@ -6,6 +6,7 @@ export class Deliverable{
     contract: number;
     person: string;
     date: Date;
+    dateString: string;
     startTime: string;
     endTime: string;
     duration = 0;
@@ -20,8 +21,9 @@ export class Deliverable{
         this.version = d.version;
         this.contract = d.einzelauftrag.id;
         this.person = d.leistungserbringer.nachname + ', ' + d.leistungserbringer.vorname;
+        this.dateString = d.datum;
         const dateParts = d.datum.split('-').map(x => +x);
-        this.date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        this.date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
         this.startTime = d.startzeit;
         this.endTime = d.endzeit;
         this.text = d.beschreibung;
