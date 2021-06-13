@@ -33,6 +33,9 @@ export const dbSyncDeliverables = async (deliverables: Deliverable[], contractId
         }
         return result;
     } catch (error) {
+        if (error instanceof HttpError) {
+            throw error;
+        }
         console.log('dbSyncDeliverables', error);
         throw new HttpError(500, error.message ?? error.toString());
     }
@@ -125,9 +128,9 @@ const deliverableRequest = async (deliverable: Deliverable) => {
     req.input('date', mssql.Date, deliverable.date);
     req.input('duration', mssql.Float, deliverable.duration);
     req.input('key', mssql.NVarChar(50), deliverable.key ?? '');
-    req.input('startTime', mssql.Time, deliverable.startTime ?? null);
-    req.input('endTime', mssql.Time, deliverable.endTime ?? null);
-    req.input('text', mssql.NVarChar(200), deliverable.text ?? null);
-    req.input('person', mssql.NVarChar(200), deliverable.person ?? null);
+    req.input('startTime', mssql.NVarChar(5), deliverable.startTime ?? null);
+    req.input('endTime', mssql.NVarChar(5), deliverable.endTime ?? null);
+    req.input('text', mssql.NVarChar(mssql.MAX), deliverable.text ?? null);
+    req.input('person', mssql.NVarChar(100), deliverable.person ?? null);
     return req;
 }

@@ -8,31 +8,14 @@
     <div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
     <div class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</div>
     <h2>Export</h2>
-    <div>
-        <div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withPersons">Mit Personennamen
-            </div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withTimes">Mit Uhrzeiten
-            </div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withText">Mit Text
-            </div>
-        </div>
-        <button type="button" class="card selectable" (click)="saveSettings()">
-            Export-Einstellungen speichern
-        </button>
-    </div>
     <div class="card selectable" (click)="exportAllNumbers()">Leistungsnachweise nach Excel</div>
-    <div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">In die Datenbank</div>
 </ng-container>
 
 <ng-container *ngIf="show !== 'nothing'">
     <div class="backdrop" (click)="show = 'nothing'"></div>
 
     <div class="overlay extended" *ngIf="show === 'names'">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schlie&szlig;en</div>
         <div>
             <h1>
                 {{contract.name}}

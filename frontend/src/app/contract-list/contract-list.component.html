@@ -1,7 +1,46 @@
-<div class="card-container">
-    <div class="card selectable" (click)="exportAllContracts()">
-        Alle Vertr&auml;ge nach Excel exportieren
+<ng-container *ngIf="showSettings">
+    <div class="backdrop" (click)="showSettings = false"></div>
+    <div class="overlay">
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="showSettings = false">Schlie&szlig;en</div>
+        <h1>Einstellungen</h1>
+        <div class="settings">
+            <h2>Export</h2>
+            <div>
+                <input type="checkbox" [(ngModel)]="withContract">Mit Vertragsnamen
+            </div>
+            <div>
+                <input type="checkbox" [(ngModel)]="withPersons">Mit Personennamen
+            </div>
+            <div>
+                <input type="checkbox" [(ngModel)]="withTimes">Mit Uhrzeiten
+            </div>
+            <div>
+                <input type="checkbox" [(ngModel)]="withText">Mit Text
+            </div>
+            <div>
+                <button type="button" class="selectable" (click)="saveSettings()">
+                    Export-Einstellungen dauerhaft speichern
+                </button>
+            </div>
+        </div>
     </div>
+
+</ng-container>
+<h1>
+    Allgemeine Aktionen
+</h1>
+<div class="card selectable" (click)="showSettings = true">
+    Export-Einstellungen &auml;ndern
+</div>
+<div class="card selectable" (click)="exportAllContracts()">
+    Alle Vertr&auml;ge nach Excel exportieren
+</div>
+<div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
+    Vertr&auml;ge in die Datenbank synchronisieren
+</div>
+<hr>
+<h1>Ihre Vertr&auml;ge</h1>
+<div class="card-container">
     <div class="card"
         *ngFor="let contract of contracts"
         [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}"

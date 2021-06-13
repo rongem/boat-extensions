@@ -3,6 +3,7 @@ import { BackendService } from '../lib/backend.service';
 import { Boat3Service } from '../lib/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
+import { SettingsService } from '../lib/settings.service';
 
 @Component({
   selector: 'app-contract-detail',
@@ -15,11 +16,6 @@ export class ContractDetailComponent implements OnInit {
   // Ansichtssteuerung
   show='nothing';
   sort='time';
-  syncIsAuthorized=false;
-  // Formularfelder für Export
-  withPersons = !!localStorage.getItem('withPersons') ?? false;
-  withText = !!localStorage.getItem('withText') ?? false;
-  withTimes = !!localStorage.getItem('withTimes') ?? false;
   // Liste der Monate, für die Leistungsnachweise vorliegen, im Format yyyy-MM
   allowedMonths: string[] = [];
   // Aktuell ausgewählter Monat (sachliche und rechnerische Prüfung)
@@ -133,7 +129,7 @@ export class ContractDetailComponent implements OnInit {
     return value >= 0 ? value : 0;
   }
 
-  constructor(private boat: Boat3Service, private backend: BackendService) { }
+  constructor(private boat: Boat3Service, private backend: BackendService, private settings: SettingsService) { }
 
   ngOnInit(): void {
     this.boat.getContractDeliverables(this.contract.id).subscribe(deliverables => {
@@ -144,9 +140,6 @@ export class ContractDetailComponent implements OnInit {
       }))];
       this.selectedMonth = this.allowedMonths[this.allowedMonths.length - 1];
     });
-    this.backend.syncIsAuthorized.subscribe(value => {
-      this.syncIsAuthorized = value;
-    })
   }
 
   // Excel-Export für sachliche Richtigkeit
@@ -172,23 +165,10 @@ export class ContractDetailComponent implements OnInit {
 
   // Excel-Export aller Leistungsnachweise (anonymisiert) für weitere Berechnungen
   exportAllNumbers() {
-    this.saveSettings();
-    const sheetContent = this._deliverables.map(d => this.createNumbersLine(d, this.withPersons, this.withTimes, this.withText));
+    const sheetContent = this._deliverables.map(d => this.createNumbersLine(d));
     this.boat.exportSheet(sheetContent, 'bis-' + this.selectedMonth, 'Export-' + this.contract.name);
     this.show = 'nothing';
   }
-
-  saveSettings() {
-    try {
-      localStorage.setItem('withTimes', this.withTimes ? '1' : '');
-      localStorage.setItem('withPersons', this.withPersons ? '1' : '');
-      localStorage.setItem('withText', this.withText ? '1' : '');
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  exportToDataBase() {}
 
   // Alle Kosten für eine Preisstufe
   getTotalForPriceCategory(priceCategoryId: number) {
@@ -242,47 +222,43 @@ export class ContractDetailComponent implements OnInit {
 
   // Excel-Hilfsfunktionen
   private createNamesLine(d: Deliverable) {
-    if (this.keysPresent) {
-      return {
-        'Datum': d.date,
-        'Uhrzeit': d.startTime + ' - ' + d.endTime,
-        'Stunden': d.duration * 8,
-        'Projektmitarbeiter': d.person,
-        'Preisstufe': d.priceCategory,
-        'Schlüssel': d.key,
-        'Tätigkeit': d.text,
-        'Vertrag': this.contract.name,
-      };
-    } else {
-      return {
-        'Datum': d.date,
-        'Uhrzeit': d.startTime + ' - ' + d.endTime,
-        'Stunden': d.duration * 8,
-        'Projektmitarbeiter': d.person,
-        'Preisstufe': d.priceCategory,
-        'Tätigkeit': d.text,
-        'Vertrag': this.contract.name,
-      };
+    let result: any = {
+      'Datum': d.date,
+      'Uhrzeit': d.startTime + ' - ' + d.endTime,
+      'Stunden': d.duration * 8,
+      'Projektmitarbeiter': d.person,
+      'Preisstufe': d.priceCategory,
     }
+    if (this.keysPresent) {
+      result = { ...result, 'Schlüssel': d.key };
+    }
+    if (this.settings.withContract) {
+      result = { ...result, 'Vertrag': this.contract.name };
+    }
+    result = { ...result, 'Tätigkeit': d.text };
+    return result;
   }
 
-  private createNumbersLine(d: Deliverable, withPersons = false, withTimes = false, withText = false) {
+  private createNumbersLine(d: Deliverable) {
     let result: any = {
       'Datum': d.date,
       'Stunden': d.duration * 8,
       'Preisstufe': d.priceCategory,
     };
-    if (withPersons) {
+    if (this.settings.withPersons) {
       result = {...result, 'Person': d.person};
     }
-    if (withTimes) {
+    if (this.settings.withTimes) {
       result = {...result, 'Start': d.startTime, 'Ende': d.endTime};
     }
     if (this.keysPresent) {
       result = {...result, 'Schlüssel': d.key};
     }
-    result = {...result, 'Kosten (netto)': d.price, 'Vertrag': this.contract.name}
-    if (withText) {
+    result = {...result, 'Kosten (netto)': d.price}
+    if (this.settings.withContract) {
+      result = {...result, 'Vertrag': this.contract.name}
+    }
+    if (this.settings.withText) {
       result = {...result, 'Text': d.text};
     }
     return result;

@@ -114,7 +114,7 @@ const contractRequest = async (contract: Contract) => {
     req.input('end', mssql.Date, contract.end);
     req.input('organization', mssql.NVarChar(50), contract.organization);
     req.input('organizationalUnit', mssql.NVarChar(20), contract.organizationalUnit);
-    req.input('responsiblePerson', mssql.NVarChar(20), contract.responsiblePerson);
+    req.input('responsiblePerson', mssql.NVarChar(50), contract.responsiblePerson);
     return req;
 }
 

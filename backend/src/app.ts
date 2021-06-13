@@ -33,7 +33,7 @@ app.use(cors({
     // domaincontroller: env.ldapServer,
 }));
 
-app.use('/rest', express.json(), getAuthentication, restRouter);
+app.use('/rest', express.json({limit: '50mb'}), getAuthentication, restRouter);
 
 app.use('/', error404);
 

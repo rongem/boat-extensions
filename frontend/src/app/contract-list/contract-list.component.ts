@@ -3,6 +3,7 @@ import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { BackendService } from '../lib/backend.service';
 import { Boat3Service } from '../lib/boat3.service';
+import { SettingsService } from '../lib/settings.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 
@@ -16,8 +17,37 @@ export class ContractListComponent implements OnInit {
   contracts: Contract[] = [];
   // Ausgewählter Vertrag
   selectedContract?: Contract;
-
-  constructor(private boat: Boat3Service, private backend: BackendService) { }
+  // Steht ein Backend zur Verfügung, und ist der Benutzer berechtigt, Daten zu synchronisieren?
+  syncIsAuthorized=false;
+  // Formularfelder für Einstellungen
+  get withContract() {
+    return this.settings.withContract;
+  }
+  set withContract(value) {
+    this.settings.withContract = value;
+  }
+  get withPersons() {
+    return this.settings.withPersons;
+  }
+  set withPersons(value) {
+    this.settings.withPersons = value;
+  }
+  get withTimes() {
+    return this.settings.withTimes;
+  }
+  set withTimes(value) {
+    this.settings.withTimes = value;
+  }
+  get withText() {
+    return this.settings.withText;
+  }
+  set withText(value) {
+    this.settings.withText = value;
+  }
+  // Ansichtoptionen
+  showSettings = false;
+  
+  constructor(private boat: Boat3Service, private backend: BackendService, private settings: SettingsService) { }
 
   ngOnInit(): void {
     this.boat.getContracts().subscribe(contracts => {
@@ -26,6 +56,13 @@ export class ContractListComponent implements OnInit {
       }
     });
     this.backend.checkAuthorization();
+    this.backend.syncIsAuthorized.subscribe(value => {
+      this.syncIsAuthorized = value;
+    })
+  }
+
+  saveSettings() {
+    this.settings.saveSettings();
   }
 
   exportAllContracts() {
@@ -42,6 +79,12 @@ export class ContractListComponent implements OnInit {
         date.getHours() < 10 ? 0 : '', date.getHours(),
         date.getMinutes() < 10 ? 0 : '', date.getMinutes()].join('');
       this.boat.exportSheet(sheetContent, 'Verträge', 'Übersicht-' + dateString);
+    });
+  }
+
+  exportToDataBase() {
+    this.backend.synchronizeContracts(this.contracts).subscribe(result => {
+      console.log(result);
     });
   }
 

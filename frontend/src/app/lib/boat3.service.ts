@@ -156,7 +156,9 @@ export class Boat3Service {
             }
         ).pipe(
             take(1),
-            map(result => result.content.map(c => new Deliverable(c)) ?? []),
+            map(result => result.content.filter(c => c.preisstufe.bezeichnung !== 'Einarbeitung / nicht fakturierbare Tätigkeiten')
+                .map(c => new Deliverable(c)) ?? []
+            ),
             catchError(this.handleError),
             tap(() => this.working.next(false)),
         )
