@@ -6,6 +6,8 @@ import { Boat3Service } from '../lib/boat3.service';
 import { SettingsService } from '../lib/settings.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
+import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-contract-list',
@@ -18,7 +20,13 @@ export class ContractListComponent implements OnInit {
   // Ausgewählter Vertrag
   selectedContract?: Contract;
   // Steht ein Backend zur Verfügung, und ist der Benutzer berechtigt, Daten zu synchronisieren?
-  syncIsAuthorized=false;
+  syncIsAuthorized = false;
+  showExport = false;
+  // Export-Variablen
+  exporting = false;
+  exportFinished = false;
+  exportCounter = 0;
+  exportResult = new ContractResult();
   // Formularfelder für Einstellungen
   get withContract() {
     return this.settings.withContract;
@@ -83,8 +91,22 @@ export class ContractListComponent implements OnInit {
   }
 
   exportToDataBase() {
-    this.backend.synchronizeContracts(this.contracts).subscribe(result => {
-      console.log(result);
+    this.exporting = true;
+    this.showExport = false;
+    this.exportFinished = false;
+    this.exportResult = new ContractResult();
+    this.exportCounter = 0;
+    const subscription = this.backend.synchronizeContracts(this.contracts).subscribe(result => {
+      this.exportCounter++;
+      if (result && !(result instanceof HttpErrorResponse))
+      {
+        this.exportResult = result;
+      }
+    }, error => {
+      console.log(error);
+    }, () => {
+      this.exportFinished = true;
+      subscription.unsubscribe();
     });
   }
 

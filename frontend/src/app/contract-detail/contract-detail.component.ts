@@ -216,7 +216,6 @@ export class ContractDetailComponent implements OnInit {
     const [year, month] = monthAndYear.split('-').map(x => +x);
     const contractDuration = this.contract.end.valueOf() - this.contract.start.valueOf();
     const monthduration = new Date(year, month + 1, 0).valueOf() - new Date(year, month, 1).valueOf();
-    console.log(100 * monthduration / contractDuration);
     return 100 * monthduration / contractDuration;
   }
 

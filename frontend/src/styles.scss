@@ -2,46 +2,46 @@ $main-blue: #1976d2;
 $light-blue: lighten($main-blue, 45%);
 $dark-blue: darken($main-blue, 20%);
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin: 0.5rem 0;
-  }
+}
 
-  p {
+p {
     margin: 0;
-  }
+}
 
-  hr {
+hr {
     width: 100%;
-  }
+}
 
-  input,
-  select,
-  button {
+input,
+select,
+button {
     margin: 0 0.5rem;
-  }
+}
 
-  th {
+th {
     border-bottom: 0.5px solid $main-blue;
     padding: 0.5rem 1rem;
-  }
-  td {
+}
+td {
     padding: 0.2rem;
-  }
-  td,
-  th {
+}
+td,
+th {
     outline: 0.5px dotted $main-blue;
-  }
+}
 
-  .spacer {
+.spacer {
     flex: 1;
-  }
+}
 
-  .toolbar {
+.toolbar {
     position: absolute;
     top: 0;
     left: 0;
@@ -52,29 +52,29 @@ $dark-blue: darken($main-blue, 20%);
     background-color: $main-blue;
     color: white;
     font-weight: 600;
-  }
+}
 
-  .toolbar span:first-child {
+.toolbar span:first-child {
     margin: 0 1rem;
-  }
+}
 
-  .content {
+.content {
     display: flex;
     margin: 3.875rem auto 2rem;
     padding: 0 1rem;
     max-width: 60rem;
     flex-direction: column;
     align-items: center;
-  }
+}
 
-  .card-container {
+.card-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 1rem;
-  }
+}
 
-  .card {
+.card {
     border-radius: 0.25rem;
     border: 1px solid #eee;
     background-color: #fafafa;
@@ -87,9 +87,9 @@ $dark-blue: darken($main-blue, 20%);
     justify-content: center;
     align-items: center;
     line-height: 1.5rem;
-  }
+}
 
-  .selectable {
+.selectable {
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
@@ -103,41 +103,41 @@ $dark-blue: darken($main-blue, 20%);
             background-color: $light-blue;
         }
     }
-  }
+}
 
-  .highlighted {
+.highlighted {
     background-color: $light-blue;
     border: 1px dashed $main-blue;
     color: black;
-  }
+}
 
-  .card.selectable,
-  button.selectable:not(:disabled) {
+.card.selectable,
+button.selectable:not(:disabled) {
     cursor: pointer;
-  }
+}
 
-  .card-container .card:not(:last-child) {
+.card-container .card:not(:last-child) {
     margin-right: 0;
-  }
+}
 
-  .card.card-small {
+.card.card-small {
     height: 1rem;
     min-width: 3.75rem;
-  }
+}
 
-  .card.highlight-card {
+.card.highlight-card {
     background-color: $main-blue;
     color: white;
     font-weight: 600;
     border: none;
     position: relative;
-  }
+}
 
-  .card.card.highlight-card span {
+.card.card.highlight-card span {
     margin-left: 3.75rem;
-  }
+}
 
-  .busy {
+.busy {
     position: fixed;
     z-index: 150;
     left: 50%;
@@ -148,9 +148,9 @@ $dark-blue: darken($main-blue, 20%);
     box-shadow: 1rem 1rem 2rem black;
     padding: 2rem;
     text-align: center;
-  }
+}
 
-  .backdrop {
+.backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -159,9 +159,9 @@ $dark-blue: darken($main-blue, 20%);
     background: rgba(0, 0, 0, 0.7);
     z-index: 10;
     display: block;
-  }
+}
 
-  .overlay {
+.overlay {
     position: fixed;
     z-index: 20;
     left: 50%;
@@ -196,35 +196,47 @@ $dark-blue: darken($main-blue, 20%);
   }
 }
 
+.gauge {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background-color: lightgreen;
+}
 
-  a,
-  a:visited,
-  a:hover {
+.rel {
+    position: relative;
+}
+
+a,
+a:visited,
+a:hover {
     color: $main-blue;
     text-decoration: none;
-  }
+}
 
-  a:hover {
+a:hover {
     color: $dark-blue;
-  }
+}
 
-  .error {
+.error {
     background-color: #ff0000;
     color: white;
     border-radius: 0.5rem;
     padding: 0 0.2rem;
     margin: 0 0.2rem;
-  }
-  
-  footer {
+}
+
+footer {
     margin-top: 0.5rem;
     display: flex;
     align-items: center;
     line-height: 1.25rem;
-  }
+}
 
   /* Responsive Styles */
-  @media screen and (max-width: 47.9375rem) {
+@media screen and (max-width: 47.9375rem) {
 
     .card-container > *:not(.circle-link) ,
     .terminal {
@@ -240,5 +252,5 @@ $dark-blue: darken($main-blue, 20%);
       margin-left: 4.5rem;
     }
 
-  }
+}
 

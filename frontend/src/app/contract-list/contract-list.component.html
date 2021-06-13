@@ -24,7 +24,72 @@
             </div>
         </div>
     </div>
-
+</ng-container>
+<ng-container *ngIf="showExport">
+    <div class="backdrop" (click)="showExport = false"></div>
+    <div class="overlay">
+        <div class="upper-right-corner selectable card" style="width: unset;" (click)="showExport = false">Schlie&szlig;en</div>
+        <h1>Export in die Datenbank</h1>
+        <p>
+            Die Controlling-Datenbank wird für weitergehende Auswertungen benutzt. Die Daten der eigenen Vertr&auml;ge k&ouml;nnen dorthin synchronisiert werden.
+        </p>
+        <div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
+            Synchronisation starten
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="exporting">
+    <div class="backdrop" style="z-index: 200;"></div>
+    <div class="overlay" style="z-index: 210;">
+        <h1 *ngIf="!exportFinished">Export durchf&uuml;hren...</h1>
+        <h1 *ngIf="exportFinished">Export durchgef&uuml;hrt</h1>
+        <div class="rel">
+            Fortschritt...
+            <div class="gauge"
+                [ngStyle]="{width: (100 * exportCounter / contracts.length | number:'1.0-0') + '%'}">
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th>Element</th>
+                <th>Neu erstellt</th>
+                <th>Aktualisiert</th>
+                <th>Gel&ouml;scht</th>
+                <th>Unver&auml;ndert</th>
+            </tr>
+            <tr>
+                <td>Vertr&auml;ge</td>
+                <td>{{exportResult.created}}</td>
+                <td>{{exportResult.updated}}</td>
+                <td>{{exportResult.deleted}}</td>
+                <td>{{exportResult.unchanged}}</td>
+            </tr>
+            <tr>
+                <td>Preiskategorien</td>
+                <td>{{exportResult.priceCategories.created}}</td>
+                <td>{{exportResult.priceCategories.updated}}</td>
+                <td>{{exportResult.priceCategories.deleted}}</td>
+                <td>{{exportResult.priceCategories.unchanged}}</td>
+            </tr>
+            <tr>
+                <td>Vertragselemente</td>
+                <td>{{exportResult.budgets.created}}</td>
+                <td>{{exportResult.budgets.updated}}</td>
+                <td>{{exportResult.budgets.deleted}}</td>
+                <td>{{exportResult.budgets.unchanged}}</td>
+            </tr>
+            <tr>
+                <td>Leitungselemente</td>
+                <td>{{exportResult.deliverables.created}}</td>
+                <td>{{exportResult.deliverables.updated}}</td>
+                <td>{{exportResult.deliverables.deleted}}</td>
+                <td>{{exportResult.deliverables.unchanged}}</td>
+            </tr>
+        </table>
+        <div class="card selectable" *ngIf="exportFinished" (click)="exporting = false">
+            Schlie&szlig;en
+        </div>
+    </div>
 </ng-container>
 <h1>
     Allgemeine Aktionen
@@ -35,7 +100,7 @@
 <div class="card selectable" (click)="exportAllContracts()">
     Alle Vertr&auml;ge nach Excel exportieren
 </div>
-<div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
+<div class="card selectable" *ngIf="syncIsAuthorized" (click)="showExport = true">
     Vertr&auml;ge in die Datenbank synchronisieren
 </div>
 <hr>

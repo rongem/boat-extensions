@@ -47,19 +47,26 @@ export class BackendService {
                 pricePerUnit: b.pricePerUnit,
             })),
         }));
+        const contractResult = new ContractResult();
         return this.http.post<ContractResult>(this.baseUrl + 'contracts', restContracts, { withCredentials: true }).pipe(
             take(1),
+            tap(result => {
+                this.addResults(contractResult, result);
+                this.addResults(contractResult.budgets, result.budgets);
+                this.addResults(contractResult.priceCategories, result.priceCategories);
+            }),
             concatMap(() => from(contracts).pipe(
                 concatMap(contract => this.boat.getContractDeliverables(contract.id).pipe(
                     concatMap(deliverables => {
                         if (deliverables && deliverables.length > 0) {
                             return this.synchronizeDeliverables(deliverables, contract.id);
                         }
-                        return of(null);
-                    })
+                        return of(new Result());
+                    }),
+                    tap(result => this.addResults(contractResult.deliverables, result)),
                 ))),
             ),
-            catchError(this.handleError),
+            map(() => contractResult)
         );
     }
 
@@ -84,15 +91,24 @@ export class BackendService {
         if (bodySize < 50000000000) {
             return this.http.post<Result>(this.baseUrl + 'deliverables', body, { withCredentials: true }).pipe(
                 take(1),
-                catchError(this.handleError),
             );
         } else {
-            return of(new HttpErrorResponse({
-                error: new Error('Size exceeds 50MB'),
-                status: 500,
-                statusText: 'Size: ' + bodySize,
+            console.log('Size: ' + (bodySize / 1000000) + 'MB exceeds 50 MB')
+            return of(null).pipe(map(() => {
+                throw new HttpErrorResponse({
+                    error: new Error('Size exceeds 50MB'),
+                    status: 500,
+                    statusText: 'Size: ' + bodySize,
+                });
             }));
         }
+    }
+
+    addResults(result1: Result, result2: Result) {
+        result1.created += result2.created;
+        result1.deleted += result2.deleted;
+        result1.unchanged += result2.unchanged;
+        result1.updated += result2.updated;
     }
 
     private handleError = (error: HttpErrorResponse) => {
