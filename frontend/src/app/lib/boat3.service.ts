@@ -20,6 +20,7 @@ export class Boat3Service {
     get authenticated() {
         return !!this.token;
     }
+    private tokenTimeOut?: number;
 
     constructor(private http: HttpClient) {
         // prüfen, ob ein gespeichertes JWT-Token noch gültig ist und Verwendung des gültigen Tokens, sonst Löschen des ungültigen.
@@ -30,7 +31,9 @@ export class Boat3Service {
             const d = new Date(details.exp * 1000);
             if (d.valueOf() > Date.now()) {
                 this.expiryDate = d;
+                this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
                 this.working.next(true);
+                // Test, if login really works
                 this.http.get<ContractResponse>('/api/meineinzelauftrag?sort=id,desc&page=0&size=10',
                 {
                     headers: new HttpHeaders({
@@ -45,21 +48,18 @@ export class Boat3Service {
                         }
                     }),
                     catchError((error: HttpErrorResponse) => {
-                        localStorage.removeItem('BOAT-Login');
-                        this.expiryDate = undefined;
-                        this.username = '';
+                        this.logout();
                         this.error = error.message;
                         return of(undefined);
                     }),
                     tap(() => this.working.next(false)),
                 ).subscribe();
             } else {
-                this.expiryDate = undefined;
-                this.username = '';
-                localStorage.removeItem('BOAT-Login');
+                this.logout();
             }
         }
     }
+
     login(username: string, password:string) {
         this.working.next(true);
         this.error = '';
@@ -76,15 +76,26 @@ export class Boat3Service {
             if (this.token) {
                 this.username = username;
                 localStorage.setItem('BOAT-Login', this.token);
-                // const parts = this.token.split(' ')[1].split('.');
-                // const obj = JSON.parse(atob(parts[1]));
-                // this.expiryDate = new Date(0);
-                // this.expiryDate.setUTCSeconds(obj.exp);
+                const parts = this.token.split(' ')[1].split('.');
+                const obj = JSON.parse(atob(parts[1]));
+                this.expiryDate = new Date(0);
+                this.expiryDate.setUTCSeconds(obj.exp);
+                this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
             } else {
-                // this.expiryDate = undefined;
-                this.username = '';
+                this.logout();
             }
         });
+    }
+
+    logout() {
+        this.token = undefined;
+        this.expiryDate = undefined;
+        this.username = '';
+        localStorage.removeItem('BOAT-Login');
+        if (this.tokenTimeOut) {
+            window.clearTimeout(this.tokenTimeOut);
+            this.tokenTimeOut = undefined;
+        }
     }
 
     private parseJwt (token: string) {

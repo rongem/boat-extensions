@@ -26,6 +26,7 @@ export class ContractListComponent implements OnInit {
   exporting = false;
   exportFinished = false;
   exportCounter = 0;
+  exportError = '';
   exportResult = new ContractResult();
   // Formularfelder für Einstellungen
   get withContract() {
@@ -94,6 +95,7 @@ export class ContractListComponent implements OnInit {
     this.exporting = true;
     this.showExport = false;
     this.exportFinished = false;
+    this.exportError = '';
     this.exportResult = new ContractResult();
     this.exportCounter = 0;
     const subscription = this.backend.synchronizeContracts(this.contracts).subscribe(result => {
@@ -103,7 +105,8 @@ export class ContractListComponent implements OnInit {
         this.exportResult = result;
       }
     }, error => {
-      console.log(error);
+      this.exportError = error.message ?? JSON.stringify(error);
+      this.exportFinished = true;
     }, () => {
       this.exportFinished = true;
       subscription.unsubscribe();

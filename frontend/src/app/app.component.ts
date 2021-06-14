@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Boat3Service } from './lib/boat3.service';
 
 @Component({
@@ -12,6 +13,7 @@ export class AppComponent implements OnInit {
   username = '';
   password = '';
   busy = false;
+  remainingTime: Subject<string> = new Subject();
   get error() {
     return this.boat.error;
   }
@@ -32,12 +34,21 @@ export class AppComponent implements OnInit {
       this.busy = value;
       this.cd.detectChanges();
     });
+    window.setInterval(() => {
+      if (this.boat.expiryDate) {
+        this.remainingTime.next(new Date(this.boat.expiryDate.valueOf() - Date.now()).toISOString().substr(11, 8));
+      }
+    }, 1000);
   }
   
   login() {
     this.boat.login(this.username, this.password);
     this.username = '';
     this.password = '';
+  }
+
+  logout() {
+    this.boat.logout();
   }
 
 }

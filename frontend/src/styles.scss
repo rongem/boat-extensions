@@ -205,6 +205,10 @@ button.selectable:not(:disabled) {
   background-color: lightgreen;
 }
 
+.gauge.red {
+    background-color: #ff7070;
+}
+
 .rel {
     position: relative;
 }

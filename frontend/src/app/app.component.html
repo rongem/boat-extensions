@@ -2,7 +2,13 @@
   <span>BOAT</span>
   <span>BOAT3 Erweiterungen v1.0</span>
   <div class="spacer"></div>
-  <div>{{authenticatedUser}}</div>
+  <div class="rel" appHover>
+    {{authenticatedUser}}
+    <ul class="dropdown-menu">
+      <li style="text-align: center;">Verbleibende Zeit: {{(remainingTime | async)}}</li>
+      <li><div (click)="logout()" i18n="logout" class="card selectable">Abmelden</div></li>
+  </ul>
+</div>
 </div>
 
 <div class="content" role="main">

@@ -28,24 +28,30 @@
 <ng-container *ngIf="showExport">
     <div class="backdrop" (click)="showExport = false"></div>
     <div class="overlay">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="showExport = false">Schlie&szlig;en</div>
         <h1>Export in die Datenbank</h1>
-        <p>
+        <p style="margin: 2rem; margin-bottom: 1rem;">
             Die Controlling-Datenbank wird für weitergehende Auswertungen benutzt. Die Daten der eigenen Vertr&auml;ge k&ouml;nnen dorthin synchronisiert werden.
+        </p>
+        <p style="margin: 2rem; margin-top: 0;">
+            Die Synchronisation kann mehrere Minuten dauern. Bitte schlie&szlig;en Sie nach dem Start und vor dem Ende nicht das Browser-Fenster.
         </p>
         <div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
             Synchronisation starten
+        </div>
+        <div class="selectable card" (click)="showExport = false">
+            Abbrechen
         </div>
     </div>
 </ng-container>
 <ng-container *ngIf="exporting">
     <div class="backdrop" style="z-index: 200;"></div>
     <div class="overlay" style="z-index: 210;">
-        <h1 *ngIf="!exportFinished">Export durchf&uuml;hren...</h1>
-        <h1 *ngIf="exportFinished">Export durchgef&uuml;hrt</h1>
-        <div class="rel">
+        <h1 *ngIf="!exportFinished">Synchronisation durchf&uuml;hren...</h1>
+        <h1 *ngIf="exportFinished">Synchronisation durchgef&uuml;hrt</h1>
+        <div class="rel gauge-bar">
             Fortschritt...
             <div class="gauge"
+                [ngClass]="{red: exportError !== ''}"
                 [ngStyle]="{width: (100 * exportCounter / contracts.length | number:'1.0-0') + '%'}">
             </div>
         </div>
@@ -59,34 +65,41 @@
             </tr>
             <tr>
                 <td>Vertr&auml;ge</td>
-                <td>{{exportResult.created}}</td>
-                <td>{{exportResult.updated}}</td>
-                <td>{{exportResult.deleted}}</td>
+                <td>{{exportResult.created | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.updated | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.deleted | number:'1.0-0':'de'}}</td>
                 <td>{{exportResult.unchanged}}</td>
             </tr>
             <tr>
                 <td>Preiskategorien</td>
-                <td>{{exportResult.priceCategories.created}}</td>
-                <td>{{exportResult.priceCategories.updated}}</td>
-                <td>{{exportResult.priceCategories.deleted}}</td>
-                <td>{{exportResult.priceCategories.unchanged}}</td>
+                <td>{{exportResult.priceCategories.created | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.priceCategories.updated | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.priceCategories.deleted | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.priceCategories.unchanged | number:'1.0-0':'de'}}</td>
             </tr>
             <tr>
                 <td>Vertragselemente</td>
-                <td>{{exportResult.budgets.created}}</td>
-                <td>{{exportResult.budgets.updated}}</td>
-                <td>{{exportResult.budgets.deleted}}</td>
-                <td>{{exportResult.budgets.unchanged}}</td>
+                <td>{{exportResult.budgets.created | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.budgets.updated | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.budgets.deleted | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.budgets.unchanged | number:'1.0-0':'de'}}</td>
             </tr>
             <tr>
                 <td>Leitungselemente</td>
-                <td>{{exportResult.deliverables.created}}</td>
-                <td>{{exportResult.deliverables.updated}}</td>
-                <td>{{exportResult.deliverables.deleted}}</td>
-                <td>{{exportResult.deliverables.unchanged}}</td>
+                <td>{{exportResult.deliverables.created | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.deliverables.updated | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.deliverables.deleted | number:'1.0-0':'de'}}</td>
+                <td>{{exportResult.deliverables.unchanged | number:'1.0-0':'de'}}</td>
             </tr>
         </table>
-        <div class="card selectable" *ngIf="exportFinished" (click)="exporting = false">
+        <p style="margin: 1rem" *ngIf="exportFinished">Die Synchronisation wurde beendet.</p>
+        <ng-container *ngIf="exportError !== ''">
+            <p style="margin: 1rem">Es sind Fehler aufgetreten:</p>
+            <p style="margin: 1rem; background-color: lightcoral;">
+                {{exportError}}
+            </p>
+        </ng-container>
+        <div class="card selectable" style="margin: 1rem" *ngIf="exportFinished" (click)="exporting = false">
             Schlie&szlig;en
         </div>
     </div>
