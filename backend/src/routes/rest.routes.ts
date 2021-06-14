@@ -26,11 +26,11 @@ router.post('/contracts', [
         .isString().bail().trim()
         .isLength({min: 1, max: 200}).withMessage('Mindestlänge: 1, Maximallänge: 200'),
     body('*.start', 'Falsches StartDatum').if(body().isArray({min: 1}))
-        .custom(value => !!Date.parse(value)).bail().customSanitizer(dateParser),
+        .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}').test(value)).bail().customSanitizer(dateParser),
     body('*.end', 'Falsches Endedatum').if(body().isArray({min: 1}))
-        .customSanitizer(dateParser),
-    body('*', 'Startdatum darf nicht größer sein als Endedatum').if(body().isArray({min: 1})).
-        custom(value => Date.parse(value.start) < Date.parse(value.end)),
+        .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}').test(value)).bail().customSanitizer(dateParser),
+    body('*', 'Startdatum darf nicht größer sein als Endedatum').if(body().isArray({min: 1}))
+        .custom(value => value.start < value.end),
     body('*.organization', 'Organisation ist falsch').if(body().isArray({min: 1}))
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
@@ -64,7 +64,7 @@ router.post('/deliverables', [
     body('deliverables.*.version', 'Fehlende oder falsche Version').if(body('deliverables').isArray({min: 1}))
         .isInt({min: 0}).bail().toInt(),
     body('deliverables.*.date', 'Fehlendes oder falsches Datum').if(body('deliverables').isArray({min: 1}))
-        .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}')).bail().customSanitizer(dateParser),
+        .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}').test(value)).bail().customSanitizer(dateParser),
     body('deliverables.*.duration', 'Fehlende oder falsche Anzahl von PT').if(body('deliverables').isArray({min: 1}))
         .isDecimal({blacklisted_chars: '-'}).bail().toFloat()
         .custom(value => value > 0),

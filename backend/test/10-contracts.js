@@ -155,7 +155,7 @@ describe('Contracts', function() {
             });
     });
 
-    it('should not accept sync request for contracts with invalid data', function(done) {
+    it('should not accept sync request for contracts with invalid data 2nd attempt', function(done) {
         chai.request(server)
             .post('/rest/contracts')
             .send([{
@@ -173,9 +173,10 @@ describe('Contracts', function() {
                 expect(res.status).to.be.equal(400);
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');
-                expect(res.body.data.errors.length).to.be.equal(1);
+                expect(res.body.data.errors.length).to.be.equal(2);
                 const params = res.body.data.errors.map(e => e.param);
                 expect(params).to.include('[0].budgets');
+                expect(params).to.include('[0].end');
                 done();
             });
     });

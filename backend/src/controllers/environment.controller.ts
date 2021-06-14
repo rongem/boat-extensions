@@ -12,12 +12,6 @@ export class EnvironmentController {
         if (!this.dbServer) {
             throw new Error('Umgebungsvariable DB_SERVER wurde nicht gefunden.');
         }
-        if (!this.ldapDomain) {
-            throw new Error('Umgebungsvariable LDAP_DOMAIN wurde nicht gefunden.');
-        }
-        if (!this.ldapServer) {
-            throw new Error('Umgebungsvariable LDAP_SERVER wurde nicht gefunden.');
-        }
         if (!['ntlm', 'none'].includes(this.authMode)) {
             throw new Error('Ungültige Authentifzierungsmethode: ' + this.authMode);
         }
@@ -61,10 +55,10 @@ export class EnvironmentController {
     }
 
     get ldapDomain() {
-        return process.env.LDAP_DOMAIN ?? '';
+        return process.env.LDAP_DOMAIN ?? undefined;
     }
 
     get ldapServer() {
-        return process.env.LDAP_SERVER ?? '';
+        return process.env.LDAP_SERVER ?? undefined;
     }
 }

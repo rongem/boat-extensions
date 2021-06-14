@@ -12,22 +12,23 @@ describe('Deliverables', function() {
         server = serverexp.default()
         chai.request(server)
             .post('/rest/deliverables')
-            .send([{
-                id: 23456,
-                version: 1,
-                contract: 1234,
-                date: new Date('2021-11-01'),
-                duration: 5,
-                key: '012341000000000XXX',
-                priceCategoryId: 12,
-            }, {
-                id: 23457,
-                version: 1,
-                contract: 1234,
-                date: new Date('2021-11-02'),
-                duration: 5,
-                priceCategoryId: 12,
-            }])
+            .send({
+                contractId: 1234,
+                deliverables: [{
+                    id: 23456,
+                    version: 1,
+                    date: '2021-11-01',
+                    duration: 5,
+                    key: '012341000000000XXX',
+                    priceCategoryId: 12,
+                }, {
+                    id: 23457,
+                    version: 1,
+                    date: '2021-11-02',
+                    duration: 5,
+                    priceCategoryId: 12,
+                }],
+            })
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res.status).to.be.equal(200);
@@ -44,13 +45,15 @@ describe('Deliverables', function() {
         chai.request(server)
             .post('/rest/deliverables')
             .send({
-                id: 23456,
-                version: 1,
-                contract: 1234,
-                date: new Date('2021-11-01'),
-                duration: 5,
-                key: '012341000000000XXX',
-                priceCategoryId: 12,
+                contractId: 1234,
+                deliverables: {
+                    id: 23456,
+                    version: 1,
+                    date: '2021-11-01',
+                    duration: 5,
+                    key: '012341000000000XXX',
+                    priceCategoryId: 12,
+                },
             })
             .end((err, res) => {
                 expect(err).to.be.null;
@@ -66,21 +69,23 @@ describe('Deliverables', function() {
     it('should not accept sync request for object', function(done) {
         chai.request(server)
             .post('/rest/deliverables')
-            .send([{
-                id: 'x',
-                version: '1x',
-                contract: 'x',
-                date: 'xyz',
-                duration: 'x',
-                key: '0123410000XX',
-                priceCategoryId: 'x',
-            }, {
-                key: 1
-            }, {
-                key: '111111111111111111'
-            }, {
-                key: ''
-            }])
+            .send({
+                contractId: 'x',
+                deliverables: [{
+                    id: 'x',
+                    version: '1x',
+                    date: 'xyz',
+                    duration: 'x',
+                    key: '0123410000XX',
+                    priceCategoryId: 'x',
+                }, {
+                    key: 1
+                }, {
+                    key: '111111111111111111'
+                }, {
+                    key: ''
+                }],
+            })
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res.status).to.be.equal(400);
@@ -88,20 +93,21 @@ describe('Deliverables', function() {
                 expect(res.body.data.errors).to.be.a('array');
                 expect(res.body.data.errors.length).to.be.greaterThan(1);
                 const params = res.body.data.errors.map(e => e.param);
-                expect(params).to.include('[0].id');
-                expect(params).to.include('[0].version');
-                expect(params).to.include('[0].date');
-                expect(params).to.include('[0].duration');
-                expect(params).to.include('[0].key');
-                expect(params).to.include('[0].priceCategoryId');
-                expect(params).to.include('[1].id');
-                expect(params).to.include('[1].version');
-                expect(params).to.include('[1].date');
-                expect(params).to.include('[1].duration');
-                expect(params).to.include('[1].key');
-                expect(params).to.include('[1].priceCategoryId');
-                expect(params).to.include('[2].key');
-                expect(params).not.to.include('[3].key');
+                expect(params).to.include('contractId');
+                expect(params).to.include('deliverables[0].id');
+                expect(params).to.include('deliverables[0].version');
+                expect(params).to.include('deliverables[0].date');
+                expect(params).to.include('deliverables[0].duration');
+                expect(params).to.include('deliverables[0].key');
+                expect(params).to.include('deliverables[0].priceCategoryId');
+                expect(params).to.include('deliverables[1].id');
+                expect(params).to.include('deliverables[1].version');
+                expect(params).to.include('deliverables[1].date');
+                expect(params).to.include('deliverables[1].duration');
+                expect(params).to.include('deliverables[1].key');
+                expect(params).to.include('deliverables[1].priceCategoryId');
+                expect(params).to.include('deliverables[2].key');
+                expect(params).not.to.include('deliverables[3].key');
                 done();
             });
     });
@@ -109,22 +115,23 @@ describe('Deliverables', function() {
     it('should accept valid sync request for deliverables and upate 2 items', function(done) {
         chai.request(server)
             .post('/rest/deliverables')
-            .send([{
-                id: 23456,
-                version: 1,
-                contract: 1234,
-                date: new Date('2021-11-01'),
-                duration: 4,
-                key: '012341000000000XXX',
-                priceCategoryId: 12,
-            }, {
-                id: 23457,
-                version: 1,
-                contract: 1234,
-                date: new Date('2021-11-02'),
-                duration: 4,
-                priceCategoryId: 12,
-            }])
+            .send({
+                contractId: 1234,
+                deliverables: [{
+                    id: 23456,
+                    version: 1,
+                    date: '2021-11-01',
+                    duration: 4,
+                    key: '012341000000000XXX',
+                    priceCategoryId: 12,
+                }, {
+                    id: 23457,
+                    version: 1,
+                    date: '2021-11-02',
+                    duration: 4,
+                    priceCategoryId: 12,
+                }],
+            })
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res.status).to.be.equal(200);

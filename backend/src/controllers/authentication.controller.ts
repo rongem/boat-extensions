@@ -3,11 +3,19 @@ import { readUser } from '../models/mssql/authorization.model';
 import { IUser } from '../models/objects/user.model';
 
 import { HttpError } from '../models/rest-api/httpError.model';
+import { EnvironmentController } from './environment.controller';
 import { serverError } from './error.controller';
 // import endpointConfig from '../../util/endpoint.config';
 
 
 export const getAuthentication = (req: Request, res: Response, next: NextFunction) => {
+    if (EnvironmentController.instance.authMode === 'none')
+    {
+        req.userName='none';
+        req.userAuthorized = true;
+        next();
+        return;
+    }
     let name: string;
     if (!req.ntlm) {
         throw new HttpError(401, 'Fehlende Authentifizierung');
