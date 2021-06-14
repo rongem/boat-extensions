@@ -3,20 +3,20 @@
     Keine Leistungsnachweise gefunden
 </ng-container>
 <ng-container *ngIf="allowedMonths.length > 0">
-    <div class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</div>
-    <div class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</div>
-    <div class="card selectable" (click)="show = 'contract'">Vertragsauslastung</div>
-    <div class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</div>
+    <button type="button" class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</button>
+    <button type="button" class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</button>
+    <button type="button" class="card selectable" (click)="show = 'contract'">Vertragsauslastung</button>
+    <button type="button" class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</button>
     <h2>Export</h2>
-    <div class="card selectable" (click)="exportAllNumbers()">Leistungsnachweise nach Excel</div>
+    <button type="button" class="card selectable" (click)="exportAllNumbers()">Leistungsnachweise nach Excel</button>
 </ng-container>
 
 <ng-container *ngIf="show !== 'nothing'">
     <div class="backdrop" (click)="show = 'nothing'"></div>
 
     <div class="overlay extended" *ngIf="show === 'names'">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schlie&szlig;en</div>
-        <div>
+        <button class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schlie&szlig;en</button>
+        <main>
             <h1>
                 {{contract.name}}
             </h1>
@@ -40,25 +40,25 @@
                     </select>
                 </div>
                 <div>
-                    <div class="card selectable" (click)="exportNames()">Monat nach Excel exportieren</div>
+                    <button type="button" class="card selectable" (click)="exportNames()">Monat nach Excel exportieren</button>
                 </div>
                 <div *ngIf="deliverablesRejected">
-                    <div class="card selectable" (click)="exportRejected()" style="margin-left: 1rem;">
+                    <button class="card selectable" (click)="exportRejected()" style="margin-left: 1rem;">
                         Zur&uuml;ckgewiesene Eintr&auml;ge exportieren
-                    </div>
+                    </button>
                 </div>
             </div>
-        </div>
+        </main>
         <table>
             <thead>
                 <tr>
-                    <th [ngClass]="{selectable: sort !== 'time'}" (click)="sort = 'time'" class="no-wrap">
+                    <th [ngClass]="{selectable: sort !== 'time'}" tabindex="0" (click)="sort = 'time'" class="no-wrap">
                         Datum
                         <ng-container *ngIf="sort === 'time'"> &#8595;</ng-container>
                     </th>
                     <th>Uhrzeit</th>
                     <th>Stunden</th>
-                    <th [ngClass]="{selectable: sort !== 'person'}" (click)="sort = 'person'" class="no-wrap">
+                    <th [ngClass]="{selectable: sort !== 'person'}" tabindex="0" (click)="sort = 'person'" class="no-wrap">
                         Person
                         <ng-container *ngIf="sort === 'person'"> &#8595;</ng-container>
                     </th>
@@ -84,11 +84,11 @@
                         {{row.key}}
                     </td>
                     <td style="white-space: pre-line;">
-                        <div role="img"
+                        <button role="img"
                             class="status-button selectable"
                             [ngClass]="{red: row.rejected}"
                             [attr.aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
-                            (click)="row.rejected = !row.rejected"></div>
+                            (click)="row.rejected = !row.rejected"></button>
                         {{row.text}}
                     </td>
                 </tr>
@@ -97,7 +97,7 @@
     </div>
 
     <div class="overlay" *ngIf="show === 'numbers'">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <button type="button" class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</button>
         <h1>
             {{contract.name}}
         </h1>
@@ -121,7 +121,7 @@
                 </select>
             </div>
             <div>
-                <div class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</div>
+                <button type="button" class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</button>
             </div>
         </div>
         <table class="center">
@@ -185,7 +185,7 @@
     </div>
 
     <div class="overlay" *ngIf="show === 'contract'">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>
+        <button type="button" class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</button>
         <h1>
             {{contract.name}}
         </h1>

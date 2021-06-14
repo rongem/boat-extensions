@@ -1,5 +1,5 @@
 import express from 'express';
-import { syncContracts, syncDeliverables } from '../controllers/sync.controller';
+import { afterSync, syncContracts, syncDeliverables } from '../controllers/sync.controller';
 import { body } from 'express-validator'
 import { validate } from './validator';
 import { getAuthorization } from '../controllers/authentication.controller';
@@ -98,5 +98,21 @@ router.post('/deliverables', [
 ], validate, syncDeliverables);
 
 router.get('/auth', getAuthorization);
+
+router.post('/import', [
+    // body('token', 'Ungültiges Token')
+    //     .isString().bail().trim()
+    //     .customSanitizer((value: string) => value.startsWith('Bearer ') ? value : 'Bearer ' + value),
+    // body('url', 'Ungültige URL')
+    //     .isURL({
+    //         allow_protocol_relative_urls: false,
+    //         allow_trailing_dot: false,
+    //         require_host: true,
+    //         require_protocol: true,
+    //         require_valid_protocol: true,
+    //         protocols: ['https'],
+    //         validate_length: true,
+    //     }),
+], validate, afterSync);
 
 export default router;

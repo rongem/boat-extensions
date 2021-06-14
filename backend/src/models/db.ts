@@ -35,6 +35,17 @@ export const pool = poolPromise
 
 export const requestPromise = pool.then(connection => new Request(connection));
 
+export const dbRunImportScript = async () => {
+    try {
+        const req = await requestPromise;
+        await req.execute('BoatExt_Import');
+        return true;
+    } catch (error) {
+        console.log(error)
+        return false;
+    }
+}
+
 // preflight check if connection works and all tables and stored procedures exist
 export const checkDatabase = async () => {
     const expectedTables = [

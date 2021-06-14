@@ -24,14 +24,17 @@ app.use(cors({
             callback(new Error(requestOrigin + ' ist kein erlaubter Host'));
     },
     credentials: true,
-}), ntlm({
-    // debug: function() {
-    //     const args = Array.prototype.slice.apply(arguments);
-    //     console.log('debug-ntlm', args);
-    // },
-    // domain: env.ldapDomain,
-    // domaincontroller: env.ldapServer,
 }));
+if (env.authMode === 'ntlm') {
+    app.use(ntlm({
+        // debug: function() {
+        //     const args = Array.prototype.slice.apply(arguments);
+        //     console.log('debug-ntlm', args);
+        // },
+        // domain: env.ldapDomain,
+        // domaincontroller: env.ldapServer,
+    }));
+}
 
 app.use('/rest', express.json({limit: '50mb'}), getAuthentication, restRouter);
 

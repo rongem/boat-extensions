@@ -38,3 +38,8 @@
 .open > .dropdown-menu {
     display: block;
 }
+
+.card-container > label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

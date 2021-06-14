@@ -35,12 +35,12 @@
         <p style="margin: 2rem; margin-top: 0;">
             Die Synchronisation kann mehrere Minuten dauern. Bitte schlie&szlig;en Sie nach dem Start und vor dem Ende nicht das Browser-Fenster.
         </p>
-        <div class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
+        <button type="button" class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
             Synchronisation starten
-        </div>
-        <div class="selectable card" (click)="showExport = false">
+        </button>
+        <button type="button" class="selectable card" (click)="showExport = false">
             Abbrechen
-        </div>
+        </button>
     </div>
 </ng-container>
 <ng-container *ngIf="exporting">
@@ -99,27 +99,28 @@
                 {{exportError}}
             </p>
         </ng-container>
-        <div class="card selectable" style="margin: 1rem" *ngIf="exportFinished" (click)="exporting = false">
+        <button type="button" class="card selectable" style="margin: 1rem" *ngIf="exportFinished" (click)="exporting = false">
             Schlie&szlig;en
-        </div>
+        </button>
     </div>
 </ng-container>
 <h1>
     Allgemeine Aktionen
 </h1>
-<div class="card selectable" (click)="showSettings = true">
+<button type="button" class="card selectable" (click)="showSettings = true">
     Export-Einstellungen &auml;ndern
-</div>
-<div class="card selectable" (click)="exportAllContracts()">
+</button>
+<button type="button" class="card selectable" (click)="exportAllContracts()">
     Alle Vertr&auml;ge nach Excel exportieren
-</div>
-<div class="card selectable" *ngIf="syncIsAuthorized" (click)="showExport = true">
+</button>
+<button type="button" class="card selectable" *ngIf="syncIsAuthorized" (click)="showExport = true">
     Vertr&auml;ge in die Datenbank synchronisieren
-</div>
+</button>
 <hr>
 <h1>Ihre Vertr&auml;ge</h1>
 <div class="card-container">
-    <div class="card"
+    <p *ngIf="!selectedContract" style="margin-left: 1rem; margin-bottom: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>
+    <button type="button" class="card"
         *ngFor="let contract of contracts"
         [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}"
         (click)="selectedContract = contract">
@@ -146,6 +147,5 @@
             </ng-container>
         </div>
         <app-contract-detail [contract]="contract" *ngIf="contract === selectedContract" class="operations"></app-contract-detail>
-    </div>
+    </button>
 </div>
-<p *ngIf="!selectedContract" style="margin-left: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>

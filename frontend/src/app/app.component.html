@@ -2,29 +2,35 @@
   <span>BOAT</span>
   <span>BOAT3 Erweiterungen v1.0</span>
   <div class="spacer"></div>
-  <div class="rel" appHover>
-    {{authenticatedUser}}
-    <ul class="dropdown-menu">
-      <li style="text-align: center;">Verbleibende Zeit: {{(remainingTime | async)}}</li>
-      <li><div (click)="logout()" i18n="logout" class="card selectable">Abmelden</div></li>
-  </ul>
-</div>
+  <div>
+    <div>
+      {{authenticatedUser}}
+    </div>
+    <div>
+      ({{(remainingTime | async)}})
+    </div>
+  </div>
+  <button class="card selectable" style="min-width: unset;" (click)="logout()">Abmelden</button>
 </div>
 
 <div class="content" role="main">
   <ng-container *ngIf="!authenticated">
     <p>Dieses Werkzeug greift auf Daten aus BOAT zu. Sie melden sich daher mit Ihrer Kennung aus BOAT auch hier an.</p>
-    <div class="card-container">
-      <div>BOAT-Benutzername:</div>
-      <div>
+    <div class="card-container" style="justify-content: right;">
+      <label>
+        <span>
+          BOAT-Benutzername:
+        </span>
         <input type="text" class="selectable" [(ngModel)]="username" (keydown.enter)="passwd.focus()">
-      </div>
+      </label>
     </div>
     <div class="card-container">
-      <div>Kennwort:</div>
-      <div>
+      <label>
+        <span>
+          Kennwort:
+        </span>
         <input #passwd type="password" class="selectable" [(ngModel)]="password" (keydown.enter)="login()">
-      </div>
+      </label>
     </div>
     <div class="card-container">
       <div>

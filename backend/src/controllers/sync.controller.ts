@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { dbRunImportScript } from '../models/db';
 import { dbSyncContracts } from '../models/mssql/contracts.model';
 import { dbSyncDeliverables } from '../models/mssql/deliverables.model';
 import { Contract } from '../models/objects/contract.model';
@@ -27,3 +28,13 @@ export const syncDeliverables = (req: Request, res: Response, next: NextFunction
     }));
 };
 
+export const afterSync = (req: Request, res: Response, next: NextFunction) => {
+    const url = req.body.url as string;
+    const token = req.body.token as string;
+    dbRunImportScript().then(result => {
+        res.json(result);
+    }).catch((error: HttpError) => res.status(error.httpStatusCode).json({
+        error: error.message,
+        data: error.data,
+    }));
+};

@@ -1,22 +1,25 @@
 export class EnvironmentController {
     private constructor() {
         if (!this.dbName) {
-            throw new Error('Umgebungsvariable DB_NAME wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable DB_NAME wurde nicht gefunden.');
         }
         if (!this.dbUser) {
-            throw new Error('Umgebungsvariable DB_USER wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable DB_USER wurde nicht gefunden.');
         }
         if (!this.dbPassword) {
-            throw new Error('Umgebungsvariable DB_PWD wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable DB_PWD wurde nicht gefunden.');
         }
         if (!this.dbServer) {
-            throw new Error('Umgebungsvariable DB_SERVER wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable DB_SERVER wurde nicht gefunden.');
         }
         if (!this.ldapDomain) {
-            throw new Error('Umgebungsvariable LDAP_DOMAIN wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable LDAP_DOMAIN wurde nicht gefunden.');
         }
         if (!this.ldapServer) {
-            throw new Error('Umgebungsvariable LDAP_SERVER wurde nicht gefunden.')
+            throw new Error('Umgebungsvariable LDAP_SERVER wurde nicht gefunden.');
+        }
+        if (!['ntlm', 'none'].includes(this.authMode)) {
+            throw new Error('Ungültige Authentifzierungsmethode: ' + this.authMode);
         }
     }
 
@@ -51,6 +54,10 @@ export class EnvironmentController {
 
     get corsOrigin() {
         return process.env.CORS_ORIGIN ?? '*';
+    }
+
+    get authMode() {
+        return (process.env.AUTH_MODE ?? 'ntlm').toLocaleLowerCase();
     }
 
     get ldapDomain() {

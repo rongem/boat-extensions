@@ -52,6 +52,10 @@ th {
     background-color: $main-blue;
     color: white;
     font-weight: 600;
+
+    & > a {
+        color: white;
+    }
 }
 
 .toolbar span:first-child {
@@ -87,6 +91,10 @@ th {
     justify-content: center;
     align-items: center;
     line-height: 1.5rem;
+}
+
+button.card {
+    height: unset;
 }
 
 .selectable {
