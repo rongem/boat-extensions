@@ -1,0 +1,25 @@
+<h1>Anmeldung</h1>
+<main>
+    <p>Dieses Werkzeug greift auf Daten aus BOAT zu. Sie melden sich daher mit Ihrer Kennung aus BOAT auch hier an.</p>
+    <div class="card-container">
+        <label>
+        <span>
+            BOAT-Benutzername:
+        </span>
+        <input type="text" class="selectable" [(ngModel)]="username" (keydown.enter)="passwd.focus()">
+        </label>
+    </div>
+    <div class="card-container">
+        <label>
+        <span>
+            Kennwort:
+        </span>
+        <input #passwd type="password" class="selectable" [(ngModel)]="password" (keydown.enter)="login()">
+        </label>
+    </div>
+    <div class="card-container">
+        <div>
+            <button type="button" class="selectable" (click)="login()">Anmelden</button>
+        </div>
+    </div>
+</main>

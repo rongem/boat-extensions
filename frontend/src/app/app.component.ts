@@ -10,8 +10,6 @@ import { Boat3Service } from './lib/boat3.service';
 export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
   // Formularfelder
-  username = '';
-  password = '';
   busy = false;
   remainingTime: Subject<string> = new Subject();
   get error() {
@@ -41,12 +39,6 @@ export class AppComponent implements OnInit {
     }, 1000);
   }
   
-  login() {
-    this.boat.login(this.username, this.password);
-    this.username = '';
-    this.password = '';
-  }
-
   logout() {
     this.boat.logout();
   }

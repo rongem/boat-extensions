@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
 import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
@@ -9,6 +10,7 @@ import { RestContract } from './models/rest-boat/contract.model';
 import { Contract } from './models/contract.model';
 import { DeliverablesResponse } from './models/rest-boat/deliverables-response.model';
 import { Deliverable } from './models/deliverable.model';
+import { parseJwt } from './functions';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {
@@ -22,11 +24,11 @@ export class Boat3Service {
     }
     private tokenTimeOut?: number;
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private router: Router) {
         // prüfen, ob ein gespeichertes JWT-Token noch gültig ist und Verwendung des gültigen Tokens, sonst Löschen des ungültigen.
         const token = localStorage.getItem('BOAT-Login');
         if (token) {
-            const details = this.parseJwt(token) as {sub: string, exp: number};
+            const details = parseJwt(token);
             this.username = details.sub;
             const d = new Date(details.exp * 1000);
             if (d.valueOf() > Date.now()) {
@@ -45,6 +47,7 @@ export class Boat3Service {
                     tap(result => {
                         if (result.content) {
                             this.token = token;
+                            this.router.navigate(['/', 'contracts']);
                         }
                     }),
                     catchError((error: HttpErrorResponse) => {
@@ -66,6 +69,7 @@ export class Boat3Service {
         this.http.post<void>('/auth/login', { email: username, passwort: password }, { observe: 'response'}).pipe(
             take(1),
             map(response => response.headers.get('Authorization')),
+            tap(() => this.router.navigate(['contracts'])),
             catchError((error: HttpErrorResponse) => {
                 this.error = error.message;
                 return of(undefined)
@@ -74,17 +78,22 @@ export class Boat3Service {
         ).subscribe(token => {
             this.token = token ?? undefined;
             if (this.token) {
-                this.username = username;
                 localStorage.setItem('BOAT-Login', this.token);
-                const parts = this.token.split(' ')[1].split('.');
-                const obj = JSON.parse(atob(parts[1]));
-                this.expiryDate = new Date(0);
-                this.expiryDate.setUTCSeconds(obj.exp);
-                this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
+                this.setTokenContent(this.token);
             } else {
                 this.logout();
             }
         });
+    }
+
+    setTokenContent(token: string) {
+        if (!token) {
+            return;
+        }
+        const details = parseJwt(token);
+        this.username = details.sub;
+        this.expiryDate = new Date(details.exp * 1000);
+        this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
     }
 
     logout() {
@@ -96,19 +105,9 @@ export class Boat3Service {
             window.clearTimeout(this.tokenTimeOut);
             this.tokenTimeOut = undefined;
         }
+        this.router.navigate(['login']);
     }
 
-    private parseJwt (token: string) {
-        var base64Url = token.replace('Bearer ', '').split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-    
-        return JSON.parse(jsonPayload);
-    };
-    
-    
     getContracts() {
         this.working.next(true);
         this.error = '';

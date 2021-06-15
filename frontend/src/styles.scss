@@ -250,11 +250,6 @@ footer {
   /* Responsive Styles */
 @media screen and (max-width: 47.9375rem) {
 
-    .card-container > *:not(.circle-link) ,
-    .terminal {
-      width: 100%;
-    }
-
     .card:not(.highlight-card) {
       height: 1rem;
       margin: 0.5rem 0;

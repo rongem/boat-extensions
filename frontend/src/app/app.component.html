@@ -1,54 +1,29 @@
-<div class="toolbar" role="banner">
+<header class="toolbar" role="banner">
   <span>BOAT</span>
   <span>BOAT3 Erweiterungen v1.0</span>
   <div class="spacer"></div>
-  <div>
+  <ng-container *ngIf="authenticated">
     <div>
-      {{authenticatedUser}}
-    </div>
-    <div>
-      ({{(remainingTime | async)}})
-    </div>
-  </div>
-  <button class="card selectable" style="min-width: unset;" (click)="logout()">Abmelden</button>
-</div>
-
-<div class="content" role="main">
-  <ng-container *ngIf="!authenticated">
-    <p>Dieses Werkzeug greift auf Daten aus BOAT zu. Sie melden sich daher mit Ihrer Kennung aus BOAT auch hier an.</p>
-    <div class="card-container" style="justify-content: right;">
-      <label>
-        <span>
-          BOAT-Benutzername:
-        </span>
-        <input type="text" class="selectable" [(ngModel)]="username" (keydown.enter)="passwd.focus()">
-      </label>
-    </div>
-    <div class="card-container">
-      <label>
-        <span>
-          Kennwort:
-        </span>
-        <input #passwd type="password" class="selectable" [(ngModel)]="password" (keydown.enter)="login()">
-      </label>
-    </div>
-    <div class="card-container">
       <div>
-        <button type="button" class="selectable" (click)="login()">Anmelden</button>
+        {{authenticatedUser}}
+      </div>
+      <div>
+        ({{(remainingTime | async)}})
       </div>
     </div>
+    <button class="card selectable" style="min-width: unset;" (click)="logout()">Abmelden</button>
   </ng-container>
-  <ng-container *ngIf="authenticated">
-    <app-contract-list></app-contract-list>
-  </ng-container>
-  <!-- Footer -->
-  <footer>
-    <p *ngIf="error !== ''" class="error">
-      {{error}}
-    </p>
-  </footer>
+</header>
 
-</div>
+<main class="content" role="main">
+  <router-outlet></router-outlet>
+</main>
+
+<footer>
+  <p *ngIf="error !== ''" class="error">
+    {{error}}
+  </p>
+</footer>
 
 <ng-container *ngIf="busy === true">
   <div class="backdrop"></div>
