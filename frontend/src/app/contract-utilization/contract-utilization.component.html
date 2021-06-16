@@ -1,0 +1,98 @@
+<button type="button" class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</button>
+<h1>
+    {{(contract | async).name}}
+</h1>
+<p class="center">
+    {{(contract | async).description}}
+</p>
+<p>
+    Diese Ansicht erlaubt die Pr&uuml;fung der Daten und der Auslastung des Vertrags.
+    Die angezeigten Prozentzahlen werden in Relation zur Vertragsdauer  bewertet. Rote Balken bedeuten,
+    dass der Vertrag voraussichtlich zu fr&uuml; ausgesch&ouml;pft sein wird.
+</p>
+<table class="center">
+    <thead>
+        <tr>
+            <td rowspan="2">Element</td>
+            <td colspan="3" class="center">Finanzen</td>
+            <td colspan="3" class="center">Personentage</td>
+            <td>Auslastung</td>
+        </tr>
+        <tr>
+            <td>Obergrenze</td>
+            <td>Verbraucht</td>
+            <td>Verf&uuml;gbar</td>
+            <td class="no-wrap">Obergrenze PT</td>
+            <td>Verbraucht</td>
+            <td>Verf&uuml;gbar</td>
+            <td class="no-wrap rel">
+                Zeit:
+                {{partOfTime | number: '1.1-1':'de'}} %
+                <div class="gauge"
+                    style="background-color: turquoise"
+                    [ngStyle]="{width: (partOfTime | number:'1.0-0') + '%'}">
+                </div>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let detail of (contract | async).budgetDetails">
+            <td class="no-wrap">
+                {{detail.priceCategory}}
+            </td>
+            <td class="no-wrap right">
+                {{detail.availableFinances | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{getTotalForPriceCategory(detail.priceCategoryId) | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{detail.availableFinances - getTotalForPriceCategory(detail.priceCategoryId) | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{detail.availableUnits | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right">
+                {{getDaysForPriceCategory(detail.priceCategoryId) | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right">
+                {{detail.availableUnits - getDaysForPriceCategory(detail.priceCategoryId) | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right rel">
+                {{detail.availableFinances === 0 ? '-' : getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances * 100 | number: '1.1-1':'de'}} %
+                <div class="gauge"
+                    [ngClass]="{red: 100 * getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances > partOfTime}"
+                    [ngStyle]="{width: (100 * getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances | number:'1.0-0') + '%'}">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><b>Summe</b></td>
+            <td class="no-wrap right">
+                {{(contract | async).completeBudget.availableFinances | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{totalSum | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{(contract | async).completeBudget.availableFinances - totalSum | number: '1.2-2':'de'}} &#8364;
+            </td>
+            <td class="no-wrap right">
+                {{(contract | async).completeBudget.availableUnits | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right">
+                {{totalDays | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right">
+                {{(contract | async).completeBudget.availableUnits - totalDays | number: '1.2-2':'de'}}
+            </td>
+            <td class="no-wrap right rel">
+                {{totalSum / (contract | async).completeBudget.availableFinances * 100 | number: '1.1-1':'de'}} %
+                <div class="gauge"
+                    [ngClass]="{red: 100 * totalSum / (contract | async).completeBudget.availableFinances > partOfTime}"
+                    [ngStyle]="{width: (100 * totalSum / (contract | async).completeBudget.availableFinances | number:'1.0-0') + '%'}">
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

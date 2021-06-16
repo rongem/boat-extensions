@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { BackendService } from '../lib/backend.service';
 import { Boat3Service } from '../lib/boat3.service';
 import { SettingsService } from '../lib/settings.service';
@@ -8,6 +8,7 @@ import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Params } from '@angular/router';
 
 @Component({
   selector: 'app-contract-list',
@@ -56,18 +57,31 @@ export class ContractListComponent implements OnInit {
   // Ansichtoptionen
   showSettings = false;
   
-  constructor(private boat: Boat3Service, private backend: BackendService, private settings: SettingsService) { }
+  constructor(private boat: Boat3Service, private backend: BackendService,
+    private settings: SettingsService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.boat.getContracts().subscribe(contracts => {
+    this.boat.getContracts().pipe(withLatestFrom(this.route.params)).subscribe(([contracts, params]) => {
       if (contracts) {
         this.contracts = contracts;
+        this.setPathForParams(params);
       }
     });
     this.backend.checkAuthorization();
     this.backend.syncIsAuthorized.subscribe(value => {
       this.syncIsAuthorized = value;
-    })
+    });
+    this.route.params.subscribe(params => {
+      this.setPathForParams(params);
+    });
+  }
+
+  private setPathForParams(params: Params) {
+    if (params.id && !isNaN(+params.id)) {
+      this.selectedContract = this.contracts.find(c => c.id === +params.id);
+    } else {
+      this.selectedContract = undefined;
+    }
   }
 
   saveSettings() {

@@ -66,7 +66,7 @@ export class BackendService {
                     tap(result => this.addResults(contractResult.deliverables, result)),
                 ))),
             ),
-            concatMap(() => this.http.post<boolean>(this.baseUrl + 'import', { url: window.location.href, token: this.boat.token })),
+            concatMap(() => this.http.post<boolean>(this.baseUrl + 'import', { url: window.location.href })),
             map(() => contractResult)
         );
     }

@@ -1,75 +1,52 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
-import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { utils, writeFile } from 'xlsx';
 
-import { ContractResponse } from './models/rest-boat/contract-response.model';
-import { RestContract } from './models/rest-boat/contract.model';
 import { Contract } from './models/contract.model';
-import { DeliverablesResponse } from './models/rest-boat/deliverables-response.model';
 import { Deliverable } from './models/deliverable.model';
-import { parseJwt } from './functions';
+import { RestContract } from './models/rest-boat/contract.model';
+import { ContractResponse } from './models/rest-boat/contract-response.model';
+import { DeliverablesResponse } from './models/rest-boat/deliverables-response.model';
+
+import * as StoreActions from './store/store.actions';
+import * as StoreSelectors from './store/store.selectors';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {
-    token?: string;
-    expiryDate?: Date;
-    username = '';
-    working = new BehaviorSubject(false);
-    error = '';
-    get authenticated() {
-        return !!this.token;
-    }
     private tokenTimeOut?: number;
+    private token?: string;
 
-    constructor(private http: HttpClient, private router: Router) {
-        // prüfen, ob ein gespeichertes JWT-Token noch gültig ist und Verwendung des gültigen Tokens, sonst Löschen des ungültigen.
+    constructor(private http: HttpClient, private router: Router, private store: Store) {
+        this.store.select(StoreSelectors.expiryDate).subscribe(expiryDate => {
+            if (this.tokenTimeOut) {
+                window.clearTimeout(this.tokenTimeOut);
+            }
+            if (expiryDate) {
+                if (expiryDate.valueOf() > Date.now()) {
+                    this.tokenTimeOut = window.setTimeout(this.logout, expiryDate.valueOf() - Date.now());
+                } else {
+                    this.store.dispatch(StoreActions.setLogin({}));
+                }
+            }
+        });
+        this.store.select(StoreSelectors.token).subscribe(token => this.token = token);
+        // prüfen, ob ein gespeichertes JWT-Token noch vorhanden ist und Verwendung des Tokens (Überprüfung erfolgt im Store)
         const token = localStorage.getItem('BOAT-Login');
         if (token) {
-            this.setTokenContent(token);
+            this.store.dispatch(StoreActions.setLogin({token}));
         }
     }
 
     login(username: string, password:string) {
-        this.working.next(true);
-        this.error = '';
-        this.http.post<void>('/auth/login', { email: username, passwort: password }, { observe: 'response'}).pipe(
-            take(1),
-            map(response => response.headers.get('Authorization')),
-            tap(() => this.router.navigate(['contracts'])),
-            catchError((error: HttpErrorResponse) => {
-                this.error = error.message;
-                return of(undefined)
-            }),
-            tap(() => this.working.next(false)),
-        ).subscribe(token => {
-            this.setTokenContent(token ?? undefined);
-        });
-    }
-
-    setTokenContent(token?: string) {
-        if (!token) {
-            return;
-        }
-        this.token = token;
-        const details = parseJwt(token);
-        this.username = details.sub;
-        this.expiryDate = new Date(details.exp * 1000);
-        if (this.expiryDate.valueOf() > Date.now()) {
-            localStorage.setItem('BOAT-Login', this.token);
-            this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
-        } else {
-            this.logout();
-        }
+        this.store.dispatch(StoreActions.boatLogin({ username, password }));
     }
 
     logout() {
-        this.token = undefined;
-        this.expiryDate = undefined;
-        this.username = '';
-        localStorage.removeItem('BOAT-Login');
+        this.store.dispatch(StoreActions.setLogin({}));
         if (this.tokenTimeOut) {
             window.clearTimeout(this.tokenTimeOut);
             this.tokenTimeOut = undefined;
@@ -78,8 +55,8 @@ export class Boat3Service {
     }
 
     getContracts() {
-        this.working.next(true);
-        this.error = '';
+        this.store.dispatch(StoreActions.setWorkingState({ working: true }));
+        this.store.dispatch(StoreActions.setError({}));
         return this.http.get<ContractResponse>(
             '/api/meineinzelauftrag?sort=id,desc', {
                 headers: new HttpHeaders({
@@ -98,13 +75,13 @@ export class Boat3Service {
                     return forkJoin(observables);
                 }),
                 map(result => result.filter(r => !!r) as Contract[]),
-                tap(() => this.working.next(false)),
+                tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
             );
     }
 
     getContractDetails(contractId: number) {
-        this.working.next(true);
-        this.error = '';
+        this.store.dispatch(StoreActions.setWorkingState({ working: true }));
+        this.store.dispatch(StoreActions.setError({}));
         return this.http.get<RestContract>(
             '/api/meineinzelauftrag/' + contractId,
             {
@@ -117,13 +94,13 @@ export class Boat3Service {
             take(1),
             map(result => new Contract(result)),
             catchError(this.handleError),
-            tap(() => this.working.next(false)),
+            tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
         )
     }
 
     getContractDeliverables(contractId: number) {
-        this.working.next(true);
-        this.error = '';
+        this.store.dispatch(StoreActions.setWorkingState({ working: true }));
+        this.store.dispatch(StoreActions.setError({}));
         return this.http.get<DeliverablesResponse>(
             '/api/taetigkeit',
             {
@@ -139,7 +116,7 @@ export class Boat3Service {
                 .map(c => new Deliverable(c)) ?? []
             ),
             catchError(this.handleError),
-            tap(() => this.working.next(false)),
+            tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
         )
     }
 
@@ -155,10 +132,10 @@ export class Boat3Service {
     }
 
     private handleError = (error: HttpErrorResponse) => {
-        this.error = error.message;
+        this.store.dispatch(StoreActions.setWorkingState({ working: false }));
+        this.store.dispatch(StoreActions.setError({ error: error.message ?? error }));
         if (error.status === 401 || error.status === 403) {
-            this.expiryDate = undefined;
-            this.token = undefined;
+            this.store.dispatch(StoreActions.setLogin({}));
         }
         return of(undefined);
     }

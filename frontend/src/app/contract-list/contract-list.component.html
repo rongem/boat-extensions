@@ -120,10 +120,9 @@
 <h1>Ihre Vertr&auml;ge</h1>
 <div class="card-container">
     <p *ngIf="!selectedContract" style="margin-left: 1rem; margin-bottom: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>
-    <button type="button" class="card"
+    <button type="button" class="card" [routerLink]="['/', 'contracts', contract.id]"
         *ngFor="let contract of contracts"
-        [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}"
-        (click)="selectedContract = contract">
+        [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}">
         <div>
             <b>{{contract.name}}</b>
         </div>

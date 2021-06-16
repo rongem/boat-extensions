@@ -6,11 +6,15 @@ import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'contracts', pathMatch: 'full'},
-  { path: 'contracts', component: ContractListComponent, canActivate: [LoginActivate] },
+  { path: 'contracts', canActivate: [LoginActivate], children: [
+    {
+      path: '', component: ContractListComponent, pathMatch: 'full'
+    }, {
+      path: ':id', component: ContractListComponent 
+    }
+  ] },
   { path: 'login', component: LoginComponent },
-//   { path: 'display', loadChildren: () => import('./display/display.module').then(m => m.DisplayModule) },
-//   { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule)},
-//   { path: '**', redirectTo: 'display' },
+  { path: '**', redirectTo: 'contracts' },
 ];
 
 @NgModule({

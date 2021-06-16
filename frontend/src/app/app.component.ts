@@ -1,6 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { Boat3Service } from './lib/boat3.service';
+
+import * as StoreSelectors from './lib/store/store.selectors';
 
 @Component({
   selector: 'app-root',
@@ -10,33 +13,30 @@ import { Boat3Service } from './lib/boat3.service';
 export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
   // Formularfelder
-  busy = false;
   remainingTime: Subject<string> = new Subject();
+  get busy() {
+    return this.store.select(StoreSelectors.working);
+  };
   get error() {
-    return this.boat.error;
+    return this.store.select(StoreSelectors.error);
   }
 
   get authenticated() {
-    return this.boat.authenticated;
+    return this.store.select(StoreSelectors.isAuthenticated);
   }
 
   get authenticatedUser() {
-    return this.boat.username;
+    return this.store.select(StoreSelectors.userName);
   }
 
-  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {}
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef, private store: Store) {}
 
   ngOnInit(): void {
-    this.busy = this.boat.working.value;
-    this.boat.working.subscribe(value => {
-      this.busy = value;
-      this.cd.detectChanges();
-    });
-    window.setInterval(() => {
-      if (this.boat.expiryDate) {
-        this.remainingTime.next(new Date(this.boat.expiryDate.valueOf() - Date.now()).toISOString().substr(11, 8));
-      }
-    }, 1000);
+    // window.setInterval(() => {
+    //   if (this.boat.expiryDate) {
+    //     this.remainingTime.next(new Date(this.boat.expiryDate.valueOf() - Date.now()).toISOString().substr(11, 8));
+    //   }
+    // }, 1000);
   }
   
   logout() {
