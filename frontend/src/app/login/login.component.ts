@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Boat3Service } from '../lib/boat3.service';
 
 @Component({
@@ -10,9 +11,12 @@ export class LoginComponent implements OnInit {
   username = '';
   password = '';
 
-  constructor(private boat: Boat3Service) { }
+  constructor(private boat: Boat3Service, private router: Router) { }
 
   ngOnInit(): void {
+    if (this.boat.token) {
+      this.router.navigate(['contracts']);
+    }
   }
 
   login() {

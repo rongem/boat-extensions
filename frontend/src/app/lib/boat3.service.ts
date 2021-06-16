@@ -28,38 +28,7 @@ export class Boat3Service {
         // prüfen, ob ein gespeichertes JWT-Token noch gültig ist und Verwendung des gültigen Tokens, sonst Löschen des ungültigen.
         const token = localStorage.getItem('BOAT-Login');
         if (token) {
-            const details = parseJwt(token);
-            this.username = details.sub;
-            const d = new Date(details.exp * 1000);
-            if (d.valueOf() > Date.now()) {
-                this.expiryDate = d;
-                this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
-                this.working.next(true);
-                // Test, if login really works
-                this.http.get<ContractResponse>('/api/meineinzelauftrag?sort=id,desc&page=0&size=10',
-                {
-                    headers: new HttpHeaders({
-                        'Content-Type': 'application/json',
-                        'Authorization': token,
-                    })
-                }).pipe(
-                    take(1),
-                    tap(result => {
-                        if (result.content) {
-                            this.token = token;
-                            this.router.navigate(['/', 'contracts']);
-                        }
-                    }),
-                    catchError((error: HttpErrorResponse) => {
-                        this.logout();
-                        this.error = error.message;
-                        return of(undefined);
-                    }),
-                    tap(() => this.working.next(false)),
-                ).subscribe();
-            } else {
-                this.logout();
-            }
+            this.setTokenContent(token);
         }
     }
 
@@ -76,24 +45,24 @@ export class Boat3Service {
             }),
             tap(() => this.working.next(false)),
         ).subscribe(token => {
-            this.token = token ?? undefined;
-            if (this.token) {
-                localStorage.setItem('BOAT-Login', this.token);
-                this.setTokenContent(this.token);
-            } else {
-                this.logout();
-            }
+            this.setTokenContent(token ?? undefined);
         });
     }
 
-    setTokenContent(token: string) {
+    setTokenContent(token?: string) {
         if (!token) {
             return;
         }
+        this.token = token;
         const details = parseJwt(token);
         this.username = details.sub;
         this.expiryDate = new Date(details.exp * 1000);
-        this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
+        if (this.expiryDate.valueOf() > Date.now()) {
+            localStorage.setItem('BOAT-Login', this.token);
+            this.tokenTimeOut = window.setTimeout(this.logout, this.expiryDate.valueOf() - Date.now());
+        } else {
+            this.logout();
+        }
     }
 
     logout() {
