@@ -5,7 +5,7 @@
 <ng-container *ngIf="allowedMonths.length > 0">
     <button type="button" class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</button>
     <button type="button" class="card selectable" (click)="show = 'numbers'">Rechnerische Richtigkeit</button>
-    <button type="button" class="card selectable" (click)="show = 'contract'">Vertragsauslastung</button>
+    <button type="button" class="card selectable" [routerLink]="['utilization']">Vertragsauslastung</button>
     <button type="button" class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</button>
     <h2>Export</h2>
     <button type="button" class="card selectable" (click)="exportAllNumbers()">Leistungsnachweise nach Excel</button>
@@ -182,9 +182,6 @@
                 </tr>
             </tbody>
         </table>
-    </div>
-
-    <div class="overlay" *ngIf="show === 'contract'">
     </div>
 
     <div class="overlay" *ngIf="show === 'trend'">

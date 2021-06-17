@@ -2,10 +2,10 @@
   <span>BOAT</span>
   <span>BOAT3 Erweiterungen v1.0</span>
   <div class="spacer"></div>
-  <ng-container *ngIf="authenticated">
+  <ng-container *ngIf="(authenticated | async) === true">
     <div>
       <div>
-        {{authenticatedUser}}
+        {{authenticatedUser | async}}
       </div>
       <div>
         ({{(remainingTime | async)}})
@@ -20,12 +20,12 @@
 </main>
 
 <footer>
-  <p *ngIf="error !== ''" class="error">
-    {{error}}
+  <p *ngIf="(error | async) && (error | async) !== ''" class="error">
+    {{error | async}}
   </p>
 </footer>
 
-<ng-container *ngIf="busy === true">
+<ng-container *ngIf="(busy | async) === true">
   <div class="backdrop"></div>
   <div class="busy">Arbeite...</div>
 </ng-container>

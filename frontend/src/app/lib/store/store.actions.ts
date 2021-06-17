@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Contract } from '../models/contract.model';
+import { Deliverable } from '../models/deliverable.model';
 
 export const setContracts = createAction('[Contracts] Set contracts',
     props<{ contracts: Contract[]}>()
@@ -7,6 +8,10 @@ export const setContracts = createAction('[Contracts] Set contracts',
 
 export const selectContract = createAction('[Contracts] Set selected contract id',
     props<{ contractId: number }>()
+);
+
+export const setDeliverables = createAction('[Deliverables] Set deliverables',
+    props<{ deliverables: Deliverable[]}>()
 );
 
 export const setWorkingState = createAction('[App] Set working state of app',

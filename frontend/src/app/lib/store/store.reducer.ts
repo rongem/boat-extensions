@@ -1,5 +1,6 @@
 import { createReducer, Action, on, ActionReducerMap } from '@ngrx/store';
 import { Contract } from '../models/contract.model';
+import { Deliverable } from '../models/deliverable.model';
 
 import * as StoreActions from './store.actions';
 
@@ -13,6 +14,7 @@ interface Login {
 
 export interface State {
     contracts: Contract[];
+    deliverables: Deliverable[];
     selectedContractId: number;
     working: boolean;
     login: Login;
@@ -27,6 +29,7 @@ const emptyLogin: Login = {
 
 const initialState: State = {
     contracts: [],
+    deliverables: [],
     selectedContractId: -1,
     working: false,
     login: emptyLogin,
@@ -72,6 +75,10 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
             contracts: action.contracts,
             selectedContractId: action.contracts.find(c => c.id === state.selectedContractId) ? state.selectedContractId : -1,
             working: false,
+        })),
+        on(StoreActions.setDeliverables, (state, action) => ({
+            ...state,
+            deliverables: action.deliverables,
         })),
         on(StoreActions.selectContract, (state, action) => ({
             ...state,
