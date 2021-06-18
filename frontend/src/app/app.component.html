@@ -8,7 +8,7 @@
         {{authenticatedUser | async}}
       </div>
       <div>
-        ({{(remainingTime | async)}})
+        ({{(remainingTime)}})
       </div>
     </div>
     <button class="card selectable" style="min-width: unset;" (click)="logout()">Abmelden</button>
@@ -20,7 +20,7 @@
 </main>
 
 <footer>
-  <p *ngIf="(error | async) && (error | async) !== ''" class="error">
+  <p *ngIf="(errorPresent | async) === true" class="error">
     {{error | async}}
   </p>
 </footer>
