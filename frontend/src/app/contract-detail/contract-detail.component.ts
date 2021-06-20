@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { BackendService } from '../lib/backend.service';
+import { Store } from '@ngrx/store';
 import { Boat3Service } from '../lib/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 import { SettingsService } from '../lib/settings.service';
+
+import * as StoreActions from '../lib/store/store.actions';
 
 @Component({
   selector: 'app-contract-detail',
@@ -129,9 +131,10 @@ export class ContractDetailComponent implements OnInit {
     return value >= 0 ? value : 0;
   }
 
-  constructor(private boat: Boat3Service, private backend: BackendService, private settings: SettingsService) { }
+  constructor(private boat: Boat3Service, private store: Store, private settings: SettingsService) { }
 
   ngOnInit(): void {
+    this.store.dispatch(StoreActions.selectContract({contractId: this.contract.id}));
     this.boat.getContractDeliverables(this.contract.id).subscribe(deliverables => {
       this._deliverables = deliverables ?? [];
       this.allowedMonths = [...new Set(this._deliverables.map(d => {

@@ -75,7 +75,10 @@ export class Boat3Service {
                     return forkJoin(observables);
                 }),
                 map(result => result.filter(r => !!r) as Contract[]),
-                tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
+                tap(contracts => {
+                    this.store.dispatch(StoreActions.setContracts({contracts}));
+                    this.store.dispatch(StoreActions.setWorkingState({ working: false }));
+                }),
             );
     }
 

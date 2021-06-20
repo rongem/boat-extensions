@@ -21,6 +21,8 @@ import { StoreEffects } from './lib/store/store.effects';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 registerLocaleData(localeDe);
 
@@ -42,6 +44,7 @@ registerLocaleData(localeDe);
     AppRoutingModule,
     StoreModule.forRoot(appReducer),
     EffectsModule.forRoot([StoreEffects]),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
   ],
   providers: [
     LoginActivate,

@@ -1,10 +1,10 @@
-<button type="button" class="upper-right-corner selectable card" style="width: unset;" [routerLink]="['..']">Schließen</button>
 <h1>
     {{(contract | async)?.name}}
 </h1>
 <p class="center">
     {{(contract | async)?.description}}
 </p>
+<h2>Vertragsauslastung</h2>
 <p>
     Diese Ansicht erlaubt die Pr&uuml;fung der Daten und der Auslastung des Vertrags.
     Die angezeigten Prozentzahlen werden in Relation zur Vertragsdauer  bewertet. Rote Balken bedeuten,
@@ -96,3 +96,4 @@
         </tr>
     </tbody>
 </table>
+<button type="button" class="selectable card" style="width: unset;" [routerLink]="['..']">Schließen</button>
