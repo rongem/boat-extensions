@@ -15,7 +15,7 @@ export class ContractUtilizationComponent implements OnInit {
   }
 
   get totalSum() {
-    return this.store.select(StoreSelectors.totalSum);
+    return this.store.select(StoreSelectors.netTotal);
   }
 
   get totalDuration() {

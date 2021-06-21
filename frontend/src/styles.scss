@@ -247,6 +247,21 @@ footer {
     line-height: 1.25rem;
 }
 
+.center {
+    margin: 1rem auto;
+}
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+}
+
+.no-wrap {
+    white-space: nowrap;
+}
+
+
+
   /* Responsive Styles */
 @media screen and (max-width: 47.9375rem) {
 

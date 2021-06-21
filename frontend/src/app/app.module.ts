@@ -29,9 +29,9 @@ registerLocaleData(localeDe);
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
     ContractListComponent,
     ContractDetailComponent,
-    LoginComponent,
     ContractNamesComponent,
     ContractNumbersComponent,
     ContractTrendComponent,

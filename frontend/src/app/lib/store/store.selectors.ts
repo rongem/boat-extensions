@@ -30,15 +30,22 @@ export const filteredDeliverables = (year: number, month: number) => createSelec
     deliverables.filter(d => d.date.getFullYear() === year && d.date.getMonth() + 1 === month)
 );
 
+// Gibt die vorhandenen Monate im Format yyyy-MM zurück
+export const allowedMonths = createSelector(deliverables, deliverables => ([...new Set(deliverables.map(d => {
+    const month = d.date.getMonth() + 1;
+    return d.date.getFullYear() + '-' + (month < 10 ? '0' + month : month);
+  }))])
+);
+
 // Gibt die Summe an (Netto-)Kosten zurück, die für den angegebenen Monat im gewählten Vertrag entstanden sind
-export const monthlySum = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
+export const monthlyNetTotal = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
     let sum = 0;
     deliverables.forEach(d => { sum += d.price; });
     return sum;
 });
 
 // Gibt die Gesamtsumme an (Netto-)Kosten zurück, die für den gewählten Vertrag bislang entstanden sind
-export const totalSum = createSelector(deliverables, deliverables => {
+export const netTotal = createSelector(deliverables, deliverables => {
     let sum = 0;
     deliverables.forEach(d => { sum += d.price; });
     return sum;
@@ -56,6 +63,19 @@ export const totalDuration = createSelector(deliverables, deliverables => {
     let sum = 0;
     deliverables.forEach(d => { sum += d.duration; });
     return sum;
+});
+
+// Gibt an, ob Schlüssel in den Liefergegenständen vorhanden sind
+export const keysPresent = createSelector(deliverables, deliverables => deliverables.some(d => !!d.key));
+
+// Gibt alle Summen aufgegliedert nach Preiskategorie zurück
+export const totalByPriceCategory = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
+    const map = new Map<string, { price: number; days: number; }>();
+    deliverables.forEach(d => {
+      const val = map.get(d.priceCategory) ?? { price: 0, days: 0 };
+      map.set(d.priceCategory, { price: val.price + d.price, days: val.days + d.duration});
+    });
+    return [...map.entries()].sort();
 });
 
 // gibt die prozentuale Zeit zurück, die seit dem heutigen Tag Mitternacht für den Vertrag verstrichen ist

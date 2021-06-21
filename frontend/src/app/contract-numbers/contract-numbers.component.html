@@ -1,1 +1,86 @@
-<p>contract-numbers works!</p>
+<h1>
+    {{(contract | async)?.name}}
+</h1>
+<p class="center">
+    {{(contract | async)?.description}}
+</p>
+<h2>Rechnerische Richtigkeit</h2>
+<p>
+    Diese Ansicht erlaubt die Pr&uuml;fung der rechnerischen Richtigkeit einer Rechnung. Sind die angezeigten Summen identisch
+    mit den Summen der Rechnung, wurde durch einen zweiten Rechnungsweg gepr&uuml;ft, dass die Rechnung rechnerisch richtig ist.
+</p>
+<p>
+    Voraussetzung ist, dass vorher die Eintr&auml;ge sachlich gepr&uuml;ft und ggf. nicht zutreffende Eintr&auml;ge entfernt wurden.
+</p>
+<div class="side-by-side">
+    <div class="card">
+        Leistungszeitraum:
+        <select [(ngModel)]="selectedMonth" class="selectable" style="min-width: 6rem;">
+            <option *ngFor="let month of (allowedMonths | async)" [value]="month">
+                {{month}}
+            </option>
+        </select>
+    </div>
+    <div>
+        <button type="button" class="card selectable" (click)="exportNumbers()">Zeitraum nach Excel exportieren</button>
+    </div>
+</div>
+<table class="center">
+    <thead>
+        <tr>
+            <th>Preiskategorie</th>
+            <th>PT</th>
+            <th>Stunden</th>
+            <th>Kosten</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let entry of (priceCategorySums | async)">
+            <td>
+                {{entry[0]}}
+            </td>
+            <td class="right">
+                {{entry[1].days | number: '1.3-3':'de'}}
+            </td>
+            <td class="right">
+                {{entry[1].days * 8 | number: '1.2-2':'de'}}
+            </td>
+            <td class="right">
+                {{entry[1].price | number: '1.2-2':'de'}} &#8364;
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Summe (netto)</b>
+            </td>
+            <td class="right">
+                {{sumDays | async | number: '1.3-3':'de'}}
+            </td>
+            <td class="right">
+                {{sumHours | async | number: '1.2-2':'de'}}
+            </td>
+            <td class="right">
+                {{netTotal | async | number: '1.2-2':'de'}} &#8364;
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                MWSt
+                <input type="number" required="true" [(ngModel)]="taxRate" class="right">
+                %
+            </td>
+            <td class="right">
+                {{tax | async | number: '1.2-2':'de'}} &#8364;
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">
+                <b>Summe (brutto)</b>
+            </td>
+            <td class="right">
+                <b>{{grosTotal | async | number: '1.2-2':'de'}} &#8364;</b>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<button type="button" class="selectable card" style="width: unset;" [routerLink]="['..']">Zur&uuml;ck zur &Uuml;bersicht</button>

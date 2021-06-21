@@ -22,7 +22,6 @@ import * as StoreActions from '../lib/store/store.actions';
 })
 export class ContractListComponent implements OnInit {
   // Liste der vorhandenen Verträge
-  // contracts: Contract[] = [];
   get contracts() {
     return this.store.select(StoreSelectors.contracts);
   }
