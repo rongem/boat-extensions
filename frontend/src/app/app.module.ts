@@ -23,6 +23,7 @@ import { environment } from '../environments/environment';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
+import { EnvServiceProvider } from './lib/env.service.provider';
 
 registerLocaleData(localeDe);
 
@@ -48,6 +49,7 @@ registerLocaleData(localeDe);
   ],
   providers: [
     LoginActivate,
+    EnvServiceProvider,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtTokenInterceptor,
