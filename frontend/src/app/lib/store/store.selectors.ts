@@ -74,13 +74,19 @@ export const deliverablesRejectedInMonth = (year: number, month: number) => crea
 );
 
 // Gibt alle Summen aufgegliedert nach Preiskategorie zurück
-export const totalByPriceCategory = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
+export const totalForMonthByPriceCategory = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
     const map = new Map<string, { price: number; days: number; }>();
     deliverables.forEach(d => {
       const val = map.get(d.priceCategory) ?? { price: 0, days: 0 };
       map.set(d.priceCategory, { price: val.price + d.price, days: val.days + d.duration});
     });
     return [...map.entries()].sort();
+});
+
+export const netTotalByPriceCategory = (id: number) => createSelector(deliverables, deliverables => {
+    let sum = 0;
+    deliverables.filter(d => d.priceCategoryId === id).forEach(d => sum += d.price);
+    return sum;
 });
 
 // gibt die prozentuale Zeit zurück, die seit dem heutigen Tag Mitternacht für den Vertrag verstrichen ist

@@ -75,7 +75,7 @@ export class ContractNumbersComponent implements OnInit {
   }
 
   get priceCategorySums() {
-    return this.store.select(StoreSelectors.totalByPriceCategory(this.year, this.month));
+    return this.store.select(StoreSelectors.totalForMonthByPriceCategory(this.year, this.month));
   }
 
   get contract() {
