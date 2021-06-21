@@ -1,8 +1,10 @@
+import { state } from '@angular/animations';
 import { createReducer, Action, on, ActionReducerMap } from '@ngrx/store';
 import { Contract } from '../models/contract.model';
 import { Deliverable } from '../models/deliverable.model';
 
 import * as StoreActions from './store.actions';
+import { deliverables } from './store.selectors';
 
 export const STORE = 'STORE';
 
@@ -83,6 +85,18 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
             ...state,
             deliverables: action.deliverables,
         })),
+        on(StoreActions.toggleDeliverableRejection, (state, action) => {
+            const index = state.deliverables.findIndex(d => d.id === action.deliverable.id);
+            const deliverables = [
+                ...state.deliverables.slice(0, index),
+                {...state.deliverables[index], rejected: !state.deliverables[index].rejected },
+                ...state.deliverables.slice(index + 1)
+            ];
+            return {
+                ...state,
+                deliverables,
+            };
+        }),
         on(StoreActions.selectContract, (state, action) => ({
             ...state,
             selectedContractId: state.contracts.find(c => c.id === action.contractId) ? action.contractId : -1,

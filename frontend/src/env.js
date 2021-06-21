@@ -4,6 +4,6 @@
     // API urls
     window.__env.apiBaseUrl = '/api';
     window.__env.authUrl = '/auth/login';
-    window.__env.backendBaseUrl = 'https://localhost:8000/'
+    window.__env.backendBaseUrl = 'https://localhost:8000/rest/'
   
   }(this));

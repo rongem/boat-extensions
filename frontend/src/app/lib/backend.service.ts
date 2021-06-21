@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, concatMap, map, switchMap, take, tap } from 'rxjs/operators'
-import { BehaviorSubject, forkJoin, from, Observable, of } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, concatMap, map, take, tap } from 'rxjs/operators'
+import { BehaviorSubject, forkJoin, from, of } from 'rxjs';
 import { Authorization } from './models/rest-backend/authorization.model';
 import { BackendContract } from './models/rest-backend/contract.model';
 import { Contract } from './models/contract.model';
@@ -11,16 +11,19 @@ import { Deliverable } from './models/deliverable.model';
 import { Result } from './models/rest-backend/result.model';
 import { Boat3Service } from './boat3.service';
 import { SettingsService } from './settings.service';
+import { EnvService } from './env.service';
 
 @Injectable({providedIn: 'root'})
 export class BackendService {
     syncIsAuthorized = new BehaviorSubject(false);
-    private baseUrl = 'http://localhost:8000/rest/';
 
-    constructor(private http: HttpClient, private boat: Boat3Service, private settings: SettingsService) {}
+    constructor(private http: HttpClient,
+                private boat: Boat3Service,
+                private env: EnvService,
+                private settings: SettingsService) {}
 
     checkAuthorization = () => {
-        this.http.get<Authorization>(this.baseUrl + 'auth', { withCredentials: true }).pipe(
+        this.http.get<Authorization>(this.env.backendBaseUrl + 'auth', { withCredentials: true }).pipe(
             take(1),
             map(result => result.isAuthorized),
             catchError((error: HttpErrorResponse) => {
@@ -48,7 +51,7 @@ export class BackendService {
             })),
         }));
         const contractResult = new ContractResult();
-        return this.http.post<ContractResult>(this.baseUrl + 'contracts', restContracts, { withCredentials: true }).pipe(
+        return this.http.post<ContractResult>(this.env.backendBaseUrl + 'contracts', restContracts, { withCredentials: true }).pipe(
             take(1),
             tap(result => {
                 this.addResults(contractResult, result);
@@ -66,7 +69,7 @@ export class BackendService {
                     tap(result => this.addResults(contractResult.deliverables, result)),
                 ))),
             ),
-            concatMap(() => this.http.post<boolean>(this.baseUrl + 'import', { url: window.location.href })),
+            concatMap(() => this.http.post<boolean>(this.env.backendBaseUrl + 'import', { url: window.location.href })),
             map(() => contractResult)
         );
     }
@@ -90,7 +93,7 @@ export class BackendService {
         };
         const bodySize = JSON.stringify(body).length;
         if (bodySize < 50000000000) {
-            return this.http.post<Result>(this.baseUrl + 'deliverables', body, { withCredentials: true }).pipe(
+            return this.http.post<Result>(this.env.backendBaseUrl + 'deliverables', body, { withCredentials: true }).pipe(
                 take(1),
             );
         } else {
@@ -110,10 +113,5 @@ export class BackendService {
         result1.deleted += result2.deleted;
         result1.unchanged += result2.unchanged;
         result1.updated += result2.updated;
-    }
-
-    private handleError = (error: HttpErrorResponse) => {
-        console.log(error.status, error.statusText, error.message);
-        return of(error);
     }
 }

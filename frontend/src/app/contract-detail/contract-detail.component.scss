@@ -30,24 +30,3 @@ table {
     z-index: 10;
 }
 
-.status-button {
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    background-color: green;
-    padding: 0;
-    margin: 0 0.5rem 0 0;
-
-    &.red {
-        background-color: red;
-    }
-}
-
-// table tbody, table thead{
-//     display: block;
-// }
-
-// table tbody {
-//     overflow: auto;
-//     max-height: calc(100vh - 1rem - 3rem);
-// }

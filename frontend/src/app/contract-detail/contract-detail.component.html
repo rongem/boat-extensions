@@ -3,7 +3,7 @@
     Keine Leistungsnachweise gefunden
 </ng-container>
 <ng-container *ngIf="allowedMonths.length > 0">
-    <button type="button" class="card selectable" (click)="show = 'names'">Sachliche Richtigkeit</button>
+    <button type="button" class="card selectable" [routerLink]="['names']">Sachliche Richtigkeit</button>
     <button type="button" class="card selectable" [routerLink]="['numbers']">Rechnerische Richtigkeit</button>
     <button type="button" class="card selectable" [routerLink]="['utilization']">Vertragsauslastung</button>
     <button type="button" class="card selectable" (click)="show = 'trend'">Zeitlicher Verlauf</button>
@@ -13,88 +13,6 @@
 
 <ng-container *ngIf="show !== 'nothing'">
     <div class="backdrop" (click)="show = 'nothing'"></div>
-
-    <div class="overlay extended" *ngIf="show === 'names'">
-        <button class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schlie&szlig;en</button>
-        <main>
-            <h1>
-                {{contract.name}}
-            </h1>
-            <p class="center">
-                {{contract.description}}
-            </p>
-            <p>
-                Diese Ansicht erlaubt die Pr&uuml;fung der sachlichen Richtigkeit einer Rechnung. Sie k&ouml;nnen die Ansicht nach Datum oder nach
-                Person sortieren, oder die Daten f&uuml;r den Monat nach Excel exportieren.
-            </p>
-            <p>
-                Au&szlig;erdem k&ouml;nnen Sie einzelne Eintr&auml;ge zur&uuml;ckweisen, und die zur&uuml;gewiesenen Eintr&auml;ge zusammengefasst exportieren.
-            </p>
-            <div class="side-by-side">
-                <div class="card">
-                    Leistungszeitraum:
-                    <select [(ngModel)]="selectedMonth" class="selectable" style="min-width: 6rem;">
-                        <option *ngFor="let month of allowedMonths" [value]="month">
-                            {{month}}
-                        </option>
-                    </select>
-                </div>
-                <div>
-                    <button type="button" class="card selectable" (click)="exportNames()">Monat nach Excel exportieren</button>
-                </div>
-                <div *ngIf="deliverablesRejected">
-                    <button class="card selectable" (click)="exportRejected()" style="margin-left: 1rem;">
-                        Zur&uuml;ckgewiesene Eintr&auml;ge exportieren
-                    </button>
-                </div>
-            </div>
-        </main>
-        <table>
-            <thead>
-                <tr>
-                    <th [ngClass]="{selectable: sort !== 'time'}" tabindex="0" (click)="sort = 'time'" class="no-wrap">
-                        Datum
-                        <ng-container *ngIf="sort === 'time'"> &#8595;</ng-container>
-                    </th>
-                    <th>Uhrzeit</th>
-                    <th>Stunden</th>
-                    <th [ngClass]="{selectable: sort !== 'person'}" tabindex="0" (click)="sort = 'person'" class="no-wrap">
-                        Person
-                        <ng-container *ngIf="sort === 'person'"> &#8595;</ng-container>
-                    </th>
-                    <th *ngIf="keysPresent" class="no-wrap">Schl&uuml;ssel</th>
-                    <th>T&auml;tigkeit</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let row of deliverables">
-                    <td class="no-wrap">
-                        {{row.date.toLocaleDateString()}}
-                    </td>
-                    <td class="no-wrap">
-                        {{row.startTime}} - {{row.endTime}}
-                    </td>
-                    <td class="no-wrap">
-                        {{row.duration * 8}}
-                    </td>
-                    <td class="no-wrap">
-                        {{row.person}}
-                    </td>
-                    <td *ngIf="keysPresent" class="no-wrap">
-                        {{row.key}}
-                    </td>
-                    <td style="white-space: pre-line;">
-                        <button role="img"
-                            class="status-button selectable"
-                            [ngClass]="{red: row.rejected}"
-                            [attr.aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
-                            (click)="row.rejected = !row.rejected"></button>
-                        {{row.text}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
 
     <div class="overlay" *ngIf="show === 'trend'">
         <div class="upper-right-corner selectable card" style="width: unset;" (click)="show = 'nothing'">Schließen</div>

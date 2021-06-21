@@ -14,13 +14,14 @@ import { DeliverablesResponse } from './models/rest-boat/deliverables-response.m
 
 import * as StoreActions from './store/store.actions';
 import * as StoreSelectors from './store/store.selectors';
+import { EnvService } from './env.service';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {
     private tokenTimeOut?: number;
     private token?: string;
 
-    constructor(private http: HttpClient, private router: Router, private store: Store) {
+    constructor(private http: HttpClient, private router: Router, private store: Store, private env: EnvService) {
         this.store.select(StoreSelectors.expiryDate).subscribe(expiryDate => {
             if (this.tokenTimeOut) {
                 window.clearTimeout(this.tokenTimeOut);
@@ -55,7 +56,7 @@ export class Boat3Service {
         this.store.dispatch(StoreActions.setWorkingState({ working: true }));
         this.store.dispatch(StoreActions.setError({}));
         return this.http.get<ContractResponse>(
-            '/api/meineinzelauftrag?sort=id,desc', {
+            this.env.apiBaseUrl + '/meineinzelauftrag?sort=id,desc', {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
                     'Authorization': this.token!,
@@ -83,7 +84,7 @@ export class Boat3Service {
         this.store.dispatch(StoreActions.setWorkingState({ working: true }));
         this.store.dispatch(StoreActions.setError({}));
         return this.http.get<RestContract>(
-            '/api/meineinzelauftrag/' + contractId,
+            this.env.apiBaseUrl + '/meineinzelauftrag/' + contractId,
             {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ export class Boat3Service {
         this.store.dispatch(StoreActions.setWorkingState({ working: true }));
         this.store.dispatch(StoreActions.setError({}));
         return this.http.get<DeliverablesResponse>(
-            '/api/taetigkeit',
+            this.env.apiBaseUrl + '/taetigkeit',
             {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',

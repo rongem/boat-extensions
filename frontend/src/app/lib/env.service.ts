@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
-
 export class EnvService {
-    apiBaseUrl = '';
-    authUrl = '';
-    backendBaseUrl = '';
+    // default values overwritten bei env.js in root directory
+    apiBaseUrl = '/api';
+    authUrl = '/auth/login';
+    backendBaseUrl = 'http://localhost:8000/rest/';
 
     constructor() {}
 }

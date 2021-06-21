@@ -68,6 +68,11 @@ export const totalDuration = createSelector(deliverables, deliverables => {
 // Gibt an, ob Schlüssel in den Liefergegenständen vorhanden sind
 export const keysPresent = createSelector(deliverables, deliverables => deliverables.some(d => !!d.key));
 
+// Gibt an, ob im gewählten Zeitraum zurückgewiesene Leistungsgegenstände vorhanden sind
+export const deliverablesRejectedInMonth = (year: number, month: number) => createSelector(
+    filteredDeliverables(year, month), deliverables => deliverables.some(d => d.rejected)
+);
+
 // Gibt alle Summen aufgegliedert nach Preiskategorie zurück
 export const totalByPriceCategory = (year: number, month: number) => createSelector(filteredDeliverables(year, month), deliverables => {
     const map = new Map<string, { price: number; days: number; }>();

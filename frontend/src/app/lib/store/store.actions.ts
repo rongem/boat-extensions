@@ -14,6 +14,10 @@ export const setDeliverables = createAction('[Deliverables] Set deliverables',
     props<{ deliverables: Deliverable[]}>()
 );
 
+export const toggleDeliverableRejection = createAction('[Deliverables] Toggle rejections status',
+    props<{ deliverable: Deliverable }>()
+);
+
 export const setWorkingState = createAction('[App] Set working state of app',
     props<{ working: boolean }>()
 );
