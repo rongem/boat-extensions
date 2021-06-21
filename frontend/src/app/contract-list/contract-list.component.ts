@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { forkJoin } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+
 import { BackendService } from '../lib/backend.service';
 import { Boat3Service } from '../lib/boat3.service';
 import { SettingsService } from '../lib/settings.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Params } from '@angular/router';
+
+import * as StoreSelectors from '../lib/store/store.selectors';
+import * as StoreActions from '../lib/store/store.actions';
 
 @Component({
   selector: 'app-contract-list',
@@ -17,9 +22,14 @@ import { ActivatedRoute, Params } from '@angular/router';
 })
 export class ContractListComponent implements OnInit {
   // Liste der vorhandenen Verträge
-  contracts: Contract[] = [];
+  // contracts: Contract[] = [];
+  get contracts() {
+    return this.store.select(StoreSelectors.contracts);
+  }
   // Ausgewählter Vertrag
-  selectedContract?: Contract;
+  get selectedContract() {
+    return this.store.select(StoreSelectors.selectedContract);
+  };
   // Steht ein Backend zur Verfügung, und ist der Benutzer berechtigt, Daten zu synchronisieren?
   syncIsAuthorized = false;
   showExport = false;
@@ -29,6 +39,11 @@ export class ContractListComponent implements OnInit {
   exportCounter = 0;
   exportError = '';
   exportResult = new ContractResult();
+  get exportPart() {
+    return this.contracts.pipe(
+      map(contracts => 100 * this.exportCounter / contracts.length),
+    );
+  }
   // Formularfelder für Einstellungen
   get withContract() {
     return this.settings.withContract;
@@ -57,31 +72,18 @@ export class ContractListComponent implements OnInit {
   // Ansichtoptionen
   showSettings = false;
   
-  constructor(private boat: Boat3Service, private backend: BackendService,
+  constructor(private boat: Boat3Service, private backend: BackendService, private store: Store,
     private settings: SettingsService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    this.boat.getContracts().pipe(withLatestFrom(this.route.params)).subscribe(([contracts, params]) => {
-      if (contracts) {
-        this.contracts = contracts;
-        this.setPathForParams(params);
-      }
-    });
     this.backend.checkAuthorization();
     this.backend.syncIsAuthorized.subscribe(value => {
       this.syncIsAuthorized = value;
     });
     this.route.params.subscribe(params => {
-      this.setPathForParams(params);
+      const contractId = +(params.id ?? -1);
+      this.store.dispatch(StoreActions.selectContract({contractId}));
     });
-  }
-
-  private setPathForParams(params: Params) {
-    if (params.id && !isNaN(+params.id)) {
-      this.selectedContract = this.contracts.find(c => c.id === +params.id);
-    } else {
-      this.selectedContract = undefined;
-    }
   }
 
   saveSettings() {
@@ -90,9 +92,13 @@ export class ContractListComponent implements OnInit {
 
   exportAllContracts() {
     const deliverables = new Map<number, Deliverable>();
-    forkJoin(this.contracts.map(c => this.boat.getContractDeliverables(c.id).pipe(
-      map(val => ({contract: c, deliverables: val ?? []})),
-    ))).subscribe(result => {
+    this.contracts.pipe(
+      switchMap(contracts =>
+        forkJoin(contracts.map(c => this.boat.getContractDeliverables(c.id).pipe(
+          map(val => ({contract: c, deliverables: val ?? []}))
+        ),
+      ))
+    )).subscribe(result => {
       const sheetContent = result.map(r => this.createContractLine(r));
       const date = new Date();
       const dateString = [
@@ -112,7 +118,9 @@ export class ContractListComponent implements OnInit {
     this.exportError = '';
     this.exportResult = new ContractResult();
     this.exportCounter = 0;
-    const subscription = this.backend.synchronizeContracts(this.contracts).subscribe(result => {
+    const subscription = this.contracts.pipe(
+      switchMap(contracts => this.backend.synchronizeContracts(contracts))
+    ).subscribe(result => {
       this.exportCounter++;
       if (result && !(result instanceof HttpErrorResponse))
       {

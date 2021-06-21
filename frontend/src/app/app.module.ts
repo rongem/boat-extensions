@@ -4,25 +4,25 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { Store, StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { appReducer } from './lib/store/store.reducer';
 import { ContractListComponent } from './contract-list/contract-list.component';
 import { ContractDetailComponent } from './contract-detail/contract-detail.component';
-import { LoginComponent } from './login/login.component';
-import { LoginActivate } from './lib/auth.guard';
-import { JwtTokenInterceptor } from './lib/jwt-token.interceptor';
 import { ContractNamesComponent } from './contract-names/contract-names.component';
 import { ContractNumbersComponent } from './contract-numbers/contract-numbers.component';
 import { ContractTrendComponent } from './contract-trend/contract-trend.component';
 import { ContractUtilizationComponent } from './contract-utilization/contract-utilization.component';
-import { appReducer } from './lib/store/store.reducer';
+import { LoginComponent } from './login/login.component';
+import { LoginActivate } from './lib/auth.guard';
+import { JwtTokenInterceptor } from './lib/jwt-token.interceptor';
 import { StoreEffects } from './lib/store/store.effects';
+import { environment } from '../environments/environment';
 
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { environment } from '../environments/environment';
 
 registerLocaleData(localeDe);
 

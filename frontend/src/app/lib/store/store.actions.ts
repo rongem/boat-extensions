@@ -19,7 +19,7 @@ export const setWorkingState = createAction('[App] Set working state of app',
 );
 
 export const setLogin = createAction('[BOAT] Set login',
-    props<{ token?: string }>()
+    props<{ token: string }>()
 );
 
 export const setError = createAction('[Error] Set error',
@@ -29,3 +29,5 @@ export const setError = createAction('[Error] Set error',
 export const boatLogin = createAction('[BOAT] Login',
     props<{ username: string, password: string }>()
 );
+
+export const logout = createAction('[BOAT] Logout');

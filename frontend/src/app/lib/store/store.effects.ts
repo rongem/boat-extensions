@@ -7,6 +7,7 @@ import { switchMap, map, catchError, take, tap, withLatestFrom } from 'rxjs/oper
 
 import * as StoreActions from './store.actions';
 import * as StoreSelectors from './store.selectors';
+import { Boat3Service } from '../boat3.service';
 
 @Injectable()
 export class StoreEffects {
@@ -16,7 +17,10 @@ export class StoreEffects {
         switchMap(login => this.http.post<void>('/auth/login', { email: login.username, passwort: login.password }, { observe: 'response'}).pipe(
             take(1),
             tap(response => {
-                this.store.dispatch(StoreActions.setLogin({ token: response.headers.get('Authorization') ?? undefined }));
+                const token = response.headers.get('Authorization') ?? undefined;
+                if (token) {
+                    this.store.dispatch(StoreActions.setLogin({token}));
+                }
             }),
             catchError((error: HttpErrorResponse) => {
                 this.store.dispatch(StoreActions.setError({ error: error.message }));
@@ -29,18 +33,19 @@ export class StoreEffects {
     // Speichert ein Token in den LocalStore, wenn es im Store gesetzt wurde, oder löscht es, wenn es im Store entfernt wurde
     saveOrRemoveLogin$ = createEffect(() => this.actions$.pipe(
         ofType(StoreActions.setLogin),
-        concatLatestFrom(action => this.store.select(StoreSelectors.token)),
-        map(([action, token]) => {
+        concatLatestFrom(() => this.store.select(StoreSelectors.token), ),
+        switchMap(([action, token]) => {
             if (token && action.token === token) {
                 localStorage.setItem('BOAT-Login', action.token);
             } else {
                 localStorage.removeItem('BOAT-Login');
             }
-            return null;
+            return of(null);
         }),
     ), { dispatch: false });
 
     constructor(private actions$: Actions,
         private store: Store,
+        private boat: Boat3Service,
         private http: HttpClient) {}
 }

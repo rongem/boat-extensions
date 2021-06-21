@@ -59,7 +59,7 @@
                 {{detail.availableUnits - (getUnitsUsedForPriceCategory(detail.priceCategoryId) | async)! | number: '1.2-2':'de'}}
             </td>
             <td class="no-wrap right rel">
-                {{detail.availableFinances === 0 ? '-' : getPartOfBudgetUsedForPriceCategory(detail.priceCategoryId) | async | number: '1.1-1':'de'}} %
+                {{detail.availableFinances === 0 ? '-' : getPartOfUnitsUsedForPriceCategory(detail.priceCategoryId) | async | number: '1.1-1':'de'}} %
                 <div class="gauge"
                     [ngClass]="{red: (getPartOfBudgetUsedForPriceCategory(detail.priceCategoryId) | async)! > (partOfTime | async)!}"
                     [ngStyle]="{width: (getPartOfBudgetUsedForPriceCategory(detail.priceCategoryId) | async | number:'1.0-0') + '%'}">
@@ -96,4 +96,4 @@
         </tr>
     </tbody>
 </table>
-<button type="button" class="selectable card" style="width: unset;" [routerLink]="['..']">Schließen</button>
+<button type="button" class="selectable card" style="width: unset;" [routerLink]="['..']">Zur&uuml;ck zur &Uuml;bersicht</button>

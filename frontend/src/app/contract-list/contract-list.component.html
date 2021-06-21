@@ -52,7 +52,7 @@
             Fortschritt...
             <div class="gauge"
                 [ngClass]="{red: exportError !== ''}"
-                [ngStyle]="{width: (100 * exportCounter / contracts.length | number:'1.0-0') + '%'}">
+                [ngStyle]="{width: (exportPart | async | number:'1.0-0') + '%'}">
             </div>
         </div>
         <table>
@@ -121,8 +121,8 @@
 <div class="card-container">
     <p *ngIf="!selectedContract" style="margin-left: 1rem; margin-bottom: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>
     <button type="button" class="card" [routerLink]="['/', 'contracts', contract.id]"
-        *ngFor="let contract of contracts"
-        [ngClass]="{highlighted: contract === selectedContract, selectable: contract !== selectedContract}">
+        *ngFor="let contract of (contracts | async)"
+        [ngClass]="{highlighted: contract === (selectedContract | async), selectable: contract !== (selectedContract | async)}">
         <div>
             <b>{{contract.name}}</b>
         </div>
@@ -134,7 +134,7 @@
             <div>
                 <b>Verantwortlich</b>: {{contract.responsiblePerson}} ({{contract.organizationalUnit}})
             </div>
-            <ng-container *ngIf="contract === selectedContract">
+            <ng-container *ngIf="contract === (selectedContract | async)">
                 <div>
                     <b>Beginn</b>: {{contract.start.toLocaleDateString()}},
                     <b>Ende</b>: {{contract.end.toLocaleDateString()}}
@@ -145,6 +145,6 @@
                 </div>
             </ng-container>
         </div>
-        <app-contract-detail [contract]="contract" *ngIf="contract === selectedContract" class="operations"></app-contract-detail>
+        <app-contract-detail [contract]="contract" *ngIf="contract === (selectedContract | async)" class="operations"></app-contract-detail>
     </button>
 </div>

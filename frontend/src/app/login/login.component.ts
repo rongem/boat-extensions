@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { Boat3Service } from '../lib/boat3.service';
 
+import * as StoreActions from '../lib/store/store.actions';
 import * as StoreSelectors from '../lib/store/store.selectors';
 
 @Component({
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.boat.login(this.username, this.password);
+    this.store.dispatch(StoreActions.boatLogin({ username: this.username, password: this.password }));
     this.username = '';
     this.password = '';
   }

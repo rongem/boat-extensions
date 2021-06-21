@@ -29,7 +29,7 @@ export class Boat3Service {
                 if (expiryDate.valueOf() > Date.now()) {
                     this.tokenTimeOut = window.setTimeout(this.logout, expiryDate.valueOf() - Date.now());
                 } else {
-                    this.store.dispatch(StoreActions.setLogin({}));
+                    this.store.dispatch(StoreActions.logout());
                 }
             }
         });
@@ -38,15 +38,12 @@ export class Boat3Service {
         const token = localStorage.getItem('BOAT-Login');
         if (token) {
             this.store.dispatch(StoreActions.setLogin({token}));
-        }
-    }
-
-    login(username: string, password:string) {
-        this.store.dispatch(StoreActions.boatLogin({ username, password }));
+            this.getContracts();
+       }
     }
 
     logout() {
-        this.store.dispatch(StoreActions.setLogin({}));
+        this.store.dispatch(StoreActions.logout());
         if (this.tokenTimeOut) {
             window.clearTimeout(this.tokenTimeOut);
             this.tokenTimeOut = undefined;
@@ -119,7 +116,11 @@ export class Boat3Service {
                 .map(c => new Deliverable(c)) ?? []
             ),
             catchError(this.handleError),
-            tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
+            tap(result => {
+                const deliverables = result ?? []
+                this.store.dispatch(StoreActions.setDeliverables({deliverables}));
+                this.store.dispatch(StoreActions.setWorkingState({ working: false }));
+            }),
         )
     }
 
@@ -138,7 +139,7 @@ export class Boat3Service {
         this.store.dispatch(StoreActions.setWorkingState({ working: false }));
         this.store.dispatch(StoreActions.setError({ error: error.message ?? error }));
         if (error.status === 401 || error.status === 403) {
-            this.store.dispatch(StoreActions.setLogin({}));
+            this.store.dispatch(StoreActions.logout());
         }
         return of(undefined);
     }

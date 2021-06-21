@@ -7,13 +7,15 @@ import { ContractTrendComponent } from './contract-trend/contract-trend.componen
 import { ContractUtilizationComponent } from './contract-utilization/contract-utilization.component';
 import { LoginActivate } from './lib/auth.guard';
 import { LoginComponent } from './login/login.component';
+import { ContractsResolver } from './lib/contracts.resolver';
+import { DeliverablesResolver } from './lib/deliverables.resolver';
 
 const routes: Routes = [
   { path: '', redirectTo: 'contracts', pathMatch: 'full'},
-  { path: 'contracts', canActivate: [LoginActivate], children: [ {
+  { path: 'contracts', canActivate: [LoginActivate], resolve: { contracts: ContractsResolver }, children: [ {
       path: '', component: ContractListComponent, pathMatch: 'full'
     }, {
-      path: ':id', children: [ {
+      path: ':id', resolve: { deliverables: DeliverablesResolver }, children: [ {
         path: '', component: ContractListComponent, pathMatch: 'full'
       }, {
         path: 'names', component: ContractNamesComponent

@@ -14,6 +14,7 @@ interface Login {
 
 export interface State {
     contracts: Contract[];
+    contractsLoaded: boolean;
     deliverables: Deliverable[];
     selectedContractId: number;
     working: boolean;
@@ -29,6 +30,7 @@ const emptyLogin: Login = {
 
 const initialState: State = {
     contracts: [],
+    contractsLoaded: false,
     deliverables: [],
     selectedContractId: -1,
     working: false,
@@ -73,6 +75,7 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
         on(StoreActions.setContracts, (state, action) => ({
             ...state,
             contracts: action.contracts,
+            contractsLoaded: true,
             selectedContractId: action.contracts.find(c => c.id === state.selectedContractId) ? state.selectedContractId : -1,
             working: false,
         })),
@@ -100,6 +103,9 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
             ...state,
             working: true,
         })),
+        on(StoreActions.logout, (state, action) => ({
+            ...initialState,
+        }))
     )(appState, appAction);
 };
 

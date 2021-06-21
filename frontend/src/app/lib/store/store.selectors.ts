@@ -7,6 +7,8 @@ const appState = createFeatureSelector<State>(STORE);
 
 export const contracts = createSelector(appState, state => state.contracts);
 
+export const contractsLoaded = createSelector(appState, state => state.contractsLoaded);
+
 export const deliverables = createSelector(appState, state => state.deliverables);
 
 export const selectedContract = createSelector(appState, state => state.contracts.find(c => c.id === state.selectedContractId));
@@ -75,7 +77,7 @@ export const totalSumForPriceCategory = (priceCategoryId: number) => createSelec
 // gibt für eine Preiskategorie alle PT zurück, die bislang aufgelaufen sind
 export const totalDurationForPriceCategory = (priceCategoryId: number) => createSelector(deliverables, deliverables => {
     let sum = 0;
-    deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.duration).forEach(p => sum += p);
+    deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.duration).forEach(d => sum += d);
     return sum;
 });
 

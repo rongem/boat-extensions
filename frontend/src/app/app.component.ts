@@ -15,15 +15,7 @@ export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
   // Formularfelder
   remainingTime?: string;
-  private _oldBusy = false;
-  get busy() {
-    return this.store.select(StoreSelectors.working).pipe(tap((value) => {
-      if (value !== this._oldBusy) {
-        this._oldBusy = value;
-        this.cd.detectChanges();
-      }
-    }));
-  };
+  busy = false;
   get error() {
     return this.store.select(StoreSelectors.error);
   }
@@ -48,11 +40,12 @@ export class AppComponent implements OnInit {
         new Date(value.valueOf() - Date.now()).toISOString().substr(11, 8) : undefined
       ),
     ).subscribe(value => this.remainingTime = value);
-    // window.setInterval(() => {
-    //   if (this.boat.expiryDate) {
-    //     this.remainingTime.next(new Date(this.boat.expiryDate.valueOf() - Date.now()).toISOString().substr(11, 8));
-    //   }
-    // }, 1000);
+    this.store.select(StoreSelectors.working).subscribe(working => {
+      if (working !== this.busy) {
+        this.busy = working;
+        this.cd.detectChanges();
+      }
+    });
   }
   
   logout() {
