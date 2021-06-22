@@ -138,3 +138,68 @@ export const partOfUnitsUsedForPriceCategory = (priceCategoryId: number) => crea
     }
 );
 
+// Gibt alle entstandenen Kosten für eine Preisstufe zurück
+export const getTotalForPriceCategory = (priceCategoryId: number) => createSelector(deliverables, deliverables => {
+    let sum = 0;
+    deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.price).forEach(p => sum += p);
+    return sum;
+  }
+);
+
+// Gibt alle verbrauchten PT für eine Preisstufe zurück
+export const getDaysForPriceCategory = (priceCategoryId: number) => createSelector(deliverables, deliverables => {
+    let sum = 0;
+    deliverables.filter(d => d.priceCategoryId === priceCategoryId).map(d => d.duration).forEach(d => sum += d);
+    return sum;
+  }
+);
+
+// Gibt die prozentualen Kosten für eine Preisstufe in Relation zu einem Vertrag zurück, die in einem Monat angefallen sind
+export const getDaysPercentageForPriceCategoryAndMonth = (priceCategoryId: number, monthAndYear: string) => createSelector(
+    deliverables, selectedContract, (deliverables, contract) => {
+        if (!contract  || !contract.budgetDetails.find(b => b.priceCategoryId === priceCategoryId)) {
+            return 0;
+        }
+        const [year, month] = monthAndYear.split('-').map(x => +x);
+        let sum = 0;
+        deliverables.filter(d => d.priceCategoryId === priceCategoryId && d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
+            .map(d => d.duration).forEach(d => sum += d);
+        return 100 * sum / contract.budgetDetails.find(b => b.priceCategoryId === priceCategoryId)!.availableUnits;
+    }
+);
+
+// Gitt die Anzahl der verbrauchten PT für einen angegebenen Monat zurück
+export const getDaysForMonth = (monthAndYear: string) => createSelector(deliverables, deliverables => {
+    const [year, month] = monthAndYear.split('-').map(x => +x);
+    let sum = 0;
+    deliverables.filter(d => d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
+        .map(d => d.duration).forEach(d => sum += d);
+    return sum;
+  }
+);
+
+// Gibt die prozentuale Anzahl der PT für einen angegebenen Monat im Verhältnis zu den insgesamt im Vertrag verfügbaren PT zurück
+export const getDaysPercentageForMonth = (monthAndYear: string) => createSelector(deliverables, selectedContract, (deliverables, contract) => {
+    if (!contract) {
+        return 0;
+    }
+    const [year, month] = monthAndYear.split('-').map(x => +x);
+    let sum = 0;
+    deliverables.filter(d => d.date.getMonth() + 1 === month && d.date.getFullYear() === year)
+        .map(d => d.duration).forEach(d => sum += d);
+    return 100 * sum / contract.completeBudget.availableUnits;
+  }
+);
+
+  // Prozentuale Dauer eines Monats im Verhältnis zur Gesamtdauer des Vertrags
+export const getmonthPercentageForContract = (monthAndYear: string) => createSelector(selectedContract, contract => {
+    if (!contract) {
+        return 0;
+    }
+    const [year, month] = monthAndYear.split('-').map(x => +x);
+    const contractDuration = contract.end.valueOf() - contract.start.valueOf();
+    const monthduration = new Date(year, month + 1, 0).valueOf() - new Date(year, month, 1).valueOf();
+    return 100 * monthduration / contractDuration;
+  }
+);
+

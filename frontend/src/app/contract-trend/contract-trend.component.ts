@@ -17,6 +17,10 @@ export class ContractTrendComponent implements OnInit {
     return this.store.select(StoreSelectors.selectedContract);
   }
 
+  get allowedMonths() {
+    return this.store.select(StoreSelectors.allowedMonths);
+  }
+
   get partOfTime() {
     return this.contract.pipe(map(c => {
       const value = 100 * (new Date().setHours(0, 0, 0 ,0) - c!.start.valueOf()) / (c!.end.valueOf() - c!.start.valueOf());
@@ -24,6 +28,11 @@ export class ContractTrendComponent implements OnInit {
     }))
   }
   
+  // Netto-Summe des Vertrags
+  get netTotal() {
+    return this.store.select(StoreSelectors.netTotal);
+  }
+
   constructor(private store: Store, private boat: Boat3Service) { }
   
   ngOnInit(): void {
@@ -33,8 +42,8 @@ export class ContractTrendComponent implements OnInit {
     return this.store.select(StoreSelectors.netTotalByPriceCategory(id));
   }
 
-  getPartOfBudgetForPriceCategory(id: number, budget: Budget) {
-    return this.getNetTotalByPriceCategory(id).pipe(map(sum => 100 * sum / budget.availableFinances));
+  getPartOfBudgetForPriceCategory(budget: Budget) {
+    return this.getNetTotalByPriceCategory(budget.priceCategoryId).pipe(map(sum => 100 * sum / budget.availableFinances));
   }
 
 }

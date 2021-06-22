@@ -27,7 +27,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let month of allowedMonths">
+            <tr *ngFor="let month of (allowedMonths | async)">
                 <td>
                     {{month.split('-')[1]}}/{{month.split('-')[0]}}
                 </td>
@@ -58,14 +58,14 @@
                     {{totalSum / (contract | async)?.completeBudget.availableFinances * 100 | number: '1.1-1':'de'}} %
                     <div class="gauge"
                         [ngClass]="{red: 100 * totalSum / (contract | async)?.completeBudget.availableFinances > (partOfTime | async)}"
-                        [ngStyle]="{width: (100 * totalSum / (contract | async)?.completeBudget.availableFinances | number:'1.0-0') + '%'}">
+                        [ngStyle]="{width: (100 * totalSum / (contract | async)?.completeBudget?.availableFinances | number:'1.0-0') + '%'}">
                     </div>
                 </td>
                 <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
-                    {{detail.availableFinances === 0 ? '-' : getTotalForPriceCategory(detail.priceCategoryId) / detail.availableFinances * 100 | number: '1.1-1':'de'}} %
+                    {{detail.availableFinances === 0 ? '-' : getPartOfBudgetForPriceCategory(detail) | async | number: '1.1-1':'de'}} %
                     <div class="gauge"
-                        [ngClass]="{red: (getPartOfBudgetForPriceCategory(detail.priceCategoryId, detail) | async) > (partOfTime | async)}"
-                        [ngStyle]="{width: (getPartOfBudgetForPriceCategory(detail.priceCategoryId, detail) | async | number:'1.0-0') + '%'}">
+                        [ngClass]="{red: (getPartOfBudgetForPriceCategory(detail) | async)! > (partOfTime | async)!}"
+                        [ngStyle]="{width: (getPartOfBudgetForPriceCategory(detail) | async | number:'1.0-0') + '%'}">
                     </div>
                 </td>
             </tr>
