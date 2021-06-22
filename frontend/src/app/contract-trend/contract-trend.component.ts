@@ -33,6 +33,33 @@ export class ContractTrendComponent implements OnInit {
     return this.store.select(StoreSelectors.netTotal);
   }
 
+  get totalUnits() {
+    return this.store.select(StoreSelectors.totalDuration);
+  }
+
+  // Anteil des Budgets, der bereits verbraucht wurde
+  get partOfBudgetUsed() {
+    return this.netTotal.pipe(
+      withLatestFrom(this.contract, this.partOfTime),
+      map(([netTotal, contract, partOfTime]) => {
+        if (!contract) {
+          return 0;
+        }
+        return 100 * netTotal / contract.completeBudget.availableFinances;
+      })
+    )
+  }
+
+  // Überprüft, ob das Budget stärker ausgelastet ist, als dies vom Zeitablauf her sein sollte
+  get partOfBudgetExceededsPartOfTime() {
+    return this.partOfBudgetUsed.pipe(
+      withLatestFrom(this.partOfTime),
+      map(([partOfBudget, partOfTime]) => {
+        return partOfBudget > partOfTime;
+      })
+    )
+  }
+
   constructor(private store: Store, private boat: Boat3Service) { }
   
   ngOnInit(): void {
@@ -44,6 +71,36 @@ export class ContractTrendComponent implements OnInit {
 
   getPartOfBudgetForPriceCategory(budget: Budget) {
     return this.getNetTotalByPriceCategory(budget.priceCategoryId).pipe(map(sum => 100 * sum / budget.availableFinances));
+  }
+
+  getMonthsPercentageForContract(yearAndMonth: string) {
+    return this.store.select(StoreSelectors.getMonthsPercentageForContract(yearAndMonth));
+  }
+
+  getUnitsPercentageForMonth(yearAndMonth: string) {
+    return this.store.select(StoreSelectors.getUnitsPercentageForMonth(yearAndMonth));
+  }
+
+  getUnitsForMonth(yearAndMonth: string) {
+    return this.store.select(StoreSelectors.getUnitsForMonth(yearAndMonth));
+  }
+
+  getUnitsPercentageForPriceCategoryAndMonth(priceCategoryId: number, yearAndMonth: string) {
+    return this.store.select(StoreSelectors.getUnitsPercentageForPriceCategoryAndMonth(priceCategoryId, yearAndMonth));
+  }
+
+  getUnitsPercentageForMonthExceedsMonthsPercentageForContract(yearAndMonth: string) {
+    return this.getUnitsPercentageForMonth(yearAndMonth).pipe(
+      withLatestFrom(this.getMonthsPercentageForContract(yearAndMonth)),
+      map(([unitsPart, monthsPart]) => unitsPart > monthsPart),
+    );
+  }
+
+  getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(priceCategoryId: number, yearAndMonth: string) {
+    return this.getUnitsPercentageForPriceCategoryAndMonth(priceCategoryId, yearAndMonth).pipe(
+      withLatestFrom(this.getMonthsPercentageForContract(yearAndMonth)),
+      map(([unitsPart, monthsPart]) => unitsPart > monthsPart),
+    );
   }
 
 }

@@ -17,7 +17,7 @@
             <tr>
                 <th rowspan="2">Leistungszeitraum</th>
                 <th rowspan="2" class="no-wrap">geleistete PT</th>
-                <th class="no-wrap center" [attr.colspan]="(contract | async)?.budgetDetails.length + 1">% Auslastung</th>
+                <th class="no-wrap center" [attr.colspan]="(((contract | async)?.budgetDetails?.length) ?? 0) + 1">% Auslastung</th>
             </tr>
             <tr>
                 <th>Gesamt</th>
@@ -32,33 +32,33 @@
                     {{month.split('-')[1]}}/{{month.split('-')[0]}}
                 </td>
                 <td class="no-wrap right">
-                    {{getDaysForMonth(month) | number: '1.3-3':'de'}}
+                    {{getUnitsForMonth(month) | async | number: '1.3-3':'de'}}
                 </td>
                 <td class="no-wrap right rel">
-                    {{getDaysPercentageForMonth(month) | number: '1.1-1':'de'}} %
+                    {{getUnitsPercentageForMonth(month) | async | number: '1.1-1':'de'}} %
                     <div class="gauge"
-                        [ngClass]="{red: getDaysPercentageForMonth(month) > getmonthPercentageForContract(month)}"
-                        [ngStyle]="{width: (getDaysPercentageForMonth(month) | number:'1.0-0') + '%'}">
+                        [ngClass]="{red: getUnitsPercentageForMonthExceedsMonthsPercentageForContract(month) | async}"
+                        [ngStyle]="{width: (getUnitsPercentageForMonth(month) | async | number:'1.0-0') + '%'}">
                     </div>
                 </td>
                 <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
-                    {{getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | number: '1.1-1':'de'}} %
+                    {{getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number: '1.1-1':'de'}} % {{getUnitsPercentageForMonth(month) | async | number:'1.1-1'}}
                     <div class="gauge"
-                        [ngClass]="{red: getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) > getmonthPercentageForContract(month)}"
-                        [ngStyle]="{width: (getDaysPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | number:'1.0-0') + '%'}">
+                        [ngClass]="{red: getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(detail.priceCategoryId, month) | async}"
+                        [ngStyle]="{width: (getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number:'1.0-0') + '%'}">
                     </div>
                 </td>
             </tr>
             <tr>
                 <td><b>Gesamt</b></td>
                 <td class="no-wrap right">
-                    {{totalDays | number: '1.3-3':'de'}}
+                    {{totalUnits | async | number: '1.3-3':'de'}}
                 </td>
                 <td class="no-wrap right rel">
-                    {{totalSum / (contract | async)?.completeBudget.availableFinances * 100 | number: '1.1-1':'de'}} %
+                    {{partOfBudgetUsed | async | number: '1.1-1':'de'}} %
                     <div class="gauge"
-                        [ngClass]="{red: 100 * totalSum / (contract | async)?.completeBudget.availableFinances > (partOfTime | async)}"
-                        [ngStyle]="{width: (100 * totalSum / (contract | async)?.completeBudget?.availableFinances | number:'1.0-0') + '%'}">
+                        [ngClass]="{red: partOfBudgetExceededsPartOfTime | async }"
+                        [ngStyle]="{width: (partOfBudgetUsed | async | number:'1.0-0') + '%'}">
                     </div>
                 </td>
                 <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
