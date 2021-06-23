@@ -1,8 +1,8 @@
 <h2>Pr&uuml;fung</h2>
-<ng-container *ngIf="allowedMonths.length === 0">
+<ng-container *ngIf="(allowedMonthsLenghtIsZero | async) === true">
     Keine Leistungsnachweise gefunden
 </ng-container>
-<ng-container *ngIf="allowedMonths.length > 0">
+<ng-container *ngIf="(allowedMonthsLenghtIsZero | async) === false">
     <button type="button" class="card selectable" [routerLink]="['names']">Sachliche Richtigkeit</button>
     <button type="button" class="card selectable" [routerLink]="['numbers']">Rechnerische Richtigkeit</button>
     <button type="button" class="card selectable" [routerLink]="['utilization']">Vertragsauslastung</button>

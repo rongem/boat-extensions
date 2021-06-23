@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Boat3Service } from './boat3.service';
+import { Boat3Service } from './services/boat3.service';
 
 import * as StoreSelectors from './store/store.selectors';
 

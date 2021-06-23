@@ -6,15 +6,15 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { utils, writeFile } from 'xlsx';
 
-import { Contract } from './models/contract.model';
-import { Deliverable } from './models/deliverable.model';
-import { RestContract } from './models/rest-boat/contract.model';
-import { ContractResponse } from './models/rest-boat/contract-response.model';
-import { DeliverablesResponse } from './models/rest-boat/deliverables-response.model';
+import { Contract } from '../models/contract.model';
+import { Deliverable } from '../models/deliverable.model';
+import { RestContract } from '../models/rest-boat/contract.model';
+import { ContractResponse } from '../models/rest-boat/contract-response.model';
+import { DeliverablesResponse } from '../models/rest-boat/deliverables-response.model';
 import { EnvService } from './env.service';
 
-import * as StoreActions from './store/store.actions';
-import * as StoreSelectors from './store/store.selectors';
+import * as StoreActions from '../store/store.actions';
+import * as StoreSelectors from '../store/store.selectors';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {

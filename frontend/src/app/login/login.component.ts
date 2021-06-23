@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { Boat3Service } from '../lib/boat3.service';
+import { Boat3Service } from '../lib/services/boat3.service';
 
 import * as StoreActions from '../lib/store/store.actions';
 import * as StoreSelectors from '../lib/store/store.selectors';

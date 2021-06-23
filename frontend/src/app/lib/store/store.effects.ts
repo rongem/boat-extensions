@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
 import { switchMap, map, catchError, take, tap } from 'rxjs/operators';
-import { EnvService } from '../env.service';
+import { EnvService } from '../services/env.service';
 
 import * as StoreActions from './store.actions';
 import * as StoreSelectors from './store.selectors';

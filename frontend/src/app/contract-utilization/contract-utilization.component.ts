@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { map, withLatestFrom } from 'rxjs/operators';
 
 import * as StoreSelectors from '../lib/store/store.selectors';
@@ -9,7 +11,7 @@ import * as StoreSelectors from '../lib/store/store.selectors';
   templateUrl: './contract-utilization.component.html',
   styleUrls: ['./contract-utilization.component.scss']
 })
-export class ContractUtilizationComponent implements OnInit {
+export class ContractUtilizationComponent implements OnInit, OnDestroy {
   get contract() {
     return this.store.select(StoreSelectors.selectedContract);
   }
@@ -60,9 +62,16 @@ export class ContractUtilizationComponent implements OnInit {
     );
   }
 
-  constructor(private store: Store) { }
+  private titleSubscription?: Subscription;
+
+  constructor(private store: Store, private title: Title) { }
 
   ngOnInit(): void {
+    this.contract.subscribe(contract => this.title.setTitle('Vertragsauslastung ' + contract?.name + ' - BOAT3 Erweiterungen'));
+  }
+
+  ngOnDestroy(): void {
+    this.titleSubscription?.unsubscribe();
   }
 
   getBudgetUsedForPriceCategory(priceCategoryId: number) {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Deliverable } from './models/deliverable.model';
+import { Deliverable } from '../models/deliverable.model';
 import { SettingsService } from './settings.service';
 
 @Injectable({providedIn: 'root'})

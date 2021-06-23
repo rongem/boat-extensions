@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { map, take, tap, withLatestFrom } from 'rxjs/operators';
-import { Boat3Service } from '../lib/boat3.service';
-import { ExportService } from '../lib/export.service';
+import { Boat3Service } from '../lib/services/boat3.service';
+import { ExportService } from '../lib/services/export.service';
 
 import * as StoreSelectors from '../lib/store/store.selectors';
 
@@ -11,7 +13,7 @@ import * as StoreSelectors from '../lib/store/store.selectors';
   templateUrl: './contract-numbers.component.html',
   styleUrls: ['./contract-numbers.component.scss']
 })
-export class ContractNumbersComponent implements OnInit {
+export class ContractNumbersComponent implements OnInit, OnDestroy {
   get allowedMonths() {
     return this.store.select(StoreSelectors.allowedMonths);
   }
@@ -82,7 +84,9 @@ export class ContractNumbersComponent implements OnInit {
     return this.store.select(StoreSelectors.selectedContract);
   }
 
-  constructor(private store: Store, private boat: Boat3Service, private exportService: ExportService) { }
+  private titleSubscription?: Subscription;
+
+  constructor(private store: Store, private boat: Boat3Service, private exportService: ExportService, private title: Title) { }
 
   ngOnInit(): void {
     this.allowedMonths.subscribe(allowedMonths => {
@@ -90,6 +94,11 @@ export class ContractNumbersComponent implements OnInit {
         this.selectedMonth = allowedMonths[allowedMonths.length - 1];
       }
     });
+    this.titleSubscription = this.contract.subscribe(contract => this.title.setTitle('Prüfung der rechnerischen Richtigkeit - ' + contract?.name + ' - BOAT3 Erweiterungen'));
+  }
+
+  ngOnDestroy(): void {
+    this.titleSubscription?.unsubscribe();
   }
 
   exportNumbers() {

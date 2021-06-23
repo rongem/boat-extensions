@@ -3,10 +3,10 @@ import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@a
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Boat3Service } from './boat3.service';
-import { Deliverable } from './models/deliverable.model';
+import { Boat3Service } from '../services/boat3.service';
+import { Deliverable } from '../models/deliverable.model';
 
-import * as StoreActions from './store/store.actions';
+import * as StoreActions from '../store/store.actions';
 
 @Injectable({providedIn: 'root'})
 export class DeliverablesResolver implements Resolve<Deliverable[]> {

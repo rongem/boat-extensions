@@ -7,8 +7,8 @@ import { ContractTrendComponent } from './contract-trend/contract-trend.componen
 import { ContractUtilizationComponent } from './contract-utilization/contract-utilization.component';
 import { LoginActivate } from './lib/auth.guard';
 import { LoginComponent } from './login/login.component';
-import { ContractsResolver } from './lib/contracts.resolver';
-import { DeliverablesResolver } from './lib/deliverables.resolver';
+import { ContractsResolver } from './lib/resolvers/contracts.resolver';
+import { DeliverablesResolver } from './lib/resolvers/deliverables.resolver';
 
 const routes: Routes = [
   { path: '', redirectTo: 'contracts', pathMatch: 'full'},

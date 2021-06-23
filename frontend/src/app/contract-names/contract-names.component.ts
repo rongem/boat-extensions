@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { take, withLatestFrom, tap, map } from 'rxjs/operators';
-import { Boat3Service } from '../lib/boat3.service';
-import { ExportService } from '../lib/export.service';
+
+import { Boat3Service } from '../lib/services/boat3.service';
+import { ExportService } from '../lib/services/export.service';
 import { Deliverable } from '../lib/models/deliverable.model';
-import { SettingsService } from '../lib/settings.service';
+
 import * as StoreActions from '../lib/store/store.actions';
 import * as StoreSelectors from '../lib/store/store.selectors';
 
@@ -14,7 +17,7 @@ import * as StoreSelectors from '../lib/store/store.selectors';
   templateUrl: './contract-names.component.html',
   styleUrls: ['./contract-names.component.scss']
 })
-export class ContractNamesComponent implements OnInit {
+export class ContractNamesComponent implements OnInit, OnDestroy {
   get allowedMonths() {
     return this.store.select(StoreSelectors.allowedMonths);
   }
@@ -55,7 +58,10 @@ export class ContractNamesComponent implements OnInit {
   get keysPresent() {
     return this.store.select(StoreSelectors.keysPresent);
   }
-  constructor(private boat: Boat3Service, private store: Store, private settings: SettingsService, private exportService: ExportService) { }
+  
+  private titleSubscription?: Subscription;
+
+  constructor(private boat: Boat3Service, private store: Store, private title: Title, private exportService: ExportService) { }
 
   ngOnInit(): void {
     this.allowedMonths.subscribe(allowedMonths => {
@@ -63,6 +69,11 @@ export class ContractNamesComponent implements OnInit {
         this.selectedMonth = allowedMonths[allowedMonths.length - 1];
       }
     });
+    this.titleSubscription = this.contract.subscribe(contract => this.title.setTitle('Prüfung der sachlichen Richtigkeit - ' + contract?.name + ' - BOAT3 Erweiterungen'));
+  }
+
+  ngOnDestroy(): void {
+    this.titleSubscription?.unsubscribe();
   }
 
   toggleDeliverableRejection(deliverable: Deliverable) {

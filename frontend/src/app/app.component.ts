@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { interval, Subject } from 'rxjs';
 import { map, tap, withLatestFrom } from 'rxjs/operators';
-import { Boat3Service } from './lib/boat3.service';
+import { Boat3Service } from './lib/services/boat3.service';
 
 import * as StoreSelectors from './lib/store/store.selectors';
 

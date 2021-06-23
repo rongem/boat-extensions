@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
-import { Boat3Service } from '../lib/boat3.service';
+import { Subscription } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { Budget } from '../lib/models/budget.model';
 
 import * as StoreSelectors from '../lib/store/store.selectors';
@@ -11,7 +12,7 @@ import * as StoreSelectors from '../lib/store/store.selectors';
   templateUrl: './contract-trend.component.html',
   styleUrls: ['./contract-trend.component.scss']
 })
-export class ContractTrendComponent implements OnInit {
+export class ContractTrendComponent implements OnInit, OnDestroy {
 
   get contract() {
     return this.store.select(StoreSelectors.selectedContract);
@@ -40,8 +41,8 @@ export class ContractTrendComponent implements OnInit {
   // Anteil des Budgets, der bereits verbraucht wurde
   get partOfBudgetUsed() {
     return this.netTotal.pipe(
-      withLatestFrom(this.contract, this.partOfTime),
-      map(([netTotal, contract, partOfTime]) => {
+      withLatestFrom(this.contract),
+      map(([netTotal, contract]) => {
         if (!contract) {
           return 0;
         }
@@ -60,11 +61,18 @@ export class ContractTrendComponent implements OnInit {
     )
   }
 
-  constructor(private store: Store, private boat: Boat3Service) { }
-  
+  constructor(private store: Store, private title: Title) { }
+
+  private titleSubscription?: Subscription;
+
   ngOnInit(): void {
+    this.titleSubscription = this.contract.subscribe(contract => this.title.setTitle('Zeitlicher Verlauf ' + contract?.name + ' - BOAT3 Erweiterungen'));
   }
   
+  ngOnDestroy(): void {
+    this.titleSubscription?.unsubscribe();
+  }
+
   getNetTotalByPriceCategory(id: number) {
     return this.store.select(StoreSelectors.netTotalByPriceCategory(id));
   }
@@ -99,7 +107,6 @@ export class ContractTrendComponent implements OnInit {
   getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(priceCategoryId: number, yearAndMonth: string) {
     return this.getUnitsPercentageForPriceCategoryAndMonth(priceCategoryId, yearAndMonth).pipe(
       withLatestFrom(this.getMonthsPercentageForContract(yearAndMonth)),
-      tap(([unitsPart, monthsPart]) => console.log(unitsPart, monthsPart, unitsPart > monthsPart)),
       map(([unitsPart, monthsPart]) => unitsPart > monthsPart),
     );
   }

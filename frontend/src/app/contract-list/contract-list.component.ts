@@ -5,9 +5,9 @@ import { Store } from '@ngrx/store';
 import { forkJoin } from 'rxjs';
 import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
-import { BackendService } from '../lib/backend.service';
-import { Boat3Service } from '../lib/boat3.service';
-import { SettingsService } from '../lib/settings.service';
+import { BackendService } from '../lib/services/backend.service';
+import { Boat3Service } from '../lib/services/boat3.service';
+import { SettingsService } from '../lib/services/settings.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
