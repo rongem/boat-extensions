@@ -11,10 +11,10 @@ import { Deliverable } from './models/deliverable.model';
 import { RestContract } from './models/rest-boat/contract.model';
 import { ContractResponse } from './models/rest-boat/contract-response.model';
 import { DeliverablesResponse } from './models/rest-boat/deliverables-response.model';
+import { EnvService } from './env.service';
 
 import * as StoreActions from './store/store.actions';
 import * as StoreSelectors from './store/store.selectors';
-import { EnvService } from './env.service';
 
 @Injectable({providedIn: 'root'})
 export class Boat3Service {
@@ -39,7 +39,6 @@ export class Boat3Service {
         const token = localStorage.getItem('BOAT-Login');
         if (token) {
             this.store.dispatch(StoreActions.setLogin({token}));
-            this.getContracts();
        }
     }
 
@@ -81,8 +80,6 @@ export class Boat3Service {
     }
 
     getContractDetails(contractId: number) {
-        this.store.dispatch(StoreActions.setWorkingState({ working: true }));
-        this.store.dispatch(StoreActions.setError({}));
         return this.http.get<RestContract>(
             this.env.apiBaseUrl + '/meineinzelauftrag/' + contractId,
             {
@@ -95,8 +92,7 @@ export class Boat3Service {
             take(1),
             map(result => new Contract(result)),
             catchError(this.handleError),
-            tap(() => this.store.dispatch(StoreActions.setWorkingState({ working: false }))),
-        )
+        );
     }
 
     getContractDeliverables(contractId: number) {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 import { Boat3Service } from '../lib/boat3.service';
 import { Budget } from '../lib/models/budget.model';
 
@@ -99,6 +99,7 @@ export class ContractTrendComponent implements OnInit {
   getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(priceCategoryId: number, yearAndMonth: string) {
     return this.getUnitsPercentageForPriceCategoryAndMonth(priceCategoryId, yearAndMonth).pipe(
       withLatestFrom(this.getMonthsPercentageForContract(yearAndMonth)),
+      tap(([unitsPart, monthsPart]) => console.log(unitsPart, monthsPart, unitsPart > monthsPart)),
       map(([unitsPart, monthsPart]) => unitsPart > monthsPart),
     );
   }

@@ -42,7 +42,7 @@
                     </div>
                 </td>
                 <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
-                    {{getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number: '1.1-1':'de'}} % {{getUnitsPercentageForMonth(month) | async | number:'1.1-1'}}
+                    {{getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number: '1.1-1':'de'}} %
                     <div class="gauge"
                         [ngClass]="{red: getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(detail.priceCategoryId, month) | async}"
                         [ngStyle]="{width: (getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number:'1.0-0') + '%'}">

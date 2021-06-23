@@ -1,10 +1,8 @@
-import { state } from '@angular/animations';
 import { createReducer, Action, on, ActionReducerMap } from '@ngrx/store';
 import { Contract } from '../models/contract.model';
 import { Deliverable } from '../models/deliverable.model';
 
 import * as StoreActions from './store.actions';
-import { deliverables } from './store.selectors';
 
 export const STORE = 'STORE';
 
