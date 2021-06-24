@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, from, of } from 'rxjs';
 import { catchError, concatMap, map, take, tap } from 'rxjs/operators'
-import { BehaviorSubject, forkJoin, from, of } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { Authorization } from '../models/rest-backend/authorization.model';
 import { BackendContract } from '../models/rest-backend/contract.model';
 import { Contract } from '../models/contract.model';
@@ -13,6 +14,8 @@ import { Boat3Service } from './boat3.service';
 import { SettingsService } from './settings.service';
 import { EnvService } from './env.service';
 
+import * as StoreActions from '../store/store.actions';
+
 @Injectable({providedIn: 'root'})
 export class BackendService {
     syncIsAuthorized = new BehaviorSubject(false);
@@ -20,6 +23,7 @@ export class BackendService {
     constructor(private http: HttpClient,
                 private boat: Boat3Service,
                 private env: EnvService,
+                private store: Store,
                 private settings: SettingsService) {}
 
     checkAuthorization = () => {
@@ -51,6 +55,7 @@ export class BackendService {
             })),
         }));
         const contractResult = new ContractResult();
+        let ctr = 0;
         return this.http.post<ContractResult>(this.env.backendBaseUrl + 'contracts', restContracts, { withCredentials: true }).pipe(
             take(1),
             tap(result => {
@@ -61,7 +66,9 @@ export class BackendService {
             concatMap(() => from(contracts).pipe(
                 concatMap(contract => this.boat.getContractDeliverables(contract.id).pipe(
                     concatMap(deliverables => {
+                        ctr++;
                         if (deliverables && deliverables.length > 0) {
+                            this.store.dispatch(StoreActions.setWorkingState({working: true}));
                             return this.synchronizeDeliverables(deliverables, contract.id);
                         }
                         return of(new Result());
@@ -69,8 +76,23 @@ export class BackendService {
                     tap(result => this.addResults(contractResult.deliverables, result)),
                 ))),
             ),
-            concatMap(() => this.http.post<boolean>(this.env.backendBaseUrl + 'import', { url: window.location.href })),
-            map(() => contractResult)
+            catchError(error => {
+                this.store.dispatch(StoreActions.setWorkingState({working: false}));
+                throw error;
+            }),
+            map(() => contractResult),
+            tap(() => this.store.dispatch(StoreActions.setWorkingState({working: false}))),
+        );
+    }
+
+    postSynchronization = () => {
+        this.store.dispatch(StoreActions.setWorkingState({working: true}));
+        return this.http.post<boolean>(this.env.backendBaseUrl + 'import', { url: window.location.href }, { withCredentials: true }).pipe(
+            tap(() => this.store.dispatch(StoreActions.setWorkingState({working: false}))),
+            catchError(error => {
+                this.store.dispatch(StoreActions.setWorkingState({working: false}));
+                throw error;
+            }),
         );
     }
 

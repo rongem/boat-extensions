@@ -133,6 +133,7 @@ export class Boat3Service {
     }
 
     private handleError = (error: HttpErrorResponse) => {
+        console.log(error);
         this.store.dispatch(StoreActions.setWorkingState({ working: false }));
         this.store.dispatch(StoreActions.setError({ error: error.message ?? error }));
         if (error.status === 401 || error.status === 403) {

@@ -18,7 +18,7 @@ CREATE PROCEDURE [DV5_Controlling].[BoatExt_Import]
         stunden float NOT NULL
     );
     INSERT INTO @IstDaten
-        SELECT 'EA' + id, [Key], [Date], Duration
+        SELECT 'EA' + CAST(id as varchar(8)), [Key], [Date], Duration
         FROM BoatExt_Deliverables
  RETURN 0
 GO

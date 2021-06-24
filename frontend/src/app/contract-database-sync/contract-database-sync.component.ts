@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
 import { BackendService } from '../lib/services/backend.service';
 
@@ -36,20 +36,28 @@ export class ContractDatabaseSyncComponent implements OnInit {
     this.exportError = '';
     this.exportResult = new ContractResult();
     this.exportCounter = 0;
+    let contractsCount = 0;
     const subscription = this.contracts.pipe(
-      switchMap(contracts => this.backend.synchronizeContracts(contracts))
+      switchMap(contracts => {
+        contractsCount = contracts.length;
+        return this.backend.synchronizeContracts(contracts)
+      }),
     ).subscribe(result => {
       this.exportCounter++;
+      console.log(this.exportCounter, contractsCount);
       if (result && !(result instanceof HttpErrorResponse))
       {
         this.exportResult = result;
+        if (contractsCount === this.exportCounter) {
+          this.backend.postSynchronization().pipe(take(1)).subscribe(() => {
+            this.exportFinished = true;
+            subscription.unsubscribe();
+          });
+        }
       }
     }, error => {
       this.exportError = error.message ?? JSON.stringify(error);
       this.exportFinished = true;
-    }, () => {
-      this.exportFinished = true;
-      subscription.unsubscribe();
     });
   }
 
