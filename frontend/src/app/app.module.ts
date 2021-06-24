@@ -16,7 +16,7 @@ import { ContractNumbersComponent } from './contract-numbers/contract-numbers.co
 import { ContractTrendComponent } from './contract-trend/contract-trend.component';
 import { ContractUtilizationComponent } from './contract-utilization/contract-utilization.component';
 import { LoginComponent } from './login/login.component';
-import { LoginActivate } from './lib/auth.guard';
+import { LoginActivate } from './lib/guards/auth.guard';
 import { JwtTokenInterceptor } from './lib/jwt-token.interceptor';
 import { StoreEffects } from './lib/store/store.effects';
 import { environment } from '../environments/environment';
@@ -24,6 +24,10 @@ import { environment } from '../environments/environment';
 import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de';
 import { EnvServiceProvider } from './lib/services/env.service.provider';
+import { SettingsComponent } from './settings/settings.component';
+import { ContractDatabaseSyncComponent } from './contract-database-sync/contract-database-sync.component';
+import { SyncActivate } from './lib/guards/sync.guard';
+import { ContractDatabaseComponent } from './contract-database/contract-database.component';
 
 registerLocaleData(localeDe);
 
@@ -37,6 +41,9 @@ registerLocaleData(localeDe);
     ContractNumbersComponent,
     ContractTrendComponent,
     ContractUtilizationComponent,
+    SettingsComponent,
+    ContractDatabaseSyncComponent,
+    ContractDatabaseComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,6 +57,7 @@ registerLocaleData(localeDe);
   providers: [
     Title,
     LoginActivate,
+    SyncActivate,
     EnvServiceProvider,
     {
       provide: HTTP_INTERCEPTORS,

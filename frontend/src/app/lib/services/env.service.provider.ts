@@ -5,6 +5,7 @@ interface EnvWindow extends Window {
         apiBaseUrl?: string;
         authUrl?: string;
         backendBaseUrl?: string;
+        headerText?: string;
     }
 }
 
@@ -22,6 +23,7 @@ export const EnvServiceFactory = () => {
                 env.apiBaseUrl = browserWindow.__env.apiBaseUrl ?? env.apiBaseUrl;
                 env.authUrl = browserWindow.__env.authUrl ?? env.authUrl;
                 env.backendBaseUrl = browserWindow.__env.backendBaseUrl ?? env.backendBaseUrl;
+                env.headerText = browserWindow.__env.headerText ?? env.headerText;
             }
         }
     }

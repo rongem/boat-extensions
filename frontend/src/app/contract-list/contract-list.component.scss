@@ -26,19 +26,6 @@
     }
 }
 
-.settings {
-    div {
-        padding: 0.25rem;
-    }
-    border-radius: 4px;
-    border: 1px solid #eee;
-    background-color: #fafafa;
-    min-width: 200px;
-    margin: 0 0.5rem 0.5rem 0.5rem;
-    padding: 16px;
-    width: calc(100% - 3rem);
-}
-
 .overlay {
     min-height: 30vh;
     text-align: left;
@@ -50,23 +37,3 @@
     }
 }
 
-th {
-    white-space: nowrap;
-}
-
-td {
-    padding: 0.5rem;
-}
-td:not(:first-child) {
-    text-align: right;
-}
-
-.upper-right-corner {
-    justify-content: center;
-    min-width: 5rem;
-}
-
-.gauge-bar {
-    margin: 2rem;
-    border: 1px solid darkgreen;
-}

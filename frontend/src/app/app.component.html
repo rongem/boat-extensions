@@ -1,17 +1,14 @@
 <header class="toolbar" role="banner">
-  <span>BOAT</span>
+  <span>{{headerText}}</span>
   <span>BOAT3 Erweiterungen v2.0</span>
   <div class="spacer"></div>
   <ng-container *ngIf="(authenticated | async) === true">
-    <div>
-      <div>
-        {{authenticatedUser | async}}
-      </div>
-      <div>
-        ({{(remainingTime)}})
-      </div>
+    <div id="username">
+      {{authenticatedUser | async}}
     </div>
-    <button class="card selectable" style="min-width: unset;" (click)="logout()">Abmelden</button>
+    <button class="card selectable" (click)="logout()">
+      Abmelden ({{(remainingTime)}})
+    </button>
   </ng-container>
 </header>
 

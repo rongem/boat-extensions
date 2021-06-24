@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin } from 'rxjs';
-import { map, switchMap, take, withLatestFrom } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 
 import { BackendService } from '../lib/services/backend.service';
 import { Boat3Service } from '../lib/services/boat3.service';
-import { SettingsService } from '../lib/services/settings.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
@@ -31,48 +30,10 @@ export class ContractListComponent implements OnInit {
   };
   // Steht ein Backend zur Verfügung, und ist der Benutzer berechtigt, Daten zu synchronisieren?
   syncIsAuthorized = false;
-  showExport = false;
-  // Export-Variablen
-  exporting = false;
-  exportFinished = false;
-  exportCounter = 0;
-  exportError = '';
-  exportResult = new ContractResult();
-  get exportPart() {
-    return this.contracts.pipe(
-      map(contracts => 100 * this.exportCounter / contracts.length),
-    );
-  }
-  // Formularfelder für Einstellungen
-  get withContract() {
-    return this.settings.withContract;
-  }
-  set withContract(value) {
-    this.settings.withContract = value;
-  }
-  get withPersons() {
-    return this.settings.withPersons;
-  }
-  set withPersons(value) {
-    this.settings.withPersons = value;
-  }
-  get withTimes() {
-    return this.settings.withTimes;
-  }
-  set withTimes(value) {
-    this.settings.withTimes = value;
-  }
-  get withText() {
-    return this.settings.withText;
-  }
-  set withText(value) {
-    this.settings.withText = value;
-  }
-  // Ansichtoptionen
-  showSettings = false;
-  
-  constructor(private boat: Boat3Service, private backend: BackendService, private store: Store,
-    private settings: SettingsService, private route: ActivatedRoute) { }
+  constructor(private boat: Boat3Service,
+              private backend: BackendService,
+              private store: Store,
+              private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.backend.checkAuthorization();
@@ -83,10 +44,6 @@ export class ContractListComponent implements OnInit {
       const contractId = +(params.id ?? -1);
       this.store.dispatch(StoreActions.selectContract({contractId}));
     });
-  }
-
-  saveSettings() {
-    this.settings.saveSettings();
   }
 
   exportAllContracts() {
@@ -107,30 +64,6 @@ export class ContractListComponent implements OnInit {
         date.getHours() < 10 ? 0 : '', date.getHours(),
         date.getMinutes() < 10 ? 0 : '', date.getMinutes()].join('');
       this.boat.exportSheet(sheetContent, 'Verträge', 'Übersicht-' + dateString);
-    });
-  }
-
-  exportToDataBase() {
-    this.exporting = true;
-    this.showExport = false;
-    this.exportFinished = false;
-    this.exportError = '';
-    this.exportResult = new ContractResult();
-    this.exportCounter = 0;
-    const subscription = this.contracts.pipe(
-      switchMap(contracts => this.backend.synchronizeContracts(contracts))
-    ).subscribe(result => {
-      this.exportCounter++;
-      if (result && !(result instanceof HttpErrorResponse))
-      {
-        this.exportResult = result;
-      }
-    }, error => {
-      this.exportError = error.message ?? JSON.stringify(error);
-      this.exportFinished = true;
-    }, () => {
-      this.exportFinished = true;
-      subscription.unsubscribe();
     });
   }
 

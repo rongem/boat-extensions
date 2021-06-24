@@ -1,0 +1,17 @@
+<header>
+    <h1>Export in die Datenbank</h1>
+    <p>
+        Die Controlling-Datenbank wird für weitergehende Auswertungen benutzt. Die Daten der eigenen Vertr&auml;ge k&ouml;nnen dorthin synchronisiert werden.
+    </p>
+    <p>
+        Die Synchronisation kann mehrere Minuten dauern. Bitte schlie&szlig;en Sie nach dem Start und vor dem Ende nicht das Browser-Fenster.
+    </p>
+</header>
+<main>
+    <button type="button" class="card selectable" [routerLink]="['start']">
+        Synchronisation starten
+    </button>
+    <button type="button" class="selectable card" [routerLink]="['..']">
+        Abbrechen
+    </button>
+</main>

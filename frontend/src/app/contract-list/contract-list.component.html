@@ -1,119 +1,13 @@
-<ng-container *ngIf="showSettings">
-    <div class="backdrop" (click)="showSettings = false"></div>
-    <div class="overlay">
-        <div class="upper-right-corner selectable card" style="width: unset;" (click)="showSettings = false">Schlie&szlig;en</div>
-        <h1>Einstellungen</h1>
-        <div class="settings">
-            <h2>Export</h2>
-            <div>
-                <input type="checkbox" [(ngModel)]="withContract">Mit Vertragsnamen
-            </div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withPersons">Mit Personennamen
-            </div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withTimes">Mit Uhrzeiten
-            </div>
-            <div>
-                <input type="checkbox" [(ngModel)]="withText">Mit Text
-            </div>
-            <div>
-                <button type="button" class="selectable" (click)="saveSettings()">
-                    Export-Einstellungen dauerhaft speichern
-                </button>
-            </div>
-        </div>
-    </div>
-</ng-container>
-<ng-container *ngIf="showExport">
-    <div class="backdrop" (click)="showExport = false"></div>
-    <div class="overlay">
-        <h1>Export in die Datenbank</h1>
-        <p style="margin: 2rem; margin-bottom: 1rem;">
-            Die Controlling-Datenbank wird für weitergehende Auswertungen benutzt. Die Daten der eigenen Vertr&auml;ge k&ouml;nnen dorthin synchronisiert werden.
-        </p>
-        <p style="margin: 2rem; margin-top: 0;">
-            Die Synchronisation kann mehrere Minuten dauern. Bitte schlie&szlig;en Sie nach dem Start und vor dem Ende nicht das Browser-Fenster.
-        </p>
-        <button type="button" class="card selectable" *ngIf="syncIsAuthorized" (click)="exportToDataBase()">
-            Synchronisation starten
-        </button>
-        <button type="button" class="selectable card" (click)="showExport = false">
-            Abbrechen
-        </button>
-    </div>
-</ng-container>
-<ng-container *ngIf="exporting">
-    <div class="backdrop" style="z-index: 200;"></div>
-    <div class="overlay" style="z-index: 210;">
-        <h1 *ngIf="!exportFinished">Synchronisation durchf&uuml;hren...</h1>
-        <h1 *ngIf="exportFinished">Synchronisation durchgef&uuml;hrt</h1>
-        <div class="rel gauge-bar">
-            Fortschritt...
-            <div class="gauge"
-                [ngClass]="{red: exportError !== ''}"
-                [ngStyle]="{width: (exportPart | async | number:'1.0-0') + '%'}">
-            </div>
-        </div>
-        <table>
-            <tr>
-                <th>Element</th>
-                <th>Neu erstellt</th>
-                <th>Aktualisiert</th>
-                <th>Gel&ouml;scht</th>
-                <th>Unver&auml;ndert</th>
-            </tr>
-            <tr>
-                <td>Vertr&auml;ge</td>
-                <td>{{exportResult.created | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.updated | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.deleted | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.unchanged}}</td>
-            </tr>
-            <tr>
-                <td>Preiskategorien</td>
-                <td>{{exportResult.priceCategories.created | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.priceCategories.updated | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.priceCategories.deleted | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.priceCategories.unchanged | number:'1.0-0':'de'}}</td>
-            </tr>
-            <tr>
-                <td>Vertragselemente</td>
-                <td>{{exportResult.budgets.created | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.budgets.updated | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.budgets.deleted | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.budgets.unchanged | number:'1.0-0':'de'}}</td>
-            </tr>
-            <tr>
-                <td>Leitungselemente</td>
-                <td>{{exportResult.deliverables.created | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.deliverables.updated | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.deliverables.deleted | number:'1.0-0':'de'}}</td>
-                <td>{{exportResult.deliverables.unchanged | number:'1.0-0':'de'}}</td>
-            </tr>
-        </table>
-        <p style="margin: 1rem" *ngIf="exportFinished">Die Synchronisation wurde beendet.</p>
-        <ng-container *ngIf="exportError !== ''">
-            <p style="margin: 1rem">Es sind Fehler aufgetreten:</p>
-            <p style="margin: 1rem; background-color: lightcoral;">
-                {{exportError}}
-            </p>
-        </ng-container>
-        <button type="button" class="card selectable" style="margin: 1rem" *ngIf="exportFinished" (click)="exporting = false">
-            Schlie&szlig;en
-        </button>
-    </div>
-</ng-container>
 <h1>
     Allgemeine Aktionen
 </h1>
-<button type="button" class="card selectable" (click)="showSettings = true">
+<button type="button" class="card selectable" [routerLink]="['/', 'settings']">
     Export-Einstellungen &auml;ndern
 </button>
 <button type="button" class="card selectable" (click)="exportAllContracts()">
     Alle Vertr&auml;ge nach Excel exportieren
 </button>
-<button type="button" class="card selectable" *ngIf="syncIsAuthorized" (click)="showExport = true">
+<button type="button" class="card selectable" *ngIf="syncIsAuthorized" [routerLink]="['/', 'contracts', 'sync']">
     Vertr&auml;ge in die Datenbank synchronisieren
 </button>
 <hr>

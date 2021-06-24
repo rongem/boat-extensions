@@ -1,0 +1,20 @@
+th {
+    white-space: nowrap;
+}
+
+td {
+    padding: 0.5rem;
+}
+td:not(:first-child) {
+    text-align: right;
+}
+
+.upper-right-corner {
+    justify-content: center;
+    min-width: 5rem;
+}
+
+.gauge-bar {
+    margin: 2rem;
+    border: 1px solid darkgreen;
+}

@@ -1,8 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { interval, Subject } from 'rxjs';
-import { map, tap, withLatestFrom } from 'rxjs/operators';
+import { interval } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
 import { Boat3Service } from './lib/services/boat3.service';
+import { EnvService } from './lib/services/env.service';
 
 import * as StoreSelectors from './lib/store/store.selectors';
 
@@ -31,7 +32,11 @@ export class AppComponent implements OnInit {
     return this.store.select(StoreSelectors.userName);
   }
 
-  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef, private store: Store) {}
+  get headerText() {
+    return this.env.headerText;
+  }
+
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef, private store: Store, private env: EnvService) {}
 
   ngOnInit(): void {
     interval(1000).pipe(

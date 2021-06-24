@@ -1,0 +1,56 @@
+<h1 *ngIf="!exportFinished">Synchronisation durchf&uuml;hren...</h1>
+<h1 *ngIf="exportFinished">Synchronisation durchgef&uuml;hrt</h1>
+<div class="rel gauge-bar">
+    Fortschritt...
+    <div class="gauge"
+        [ngClass]="{red: exportError !== ''}"
+        [ngStyle]="{width: (exportPart | async | number:'1.0-0') + '%'}">
+    </div>
+</div>
+<table>
+    <tr>
+        <th>Element</th>
+        <th>Neu erstellt</th>
+        <th>Aktualisiert</th>
+        <th>Gel&ouml;scht</th>
+        <th>Unver&auml;ndert</th>
+    </tr>
+    <tr>
+        <td>Vertr&auml;ge</td>
+        <td>{{exportResult.created | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.updated | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.deleted | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.unchanged}}</td>
+    </tr>
+    <tr>
+        <td>Preiskategorien</td>
+        <td>{{exportResult.priceCategories.created | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.priceCategories.updated | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.priceCategories.deleted | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.priceCategories.unchanged | number:'1.0-0':'de'}}</td>
+    </tr>
+    <tr>
+        <td>Vertragselemente</td>
+        <td>{{exportResult.budgets.created | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.budgets.updated | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.budgets.deleted | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.budgets.unchanged | number:'1.0-0':'de'}}</td>
+    </tr>
+    <tr>
+        <td>Leitungselemente</td>
+        <td>{{exportResult.deliverables.created | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.deliverables.updated | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.deliverables.deleted | number:'1.0-0':'de'}}</td>
+        <td>{{exportResult.deliverables.unchanged | number:'1.0-0':'de'}}</td>
+    </tr>
+</table>
+<p style="margin: 1rem" *ngIf="exportFinished">Die Synchronisation wurde beendet.</p>
+<ng-container *ngIf="exportError !== ''">
+    <p style="margin: 1rem">Es sind Fehler aufgetreten:</p>
+    <p style="margin: 1rem; background-color: lightcoral;">
+        {{exportError}}
+    </p>
+</ng-container>
+<button type="button" class="card selectable" style="margin: 1rem" *ngIf="exportFinished" [routerLink]="['/', '/contracts']">
+    Zur&uuml;ck zur Vertrags&uuml;bersicht
+</button>

@@ -1,0 +1,35 @@
+<h1>Einstellungen</h1>
+<main class="settings">
+    <h2>Export</h2>
+    <p>
+        Mit den folgenden Einstellungen steuern Sie, welche Felder zus&auml;tzlich zu den mindestens notwendigen Feldern
+        in den Export-Tabellen erscheinen. Bitte beachten Sie, dass durch die Auswahl des Feldes Personennamen die Export-Tabellen
+        personenbezogene Daten enthalten und dementsprechend behandelt werden müssen.
+    </p>
+    <p style="margin-bottom: 0.5rem;">
+        Die Einstellungen werden nur f&uuml;r die aktuelle Sitzung verwendet. Wenn Sie die Einstellungen in jeder Sitzung
+        verwenden m&ouml;chten, k&ouml;nnen Sie sie auch dauerhaft speichern. Bitte beachten Sie dabei, dass die Speicherung
+        in Ihrem Browser erfolgt, und dass Ihre IT-Abteilung diese Speicherung unterbinden kann. Falls die Speicherung also nicht
+        wie erwartet funktioniert, wenden Sie sich bitte dorthin.
+    </p>
+    <p>Bitte w&auml;hlen Sie, was im Export erscheinen soll:</p>
+    <div>
+        <input type="checkbox" [(ngModel)]="withContract">Vertragsnamen zus&auml;tzlich exportieren
+    </div>
+    <div>
+        <input type="checkbox" [(ngModel)]="withPersons">Personennamen zus&auml;tzlich exportieren
+    </div>
+    <div>
+        <input type="checkbox" [(ngModel)]="withTimes">Uhrzeiten zus&auml;tzlich exportieren
+    </div>
+    <div>
+        <input type="checkbox" [(ngModel)]="withText">Text (Beschreibung) zus&auml;tzlich exportieren
+    </div>
+    <div>
+        <button type="button" class="selectable card" (click)="saveSettings()">
+            Export-Einstellungen dauerhaft speichern
+        </button>
+    </div>
+</main>
+
+<button class="selectable card" [routerLink]="['/', 'contracts']">Zur&uuml;ck zur Vertrags&uuml;bersicht</button>

@@ -3,6 +3,7 @@ export class EnvService {
     apiBaseUrl = '/api';
     authUrl = '/auth/login';
     backendBaseUrl = 'http://localhost:8000/rest/';
+    headerText = 'BOAT';
 
     constructor() {}
 }
