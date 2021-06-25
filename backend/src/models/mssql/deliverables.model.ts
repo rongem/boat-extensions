@@ -87,7 +87,7 @@ const createDeliverable = async (deliverable: Deliverable) => {
 const updateDeliverable = async (deliverable: Deliverable) => {
     try {
         const req = await deliverableRequest(deliverable);
-        const sql=`UPDATE [TEST].[BoatExt_Deliverables]
+        const sql=`UPDATE [BoatExt_Deliverables]
             SET [Version]=@version, [ContractId]=@contractId, [PriceCategoryId]=@priceCategoryId, [Date]=@date,
             [StartTime]=@startTime, [EndTime]=@endTime, [Duration]=@duration, [Key]=@key, [Text]=@text, [Person]= @person
             WHERE [Id]=@id`;
@@ -117,7 +117,8 @@ const deleteDeliverables = async (ids: number[]) => {
 };
 
 const deliverablesEqual = (d1: Deliverable, d2: Deliverable) => d1.version === d2.version && d1.duration === d2.duration &&
-    d1.key === d2.key && d1.priceCategoryId === d2.priceCategoryId;
+    d1.key === d2.key && d1.priceCategoryId === d2.priceCategoryId && d1.startTime === d1.startTime && d1.endTime === d2.endTime &&
+    d1.person === d2.person && d1.text === d2.text;
 
 const deliverableRequest = async (deliverable: Deliverable) => {
     const req = await pool.then(connection => new mssql.Request(connection));

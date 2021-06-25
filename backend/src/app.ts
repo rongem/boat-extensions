@@ -21,7 +21,9 @@ app.use(cors({
         if (!requestOrigin) {
             callback(null, 'http://localhost')
         } else {
-            if (env.corsOrigin && requestOrigin?.startsWith(env.corsOrigin))
+            if (env.corsOrigin === '*') {
+                callback(null, requestOrigin);
+            } else if (env.corsOrigin && requestOrigin?.startsWith(env.corsOrigin))
                 callback(null, requestOrigin);
             else
                 callback(new Error(requestOrigin + ' ist kein erlaubter Host'));

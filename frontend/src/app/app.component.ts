@@ -1,6 +1,11 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { Boat3Service } from './lib/boat3.service';
+import { Store } from '@ngrx/store';
+import { interval } from 'rxjs';
+import { map, withLatestFrom } from 'rxjs/operators';
+import { Boat3Service } from './lib/services/boat3.service';
+import { EnvService } from './lib/services/env.service';
+
+import * as StoreSelectors from './lib/store/store.selectors';
 
 @Component({
   selector: 'app-root',
@@ -10,43 +15,44 @@ import { Boat3Service } from './lib/boat3.service';
 export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
   // Formularfelder
-  username = '';
-  password = '';
+  remainingTime?: string;
   busy = false;
-  remainingTime: Subject<string> = new Subject();
   get error() {
-    return this.boat.error;
+    return this.store.select(StoreSelectors.error);
+  }
+  get errorPresent() {
+    return this.error.pipe(map(error => !!error));
   }
 
   get authenticated() {
-    return this.boat.authenticated;
+    return this.store.select(StoreSelectors.isAuthenticated);
   }
 
   get authenticatedUser() {
-    return this.boat.username;
+    return this.store.select(StoreSelectors.userName);
   }
 
-  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef) {}
+  get headerText() {
+    return this.env.headerText;
+  }
+
+  constructor(private boat: Boat3Service, private cd: ChangeDetectorRef, private store: Store, private env: EnvService) {}
 
   ngOnInit(): void {
-    this.busy = this.boat.working.value;
-    this.boat.working.subscribe(value => {
-      this.busy = value;
-      this.cd.detectChanges();
-    });
-    window.setInterval(() => {
-      if (this.boat.expiryDate) {
-        this.remainingTime.next(new Date(this.boat.expiryDate.valueOf() - Date.now()).toISOString().substr(11, 8));
+    interval(1000).pipe(
+      withLatestFrom(this.store.select(StoreSelectors.expiryDate)),
+      map(([, value]) => value ?
+        new Date(value.valueOf() - Date.now()).toISOString().substr(11, 8) : undefined
+      ),
+    ).subscribe(value => this.remainingTime = value);
+    this.store.select(StoreSelectors.working).subscribe(working => {
+      if (working !== this.busy) {
+        this.busy = working;
+        this.cd.detectChanges();
       }
-    }, 1000);
+    });
   }
   
-  login() {
-    this.boat.login(this.username, this.password);
-    this.username = '';
-    this.password = '';
-  }
-
   logout() {
     this.boat.logout();
   }

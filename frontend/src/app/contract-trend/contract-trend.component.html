@@ -1,0 +1,78 @@
+<header>
+    <h1>
+        {{(contract | async)?.name}}
+    </h1>
+    <p class="center">
+        {{(contract | async)?.description}}
+    </p>
+    <p>
+        Diese Ansicht zeigt den detaillierten zeitlichen Verlauf der Leistungen und erlaubt, Fehlentwicklungen fr&uuml;zeitig zu erkennen.
+        Die angezeigten Prozentzahlen werden in Relation zur Vertragsdauer  bewertet. Rote Balken bedeuten,
+        dass in diesem Monat das durchschnittlich zur Verf&uuml;gung stehende Budget &uuml;berschritten wurde.
+    </p>
+</header>
+<main>
+    <table class="center">
+        <thead>
+            <tr>
+                <th rowspan="2">Leistungszeitraum</th>
+                <th rowspan="2" class="no-wrap">geleistete PT</th>
+                <th class="no-wrap center" [attr.colspan]="(((contract | async)?.budgetDetails?.length) ?? 0) + 1">% Auslastung</th>
+            </tr>
+            <tr>
+                <th>Gesamt</th>
+                <th class="no-wrap" *ngFor="let detail of (contract | async)?.budgetDetails">
+                    {{detail.priceCategory}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let month of (allowedMonths | async)">
+                <td>
+                    {{month.split('-')[1]}}/{{month.split('-')[0]}}
+                </td>
+                <td class="no-wrap right">
+                    {{getUnitsForMonth(month) | async | number: '1.3-3':'de'}}
+                </td>
+                <td class="no-wrap right rel">
+                    {{getUnitsPercentageForMonth(month) | async | number: '1.1-1':'de'}} %
+                    <div class="gauge"
+                        [ngClass]="{red: getUnitsPercentageForMonthExceedsMonthsPercentageForContract(month) | async}"
+                        [ngStyle]="{width: (getUnitsPercentageForMonth(month) | async | number:'1.0-0') + '%'}">
+                    </div>
+                </td>
+                <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
+                    {{getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number: '1.1-1':'de'}} %
+                    <div class="gauge"
+                        [ngClass]="{red: getUnitsPercentageForPriceCategoryMonthExceedsMonthsPercentageForContract(detail.priceCategoryId, month) | async}"
+                        [ngStyle]="{width: (getUnitsPercentageForPriceCategoryAndMonth(detail.priceCategoryId, month) | async | number:'1.0-0') + '%'}">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Gesamt</b></td>
+                <td class="no-wrap right">
+                    {{totalUnits | async | number: '1.3-3':'de'}}
+                </td>
+                <td class="no-wrap right rel">
+                    {{partOfBudgetUsed | async | number: '1.1-1':'de'}} %
+                    <div class="gauge"
+                        [ngClass]="{red: partOfBudgetExceededsPartOfTime | async }"
+                        [ngStyle]="{width: (partOfBudgetUsed | async | number:'1.0-0') + '%'}">
+                    </div>
+                </td>
+                <td class="no-wrap right rel" *ngFor="let detail of (contract | async)?.budgetDetails">
+                    {{detail.availableFinances === 0 ? '-' : getPartOfBudgetForPriceCategory(detail) | async | number: '1.1-1':'de'}} %
+                    <div class="gauge"
+                        [ngClass]="{red: (getPartOfBudgetForPriceCategory(detail) | async)! > (partOfTime | async)!}"
+                        [ngStyle]="{width: (getPartOfBudgetForPriceCategory(detail) | async | number:'1.0-0') + '%'}">
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+<footer>
+    <button type="button" class="selectable card" [routerLink]="['..']">Zur&uuml;ck zur &Uuml;bersicht</button>
+</footer>
+

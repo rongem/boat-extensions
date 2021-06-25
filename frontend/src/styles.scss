@@ -12,7 +12,7 @@ h6 {
 }
 
 p {
-    margin: 0;
+    margin-bottom: 0.5rem;
 }
 
 hr {
@@ -46,7 +46,6 @@ th {
     top: 0;
     left: 0;
     right: 0;
-    height: 3.75rem;
     display: flex;
     align-items: center;
     background-color: $main-blue;
@@ -64,11 +63,17 @@ th {
 
 .content {
     display: flex;
-    margin: 3.875rem auto 2rem;
     padding: 0 1rem;
     max-width: 60rem;
     flex-direction: column;
     align-items: center;
+    margin: 5rem auto 2rem;
+    @media (min-width: 27.25rem) {
+        margin: 4rem auto 2rem;
+    }
+    @media (min-width: 48rem) {
+        margin: 3.5rem auto 2rem;
+    }
 }
 
 .card-container {
@@ -95,6 +100,7 @@ th {
 
 button.card {
     height: unset;
+    border: 1px solid #222;
 }
 
 .selectable {
@@ -247,16 +253,25 @@ footer {
     line-height: 1.25rem;
 }
 
+.center {
+    margin: 1rem auto;
+}
+
+.side-by-side {
+    display: flex;
+    flex-direction: row;
+}
+
+.no-wrap {
+    white-space: nowrap;
+}
+
+
+
   /* Responsive Styles */
 @media screen and (max-width: 47.9375rem) {
 
-    .card-container > *:not(.circle-link) ,
-    .terminal {
-      width: 100%;
-    }
-
     .card:not(.highlight-card) {
-      height: 1rem;
       margin: 0.5rem 0;
     }
 
@@ -266,3 +281,13 @@ footer {
 
 }
 
+/* Accessibility tricks */
+.visually-hidden:not(:focus):not(:active) {
+    clip: rect(0 0 0 0); 
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap; 
+    width: 1px;
+  }

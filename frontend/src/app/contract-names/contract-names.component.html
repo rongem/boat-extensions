@@ -1,0 +1,97 @@
+<header>
+    <h1>
+        {{(contract | async)?.name}}
+    </h1>
+    <p class="center">
+        {{(contract | async)?.description}}
+    </p>
+    <p>
+        Diese Ansicht erlaubt die Pr&uuml;fung der sachlichen Richtigkeit einer Rechnung. Sie k&ouml;nnen die Ansicht nach Datum oder nach
+        Person sortieren, indem Sie auf den Spaltenkopf klicken, oder die Daten f&uuml;r den Monat nach Excel exportieren.
+    </p>
+    <p>
+        Au&szlig;erdem k&ouml;nnen Sie einzelne Eintr&auml;ge zur&uuml;ckweisen, und die zur&uuml;gewiesenen Eintr&auml;ge zusammengefasst
+        nach Excel exportieren.
+    </p>
+    <div class="side-by-side">
+        <div class="card">
+            Leistungszeitraum:
+            <select [(ngModel)]="selectedMonth" class="selectable" style="min-width: 6rem;">
+                <option *ngFor="let month of (allowedMonths | async)" [value]="month">
+                    {{month}}
+                </option>
+            </select>
+        </div>
+        <div>
+            <button type="button" class="card selectable" (click)="exportNames()">Monat nach Excel exportieren</button>
+        </div>
+        <div *ngIf="(deliverablesRejected | async)">
+            <button class="card selectable" (click)="exportRejected()" style="margin-left: 1rem;">
+                Zur&uuml;ckgewiesene Eintr&auml;ge exportieren
+            </button>
+        </div>
+    </div>
+</header>
+<main>
+    <table>
+        <thead>
+            <tr>
+                <th>Pr&uuml;fergebnis</th>
+                <th [ngClass]="{selectable: sortOrder !== 'time'}" tabindex="0" (click)="sortOrder = 'time'" class="no-wrap">
+                    Datum
+                    <ng-container *ngIf="sortOrder === 'time'"> &#8595;</ng-container>
+                </th>
+                <th>Uhrzeit</th>
+                <th>Stunden</th>
+                <th [ngClass]="{selectable: sortOrder !== 'person'}" tabindex="0" (click)="sortOrder = 'person'" class="no-wrap">
+                    Person
+                    <ng-container *ngIf="sortOrder === 'person'"> &#8595;</ng-container>
+                </th>
+                <th *ngIf="(keysPresent | async)" class="no-wrap">Schl&uuml;ssel</th>
+                <th>T&auml;tigkeit</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let row of (deliverables | async)">
+                <td style="text-align: center;">
+                    <button role="img"
+                        class="status-button selectable"
+                        [ngClass]="{red: row.rejected}"
+                        [attr.aria-label]="row.rejected ? 'Zur&uuml;ckgewiesen' : 'Akzeptiert'"
+                        (click)="toggleDeliverableRejection(row)">
+                        <ng-container  *ngIf="row.rejected">
+                            X
+                            <span class="visually-hidden">Zur&uuml;ckgewiesen - zum Akzeptieren klicken</span>
+                        </ng-container>
+                        <ng-container *ngIf="!row.rejected">
+                            &#10004;
+                            <span class="visually-hidden">Akzeptiert - zum Zur&uuml;ckweisen klicken</span>
+                        </ng-container>
+                    </button>
+                </td>
+                <td class="no-wrap">
+                    {{row.date.toLocaleDateString()}}
+                </td>
+                <td class="no-wrap">
+                    {{row.startTime}} - {{row.endTime}}
+                </td>
+                <td class="no-wrap">
+                    {{row.duration * 8}}
+                </td>
+                <td class="no-wrap">
+                    {{row.person}}
+                </td>
+                <td *ngIf="(keysPresent | async)" class="no-wrap">
+                    {{row.key}}
+                </td>
+                <td style="white-space: pre-line;">
+                    {{row.text}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</main>
+<footer>
+    <button type="button" class="selectable card" [routerLink]="['..']">Zur&uuml;ck zur &Uuml;bersicht</button>
+</footer>
+

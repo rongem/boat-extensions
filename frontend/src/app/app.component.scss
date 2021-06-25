@@ -1,45 +1,17 @@
-.card-container > div {
-    align-items: flex-start;
-    min-width: 200px;
-    text-align: right;
-    margin-bottom: 1rem;
-}
-
 .backdrop {
     z-index: 140;
 }
 
-.dropdown-menu {
-    position: absolute;
-    right: 0;
-    z-index: 100;
+#username {
     display: none;
-    float: left;
-    min-width: 10rem;
-    padding: 0.4rem 0;
-    margin: 0.1rem 0 0;
-    font-size: 14px;
-    text-align: left;
-    list-style: none;
-    background-color: #fff;
-    color: black;
-    background-clip: padding-box;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-
-    & > li {
-        padding: 0.3rem;
+    @media (min-width: 40rem) {
+        display: block;
     }
 }
 
-.open > .dropdown-menu {
-    display: block;
-}
-
-.card-container > label {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+header > button {
+    min-width: unset;
+    margin-left: 0.5rem;
+    margin-right: 0.2rem;
+    padding: 0.5rem 1rem;
 }

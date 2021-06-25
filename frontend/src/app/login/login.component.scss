@@ -1,0 +1,15 @@
+.card-container > div {
+    align-items: flex-start;
+    min-width: 200px;
+    text-align: right;
+    margin-bottom: 1rem;
+}
+
+.card-container > label {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+input {
+    font-size: 120%;
+}

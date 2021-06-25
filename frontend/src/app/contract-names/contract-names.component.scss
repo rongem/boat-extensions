@@ -1,0 +1,32 @@
+td, p {
+    text-align: left;
+
+    &.right {
+        text-align: right;
+    }
+
+    &.center {
+        text-align: center;
+    }
+}
+
+.selectable {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    width: calc(100% - 1rem);
+}
+
+.status-button {
+    display: inline-block;
+    width: 1.7rem;
+    height: 1.7rem;
+    background-color: darkgreen;
+    padding: 0.2rem 0;
+    color: white;
+    margin: 0 0.5rem 0 0;
+    font-weight: bold;
+
+    &.red {
+        background-color: red;
+    }
+}
