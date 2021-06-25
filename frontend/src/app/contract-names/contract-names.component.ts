@@ -4,7 +4,6 @@ import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { take, withLatestFrom, tap, map } from 'rxjs/operators';
 
-import { Boat3Service } from '../lib/services/boat3.service';
 import { ExportService } from '../lib/services/export.service';
 import { Deliverable } from '../lib/models/deliverable.model';
 
@@ -61,7 +60,7 @@ export class ContractNamesComponent implements OnInit, OnDestroy {
   
   private titleSubscription?: Subscription;
 
-  constructor(private boat: Boat3Service, private store: Store, private title: Title, private exportService: ExportService) { }
+  constructor(private store: Store, private title: Title, private exportService: ExportService) { }
 
   ngOnInit(): void {
     this.allowedMonths.subscribe(allowedMonths => {
@@ -106,7 +105,7 @@ export class ContractNamesComponent implements OnInit, OnDestroy {
       withLatestFrom(this.contract, this.keysPresent),
       tap(([deliverables, contract, keysPresent]) => {
         const sheetContent = deliverables.map(d => this.exportService.createNamesLine(d, contract!.name, keysPresent));
-        this.boat.exportSheet(sheetContent, this.selectedMonth, 'Sachlich-' + contract!.name);
+        this.exportService.exportSheet(sheetContent, this.selectedMonth, 'Sachlich-' + contract!.name);
       }),
     ).subscribe();
   }
@@ -117,7 +116,7 @@ export class ContractNamesComponent implements OnInit, OnDestroy {
       withLatestFrom(this.contract, this.keysPresent),
       tap(([deliverables, contract, keysPresent]) => {
         const sheetContent = deliverables.filter(d => d.rejected).map(d => this.exportService.createNamesLine(d, contract!.name, keysPresent));
-        this.boat.exportSheet(sheetContent, this.selectedMonth, 'Zugrückgewiesene-' + contract!.name);
+        this.exportService.exportSheet(sheetContent, this.selectedMonth, 'Zugrückgewiesene-' + contract!.name);
       }),
     ).subscribe();
   }

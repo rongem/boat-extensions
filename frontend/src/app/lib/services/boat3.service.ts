@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
 import { forkJoin, Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { utils, writeFile } from 'xlsx';
 
 import { Contract } from '../models/contract.model';
 import { Deliverable } from '../models/deliverable.model';
@@ -51,6 +50,7 @@ export class Boat3Service {
         this.router.navigate(['login']);
     }
 
+    // Liest eine Liste mit wenigen Daten zu den Verträgen aus
     getContracts() {
         this.store.dispatch(StoreActions.setWorkingState({ working: true }));
         this.store.dispatch(StoreActions.setError({}));
@@ -79,6 +79,7 @@ export class Boat3Service {
             );
     }
 
+    // Liest zusätzliche Details für jeden Vertrag aus
     getContractDetails(contractId: number) {
         return this.http.get<RestContract>(
             this.env.apiBaseUrl + '/meineinzelauftrag/' + contractId,
@@ -95,6 +96,7 @@ export class Boat3Service {
         );
     }
 
+    // Liest alle Liefergegenstände zu einem Vertrag aus
     getContractDeliverables(contractId: number) {
         this.store.dispatch(StoreActions.setWorkingState({ working: true }));
         this.store.dispatch(StoreActions.setError({}));
@@ -121,17 +123,7 @@ export class Boat3Service {
         )
     }
 
-    exportSheet(sheetContent: any[], sheetName: string, prefix: string) {
-        const sheet = utils.json_to_sheet(sheetContent);
-        sheet['!autofilter'] = { ref: sheet['!ref']! };
-        const book = utils.book_new();
-        book.Sheets = {
-          [sheetName]: sheet,
-        };
-        book.SheetNames.push(sheetName);
-        writeFile(book, prefix + '-' + sheetName + '.xlsx');
-    }
-
+    // Überprüft Fehler beim Aufruf und meldet den Benutzer ab, wenn das Anmelde-Token nicht mehr gültig ist
     private handleError = (error: HttpErrorResponse) => {
         console.log(error);
         this.store.dispatch(StoreActions.setWorkingState({ working: false }));

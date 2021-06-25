@@ -21,6 +21,8 @@ export class ContractDatabaseSyncComponent implements OnInit {
   exportFinished = false;
   exportCounter = 0;
   exportError = '';
+  startedSync = Date.now();
+  syncDuration = 0;
   exportResult = new ContractResult();
   get exportPart() {
     return this.contracts.pipe(
@@ -43,14 +45,15 @@ export class ContractDatabaseSyncComponent implements OnInit {
         return this.backend.synchronizeContracts(contracts)
       }),
     ).subscribe(result => {
+      // Zählt die Anzahl der Exporte
       this.exportCounter++;
-      console.log(this.exportCounter, contractsCount);
       if (result && !(result instanceof HttpErrorResponse))
       {
         this.exportResult = result;
-        if (contractsCount === this.exportCounter) {
+        if (contractsCount === this.exportCounter) { // Wenn alle Verträge exportiert wurden, beenden der Synchronisation
           this.backend.postSynchronization().pipe(take(1)).subscribe(() => {
             this.exportFinished = true;
+            this.syncDuration = (Date.now() - this.startedSync) / 1000;
             subscription.unsubscribe();
           });
         }

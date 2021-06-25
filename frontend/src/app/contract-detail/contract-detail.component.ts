@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { map, take, withLatestFrom } from 'rxjs/operators';
 import { ExportService } from '../lib/services/export.service';
-import { Boat3Service } from '../lib/services/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 
 import * as StoreActions from '../lib/store/store.actions';
@@ -30,7 +29,6 @@ export class ContractDetailComponent implements OnInit {
 
   constructor(private store: Store,
               private title: Title,
-              private boat: Boat3Service,
               private exportService: ExportService) { }
 
   ngOnInit(): void {
@@ -45,7 +43,7 @@ export class ContractDetailComponent implements OnInit {
       withLatestFrom(this.store.select(StoreSelectors.keysPresent))
     ).subscribe(([deliverables, keysPresent]) => {
       const sheetContent = deliverables.map(d => this.exportService.createNumbersLine(d, 'Export', keysPresent));
-      this.boat.exportSheet(sheetContent, 'Export-' + this.contract.name, 'vollständiger');
+      this.exportService.exportSheet(sheetContent, 'Export-' + this.contract.name, 'vollständiger');
     });
   }
 }

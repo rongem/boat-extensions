@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin } from 'rxjs';
@@ -9,10 +8,10 @@ import { BackendService } from '../lib/services/backend.service';
 import { Boat3Service } from '../lib/services/boat3.service';
 import { Contract } from '../lib/models/contract.model';
 import { Deliverable } from '../lib/models/deliverable.model';
-import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
 
 import * as StoreSelectors from '../lib/store/store.selectors';
 import * as StoreActions from '../lib/store/store.actions';
+import { ExportService } from '../lib/services/export.service';
 
 @Component({
   selector: 'app-contract-list',
@@ -33,6 +32,7 @@ export class ContractListComponent implements OnInit {
   constructor(private boat: Boat3Service,
               private backend: BackendService,
               private store: Store,
+              private exportService: ExportService,
               private route: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -63,7 +63,7 @@ export class ContractListComponent implements OnInit {
         date.getDate() < 10 ? 0 : '', date.getDate(), '_',
         date.getHours() < 10 ? 0 : '', date.getHours(),
         date.getMinutes() < 10 ? 0 : '', date.getMinutes()].join('');
-      this.boat.exportSheet(sheetContent, 'Verträge', 'Übersicht-' + dateString);
+      this.exportService.exportSheet(sheetContent, 'Verträge', 'Übersicht-' + dateString);
     });
   }
 

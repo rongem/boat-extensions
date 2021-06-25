@@ -26,6 +26,7 @@ export class BackendService {
                 private store: Store,
                 private settings: SettingsService) {}
 
+    // Überprüft, ob ein Benutzer in der Datenbank autorisiert ist, Daten zu synchronisieren.
     checkAuthorization = () => {
         this.http.get<Authorization>(this.env.backendBaseUrl + 'auth', { withCredentials: true }).pipe(
             take(1),
@@ -37,6 +38,9 @@ export class BackendService {
         ).subscribe(result => this.syncIsAuthorized.next(result));
     }
 
+    // Synchronisiert alle Verträge und die Liefergegenstände mit der Datenbank
+    // Wird für jeden Vertrag einmal ausgeführt und gibt bei subscribe ein Ergebnis aus
+    // Daher muss dort das Ende überwacht werden
     synchronizeContracts = (contracts: Contract[]) => {
         const restContracts: BackendContract[] = contracts.map(contract => ({
             id: contract.id,
@@ -85,6 +89,7 @@ export class BackendService {
         );
     }
 
+    // Führt die Stored Procedure Import nach dem Import aus, um ggf. notwendige weitere Datenbank-Operationen zu triggern
     postSynchronization = () => {
         this.store.dispatch(StoreActions.setWorkingState({working: true}));
         return this.http.post<boolean>(this.env.backendBaseUrl + 'import', { url: window.location.href }, { withCredentials: true }).pipe(

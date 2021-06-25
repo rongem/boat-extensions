@@ -1,0 +1,17 @@
+.selectable {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    width: calc(100% - 1rem);
+}
+
+td, p {
+    text-align: left;
+
+    &.right {
+        text-align: right;
+    }
+
+    &.center {
+        text-align: center;
+    }
+}

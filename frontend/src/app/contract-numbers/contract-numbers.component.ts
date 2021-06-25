@@ -3,7 +3,6 @@ import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { map, take, tap, withLatestFrom } from 'rxjs/operators';
-import { Boat3Service } from '../lib/services/boat3.service';
 import { ExportService } from '../lib/services/export.service';
 
 import * as StoreSelectors from '../lib/store/store.selectors';
@@ -86,7 +85,7 @@ export class ContractNumbersComponent implements OnInit, OnDestroy {
 
   private titleSubscription?: Subscription;
 
-  constructor(private store: Store, private boat: Boat3Service, private exportService: ExportService, private title: Title) { }
+  constructor(private store: Store, private exportService: ExportService, private title: Title) { }
 
   ngOnInit(): void {
     this.allowedMonths.subscribe(allowedMonths => {
@@ -107,7 +106,7 @@ export class ContractNumbersComponent implements OnInit, OnDestroy {
       withLatestFrom(this.contract, this.store.select(StoreSelectors.keysPresent)),
       tap(([deliverables, contract, keysPresent]) => {
         const sheetContent = deliverables.map(d => this.exportService.createNumbersLine(d, contract!.name, keysPresent));
-        this.boat.exportSheet(sheetContent, this.selectedMonth, 'Rechnerisch-' + contract!.name);
+        this.exportService.exportSheet(sheetContent, this.selectedMonth, 'Rechnerisch-' + contract!.name);
       }),
     ).subscribe();
   }

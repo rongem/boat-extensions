@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { utils, writeFile } from 'xlsx';
 import { Deliverable } from '../models/deliverable.model';
 import { SettingsService } from './settings.service';
 
@@ -48,6 +49,18 @@ export class ExportService {
             result = {...result, 'Text': d.text};
         }
         return result;
+    }
+
+    // Exportiert eine Excel-Datei
+    exportSheet(sheetContent: any[], sheetName: string, prefix: string) {
+        const sheet = utils.json_to_sheet(sheetContent);
+        sheet['!autofilter'] = { ref: sheet['!ref']! };
+        const book = utils.book_new();
+        book.Sheets = {
+          [sheetName]: sheet,
+        };
+        book.SheetNames.push(sheetName);
+        writeFile(book, prefix + '-' + sheetName + '.xlsx');
     }
 
 }

@@ -1,44 +1,50 @@
-<h1>
-    Allgemeine Aktionen
-</h1>
-<button type="button" class="card selectable" [routerLink]="['/', 'settings']">
-    Export-Einstellungen &auml;ndern
-</button>
-<button type="button" class="card selectable" (click)="exportAllContracts()">
-    Alle Vertr&auml;ge nach Excel exportieren
-</button>
-<button type="button" class="card selectable" *ngIf="syncIsAuthorized" [routerLink]="['/', 'contracts', 'sync']">
-    Vertr&auml;ge in die Datenbank synchronisieren
-</button>
+<header>
+    <h1>
+        Allgemeine Aktionen
+    </h1>
+    <div class="action-list">
+        <button type="button" class="card selectable" [routerLink]="['/', 'settings']">
+            Export-Einstellungen &auml;ndern
+        </button>
+        <button type="button" class="card selectable" (click)="exportAllContracts()">
+            Alle Vertr&auml;ge nach Excel exportieren
+        </button>
+        <button type="button" class="card selectable" *ngIf="syncIsAuthorized" [routerLink]="['/', 'contracts', 'sync']">
+            Vertr&auml;ge in die Datenbank synchronisieren
+        </button>
+    </div>
+</header>
 <hr>
-<h1>Ihre Vertr&auml;ge</h1>
-<div class="card-container">
-    <p *ngIf="!selectedContract" style="margin-left: 1rem; margin-bottom: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>
-    <button type="button" class="card" [routerLink]="['/', 'contracts', contract.id]"
-        *ngFor="let contract of (contracts | async)"
-        [ngClass]="{highlighted: contract === (selectedContract | async), selectable: contract !== (selectedContract | async)}">
-        <div>
-            <b>{{contract.name}}</b>
-        </div>
-        <div>
+<main>
+    <h1>Ihre Vertr&auml;ge</h1>
+    <div class="card-container">
+        <p *ngIf="!selectedContract" style="margin-left: 1rem; margin-bottom: 1rem;">W&auml;hlen Sie einen Vertrag aus, um weitere Aktionen daf&uuml;r zu erhalten.</p>
+        <button type="button" class="card" [routerLink]="['/', 'contracts', contract.id]"
+            *ngFor="let contract of (contracts | async)"
+            [ngClass]="{highlighted: contract === (selectedContract | async), selectable: contract !== (selectedContract | async)}">
+            <h2>
+                {{contract.name}}
+            </h2>
             <div>
-                <b>Bezeichnung</b>:
-                {{contract.description}}
-            </div>
-            <div>
-                <b>Verantwortlich</b>: {{contract.responsiblePerson}} ({{contract.organizationalUnit}})
-            </div>
-            <ng-container *ngIf="contract === (selectedContract | async)">
                 <div>
-                    <b>Beginn</b>: {{contract.start.toLocaleDateString()}},
-                    <b>Ende</b>: {{contract.end.toLocaleDateString()}}
+                    <b>Bezeichnung</b>:
+                    {{contract.description}}
                 </div>
                 <div>
-                    <b>Budget</b>: {{contract.completeBudget.availableFinances | number: '1.2-2':'de'}} &#8364;,
-                    {{contract.completeBudget.availableUnits | number: '1.3-3':'de'}} PT
+                    <b>Verantwortlich</b>: {{contract.responsiblePerson}} ({{contract.organizationalUnit}})
                 </div>
-            </ng-container>
-        </div>
-        <app-contract-detail [contract]="contract" *ngIf="contract === (selectedContract | async)" class="operations"></app-contract-detail>
-    </button>
-</div>
+                <ng-container *ngIf="contract === (selectedContract | async)">
+                    <div>
+                        <b>Beginn</b>: {{contract.start.toLocaleDateString()}},
+                        <b>Ende</b>: {{contract.end.toLocaleDateString()}}
+                    </div>
+                    <div>
+                        <b>Budget</b>: {{contract.completeBudget.availableFinances | number: '1.2-2':'de'}} &#8364;,
+                        {{contract.completeBudget.availableUnits | number: '1.3-3':'de'}} PT
+                    </div>
+                </ng-container>
+            </div>
+            <app-contract-detail [contract]="contract" *ngIf="contract === (selectedContract | async)" class="operations"></app-contract-detail>
+        </button>
+    </div>
+</main>

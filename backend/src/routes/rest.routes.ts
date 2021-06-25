@@ -8,13 +8,14 @@ const router = express.Router();
 
 const dateParser = (value: string) => {
     if (value.includes('T')) {
+        console.log(value);
         value = value.split('T')[0];
     }
     let dateParts = value.split('-');
     if (dateParts[0].length === 2 && dateParts[2].length === 4) {
         dateParts = dateParts.reverse();
     }
-    const date = new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2], 1);
+    const date = new Date(Date.UTC(+dateParts[0], +dateParts[1] - 1, +dateParts[2]));
     return date;
 }
 

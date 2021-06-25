@@ -18,11 +18,12 @@ export class Contract{
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
         this.description = restContract.stammdaten.projektTitel;
-        this.startDate = restContract.stammdaten.projektBeginn;
-        let dateParts = restContract.stammdaten.projektBeginn.split('-').map(x => +x);
+        // Daten werden als String geliefert und können leer sein, daher wird das heutige Datum als Ersatz angeboten
+        this.startDate = restContract.stammdaten.projektBeginn ?? new Date().toISOString().substring(0, 10);
+        let dateParts = this.startDate.split('-').map(x => +x);
         this.start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-        this.endDate = restContract.stammdaten.projektEnde;
-        dateParts = restContract.stammdaten.projektEnde.split('-').map(x => +x);
+        this.endDate = restContract.stammdaten.projektEnde ?? new Date().toISOString().substring(0, 10);
+        dateParts = this.endDate.split('-').map(x => +x);
         this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;
         this.organizationalUnit = restContract.stammdaten.orgE;

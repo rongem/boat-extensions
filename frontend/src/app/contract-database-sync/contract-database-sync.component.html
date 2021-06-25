@@ -44,7 +44,10 @@
         <td>{{exportResult.deliverables.unchanged | number:'1.0-0':'de'}}</td>
     </tr>
 </table>
-<p style="margin: 1rem" *ngIf="exportFinished">Die Synchronisation wurde beendet.</p>
+<p style="margin: 1rem" *ngIf="exportFinished">
+    Die Synchronisation wurde beendet. 
+    Dauer: {{ syncDuration | number:'1.1-1':'de' }} Sekunden.
+</p>
 <ng-container *ngIf="exportError !== ''">
     <p style="margin: 1rem">Es sind Fehler aufgetreten:</p>
     <p style="margin: 1rem; background-color: lightcoral;">
