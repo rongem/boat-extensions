@@ -44,7 +44,7 @@ Das Backend verfügt über eine ganze Reihe von Umgebungsvariablen:
  - DB_SERVER: MS-SQL-Datenbank-Server
  - DB_PORT: Port für den MS-SQL-Datenbank-Server (normalerweise 1433)
  - DB_INSTANCE: (Optional) Instanzname für den MS-SQL-Datenbank-Server
- - CORS_ORIGIN: (Optional) URL des Frontend-Servers für die CORS-Konfiguration des Backends.
+ - CORS_ORIGIN: (Optional) URL des Frontend-Servers für die CORS-Konfiguration des Backends. Wird der Wert nicht oder auf die Voreinstellung * gesetzt, wird jeder Host als Frontend akzeptiert.
  - AUTH_MODE: Authentifizierungmodus. Erlaubte Werte: ntlm (empfohlen) oder none (nur für Tests)
  - LDAP_DOMAIN: (Optional) Name der Windows-Domäne, aus der Benutzer auf den Server zugreifen dürfen
  - LDAP_SERVER: (Optional, gemeinsame mit LDAP_DOMAIN) Domain Controller, gegen den Benutzer geprüft werden.
