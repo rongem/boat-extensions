@@ -8,7 +8,6 @@ const router = express.Router();
 
 const dateParser = (value: string) => {
     if (value.includes('T')) {
-        console.log(value);
         value = value.split('T')[0];
     }
     let dateParts = value.split('-');
@@ -31,7 +30,12 @@ router.post('/contracts', [
     body('*.end', 'Falsches Endedatum').if(body().isArray({min: 1}))
         .custom(value => new RegExp('^[0-9]{4}-[0-9]{2}-[0-9]{2}').test(value)).bail().customSanitizer(dateParser),
     body('*', 'Startdatum darf nicht größer sein als Endedatum').if(body().isArray({min: 1}))
-        .custom(value => value.start < value.end),
+        .custom(value => {
+            if (isNaN(value.start.valueOf()) || isNaN(value.end.valueOf())) {
+                return true;
+            }
+            return value.start.valueOf() < value.end.valueOf();
+        }),
     body('*.organization', 'Organisation ist falsch').if(body().isArray({min: 1}))
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
