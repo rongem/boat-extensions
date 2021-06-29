@@ -31,7 +31,7 @@ export class StoreEffects {
     ));
 
     // Speichert ein Token in den LocalStore, wenn es im Store gesetzt wurde, oder löscht es, wenn es im Store entfernt wurde
-    saveOrRemoveLogin$ = createEffect(() => this.actions$.pipe(
+    saveLogin$ = createEffect(() => this.actions$.pipe(
         ofType(StoreActions.setLogin),
         concatLatestFrom(() => this.store.select(StoreSelectors.token), ),
         switchMap(([action, token]) => {
@@ -42,6 +42,15 @@ export class StoreEffects {
             }
             return of(null);
         }),
+    ), { dispatch: false });
+
+    // Entfernt ein Token aus dem LocalStore
+    logout$ = createEffect(() => this.actions$.pipe(
+        ofType(StoreActions.logout),
+        switchMap(() => {
+            localStorage.removeItem('BOAT-Login');
+            return of(null);
+        })
     ), { dispatch: false });
 
     constructor(private actions$: Actions,
