@@ -36,14 +36,21 @@ export class Deliverable{
         } else {
             console.log(d.duration);
         }
-        const keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}');
-        const key = keyRegex.exec(d.beschreibung);
+        let keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}');
+        let key = keyRegex.exec(d.beschreibung);
+        if (!key) {
+            keyRegex = new RegExp('^[0-9]{14,15}:');
+            key = keyRegex.exec(d.beschreibung);
+        }
         if (key && key.length > 0) {
             this.key = key[0];
-            if (this.key.length < 18) {
+            this.text = d.beschreibung.substr(this.key.length + 1).trim();
+            if (this.key.endsWith(':')) {
+                this.key = this.key.substring(0, this.key.length - 1);
+            }
+            if (this.key.length === 17) {
                 this.key = '0' + this.key;
             }
-            this.text = d.beschreibung.substr(this.key.length + 1).trim();
         }
         this.priceCategoryId = d.preisstufe.id;
         this.priceCategory = d.preisstufe.bezeichnung;
