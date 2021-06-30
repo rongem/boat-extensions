@@ -53,11 +53,11 @@ router.post('/contracts', [
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
     body('*.budgets.*.pricePerUnit', 'Fehlender Preis für die Preiskategorie').if(body().isArray({min: 1}))
-        .isFloat({min: 1}).bail().toFloat(),
+        .isFloat({min: 0}).bail().toFloat(),
     body('*.budgets.*.availableUnits', 'Fehlende Anzahl von Personentagen für die Preiskategorie').if(body().isArray({min: 1}))
-        .isFloat({min: 1}).bail().toFloat(),
+        .isFloat({min: 0}).bail().toFloat(),
     body('*.budgets.*.minutesPerDay', 'Fehlende Arbeitstaglänge').if(body().isArray({min: 1}))
-        .isFloat({min: 1}).bail().toFloat(),
+        .isFloat({min: 0}).bail().toFloat(),
 ], validate, syncContracts);
 
 router.post('/deliverables', [
