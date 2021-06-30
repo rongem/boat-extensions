@@ -76,8 +76,8 @@ router.post('/deliverables', [
     body('deliverables.*.key', 'Falscher Datentyp für Schlüssel').if(body('deliverables').isArray({min: 1}))
         .optional({checkFalsy: true})
         .isString().trim()
-        .isLength({min: 18, max: 18}).withMessage('Schlüssel hat die falsche Länge')
-        .custom(value => new RegExp('^[0-9]{15}[A-Z]{3}').test(value)).withMessage('Schlüssel entspricht nicht den Vorgaben'),
+        .isLength({min: 15, max: 18}).withMessage('Schlüssel hat die falsche Länge')
+        .custom(value => new RegExp('^[0-9]{15}([A-Z]{3})?$').test(value)).withMessage('Schlüssel entspricht nicht den Vorgaben'),
     body('deliverables.*.priceCategoryId', 'Fehlende oder falsche Preiskategorie').if(body('deliverables').isArray({min: 1}))
         .isInt({min: 1}).bail().toInt(),
     body('deliverables.*.person', 'Falscher Datentyp für Person').if(body('deliverables').isArray({min: 1}))
