@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   frontend:
-    image: rongem/boat3-extensions:frontend
+    image: rongem/boat3-extensions:latest
     ports:
       - 80:80
     build:
@@ -18,10 +18,11 @@ services:
       - DB_SERVER
       - DB_USER
       - DB_PWD
+      - CORS_ORIGIN
+      - AUTH_MODE
       - LDAP_DOMAIN
       - LDAP_SERVER
-  apache-ds:
-    image: tgbyte/apacheds
-
+    extra_hosts:
+      - "micron:192.168.178.20"
 
     
