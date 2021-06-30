@@ -36,10 +36,10 @@ export class Deliverable{
         } else {
             console.log(d.duration);
         }
-        let keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}');
+        let keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}'); // Ursprüngliche Art des Schlüssels
         let key = keyRegex.exec(d.beschreibung);
-        if (!key) {
-            keyRegex = new RegExp('^[0-9]{14,15}:');
+        if (!key || key.length === 0) { // Zweite Art des Schlüssels
+            keyRegex = new RegExp('^[0-9]{15}:');
             key = keyRegex.exec(d.beschreibung);
         }
         if (key && key.length > 0) {
