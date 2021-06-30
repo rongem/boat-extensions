@@ -23,42 +23,42 @@ export class EnvironmentController {
     }
 
     get dbName() {
-        return process.env.DB_NAME ?? '';
+        return process.env.DB_NAME?.trim() ?? '';
     }
 
     get dbUser() {
-        return process.env.DB_USER ?? '';
+        return process.env.DB_USER?.trim() ?? '';
     }
 
     get dbPassword() {
-        return process.env.DB_PWD ?? '';
+        return process.env.DB_PWD?.trim() ?? '';
     }
 
     get dbServer() {
-        return process.env.DB_SERVER ?? '';
+        return process.env.DB_SERVER?.trim() ?? '';
     }
 
     get dbPort() {
-        return process.env.DB_PORT ?? '1433';
+        return process.env.DB_PORT?.trim() ?? '1433';
     } 
 
     get dbInstance() {
-        return process.env.DB_INSTANCE ?? '';
+        return process.env.DB_INSTANCE?.trim() ?? '';
     }
 
     get corsOrigin() {
-        return process.env.CORS_ORIGIN ?? '*';
+        return process.env.CORS_ORIGIN?.trim() ?? '*';
     }
 
     get authMode() {
-        return (process.env.AUTH_MODE ?? 'ntlm').toLocaleLowerCase();
+        return process.env.AUTH_MODE?.trim().toLocaleLowerCase() ?? 'ntlm';
     }
 
     get ldapDomain() {
-        return process.env.LDAP_DOMAIN ?? undefined;
+        return process.env.LDAP_DOMAIN?.trim() ?? undefined;
     }
 
     get ldapServer() {
-        return process.env.LDAP_SERVER ?? undefined;
+        return process.env.LDAP_SERVER?.trim() ?? undefined;
     }
 }
