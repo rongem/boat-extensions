@@ -42,7 +42,7 @@ export class ContractDetailComponent implements OnInit {
       take(1),
       withLatestFrom(this.store.select(StoreSelectors.keysPresent))
     ).subscribe(([deliverables, keysPresent]) => {
-      const sheetContent = deliverables.map(d => this.exportService.createNumbersLine(d, 'Export', keysPresent));
+      const sheetContent = deliverables.map(d => this.exportService.createNumbersLine(d, this.contract.name, keysPresent));
       this.exportService.exportSheet(sheetContent, 'Export-' + this.contract.name, 'vollständiger');
     });
   }
