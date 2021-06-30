@@ -11,7 +11,7 @@ COPY ./backend/ ./
 RUN npm run comp
 
 # specify base image
-FROM node
+FROM node:alpine
 WORKDIR /usr/app
 
 # install dependencies
