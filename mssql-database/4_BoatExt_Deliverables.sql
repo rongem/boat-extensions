@@ -18,7 +18,7 @@ CREATE TABLE [DV5_Controlling].[BoatExt_Deliverables](
 	[EndTime] [time](7) NULL,
 	[Duration] [float] NOT NULL,
 	[Key] [nvarchar](50) NOT NULL,
-	[Text] [nvarchar](1000) NULL,
+	[Text] [nvarchar](MAX) NULL,
 	[Person] [nvarchar](50) NULL,
  CONSTRAINT [PK__BoatExt___3214EC07ECFCEF64] PRIMARY KEY CLUSTERED 
 (
