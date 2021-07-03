@@ -65,7 +65,7 @@ export class Boat3Service {
                 switchMap(result => {
                     const observables: Observable<Contract | undefined>[] = [];
                     if (result && result.content) {
-                        result.content.forEach(c => {
+                        result.content.sort((a, b) => a.id - b.id).forEach(c => {
                             observables.push(this.getContractDetails(c.id));
                         });
                     }

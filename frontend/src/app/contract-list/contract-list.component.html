@@ -33,6 +33,9 @@
                 <div>
                     <b>Verantwortlich</b>: {{contract.responsiblePerson}} ({{contract.organizationalUnit}})
                 </div>
+                <div>
+                    <b>BVA-Status</b>: {{contract.status}}
+                </div>
                 <ng-container *ngIf="contract === (selectedContract | async)">
                     <div>
                         <b>Beginn</b>: {{contract.start.toLocaleDateString()}},

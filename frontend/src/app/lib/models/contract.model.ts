@@ -1,6 +1,12 @@
 import { Budget } from './budget.model';
 import { RestContract } from './rest-boat/contract.model';
 
+const dateString = (difference: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() + difference);
+    return d.toISOString().substring(0, 10);
+}
+
 export class Contract{
     name: string;
     id: number;
@@ -12,22 +18,25 @@ export class Contract{
     organization: string;
     organizationalUnit: string;
     responsiblePerson: string;
+    status: string;
     budgetDetails: Budget[] = [];
     completeBudget: Budget;
     constructor(restContract: RestContract) {
+        console.log(restContract);
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
         this.description = restContract.stammdaten.projektTitel;
         // Daten werden als String geliefert und können leer sein, daher wird das heutige Datum als Ersatz angeboten
-        this.startDate = restContract.stammdaten.projektBeginn ?? new Date().toISOString().substring(0, 10);
+        this.startDate = restContract.stammdaten.projektBeginn ?? dateString(1);
         let dateParts = this.startDate.split('-').map(x => +x);
         this.start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-        this.endDate = restContract.stammdaten.projektEnde ?? new Date().toISOString().substring(0, 10);
+        this.endDate = restContract.stammdaten.projektEnde ?? dateString(100);
         dateParts = this.endDate.split('-').map(x => +x);
         this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
         this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;
         this.organizationalUnit = restContract.stammdaten.orgE;
         this.responsiblePerson = restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname;
+        this.status = restContract.stammdaten.status;
         const map = new Map<number, number>();
         restContract.stammdaten.rahmenvertrag.preisstufen.forEach(p => map.set(p.id, p.kostenProPT / 100));
         restContract.budget.budgetdaten.forEach(d => {

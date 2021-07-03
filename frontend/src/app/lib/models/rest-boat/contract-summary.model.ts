@@ -2,7 +2,7 @@ export class RestContractSummary {
     bedarfstraeger!: string;
     budgetStatus!: string;
     id!: number;
-    projektbeginn!: string;
+    projektBeginn!: string;
     projektTitel!: string;
     proejktEnde!: string;
     projektTyp!: string;
