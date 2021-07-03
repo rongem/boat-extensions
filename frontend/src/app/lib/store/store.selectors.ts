@@ -191,7 +191,7 @@ export const getUnitsPercentageForMonth = (yearAndMonth: string) => createSelect
   }
 );
 
-  // Prozentuale Dauer eines Monats im Verhältnis zur Gesamtdauer des Vertrags
+// Prozentuale Dauer eines Monats im Verhältnis zur Gesamtdauer des Vertrags
 export const getMonthsPercentageForContract = (yearAndMonth: string) => createSelector(selectedContract, contract => {
     if (!contract) {
         return 0;
@@ -202,4 +202,6 @@ export const getMonthsPercentageForContract = (yearAndMonth: string) => createSe
     return 100 * monthduration / contractDuration;
   }
 );
+
+
 

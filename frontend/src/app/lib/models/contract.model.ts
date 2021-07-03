@@ -21,15 +21,16 @@ export class Contract{
     status: string;
     budgetDetails: Budget[] = [];
     completeBudget: Budget;
+    inactive: boolean;
     constructor(restContract: RestContract) {
-        console.log(restContract);
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
         this.description = restContract.stammdaten.projektTitel;
-        // Daten werden als String geliefert und können leer sein, daher wird das heutige Datum als Ersatz angeboten
+        // Datum wird als String geliefert und kann undefiniert sein, daher wird das morgige Datum als Ersatz angeboten
         this.startDate = restContract.stammdaten.projektBeginn ?? dateString(1);
         let dateParts = this.startDate.split('-').map(x => +x);
         this.start = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        // Datum wird als String geliefert und kann undefiniert leer sein, daher wird das ein Datum in 100 Tagen als Ersatz angeboten
         this.endDate = restContract.stammdaten.projektEnde ?? dateString(100);
         dateParts = this.endDate.split('-').map(x => +x);
         this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
@@ -37,6 +38,7 @@ export class Contract{
         this.organizationalUnit = restContract.stammdaten.orgE;
         this.responsiblePerson = restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname;
         this.status = restContract.stammdaten.status;
+        this.inactive = this.start.valueOf() <= Date.now() && this.end.valueOf() >= Date.now();
         const map = new Map<number, number>();
         restContract.stammdaten.rahmenvertrag.preisstufen.forEach(p => map.set(p.id, p.kostenProPT / 100));
         restContract.budget.budgetdaten.forEach(d => {
