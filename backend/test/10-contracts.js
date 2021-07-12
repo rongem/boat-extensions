@@ -127,7 +127,7 @@ describe('Contracts', function() {
                     priceCategoryId: 'acd',
                     priceCategory: 'Preisstufe II',
                     pricePerUnit: '200.5',
-                    minutesPerDay: 0,
+                    minutesPerDay: false,
                 }]
             }])
             .end((err, res) => {
