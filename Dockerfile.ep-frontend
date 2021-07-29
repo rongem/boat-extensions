@@ -2,7 +2,6 @@ FROM node:lts AS build
 WORKDIR /usr/app
 
 COPY ./frontend/package*.json ./
-RUN npm install npm@latest -g
 RUN npm install
 COPY ./frontend/ ./
 RUN npm run build:prod
