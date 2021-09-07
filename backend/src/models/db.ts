@@ -40,7 +40,7 @@ export const dbRunImportScript = async () => {
         const req = await requestPromise;
         await req.execute('BoatExt_Import');
         return true;
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
         return false;
     }
@@ -73,7 +73,7 @@ export const checkDatabase = async () => {
                 throw new Error('Missing procedure ' + p);
             }
         });
-    } catch (error) {
+    } catch (error: any) {
         console.log(error);
         return false;
     }
@@ -89,7 +89,7 @@ export const deleteDatabaseContents = async () => {
         result = await req.query('DELETE FROM [BoatExt_PriceCategories];');
         result = await req.query('DELETE FROM [BoatExt_Contracts];');
         result = await req.query('TRUNCATE TABLE [BoatExt_Authorizations]')
-    } catch (error) {
+    } catch (error: any) {
         console.log(error);
         return false;
     }
@@ -102,7 +102,7 @@ export const disconnectDatabase = async () => {
         await poolPromise.close();
         console.log('Connection to database closed!');
         return true;
-    } catch (error) {
+    } catch (error: any) {
         console.log(error);
         return false;
     }

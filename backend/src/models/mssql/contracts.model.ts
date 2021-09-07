@@ -36,7 +36,7 @@ export const dbSyncContracts = async (contracts: Contract[]) => {
             await dbSyncBudgets(contract.budgets, contract.id, result);
         }
         return result;
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof HttpError) {
             throw error;
         }
@@ -64,7 +64,7 @@ const readContracts = async (contractIds: string) => {
             budgets: budgets.filter(b => b.contractId === r.Id),
         }));
         return existingContracts;
-    } catch (error) {
+    } catch (error: any) {
         console.log('readContracts', error);
         throw new HttpError(500, error.message ?? error.toString());
     }
@@ -79,7 +79,7 @@ const createContract = async (contract: Contract) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Contracts: Daten wurden nicht geschrieben: ' + contract.id);
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('createContracts', error);
         throw new HttpError(500, error.message ?? error.toString(), contract);
     }
@@ -95,7 +95,7 @@ const updateContract = async (contract: Contract) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE Contracts: Daten wurden nicht geschrieben: ' + contract.id);
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('udpateContracts', error);
         throw new HttpError(500, error.message ?? error.toString(), contract);
     }

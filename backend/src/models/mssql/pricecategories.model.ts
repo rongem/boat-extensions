@@ -24,7 +24,7 @@ export const dbSyncPriceCategorys = async (priceCategories: PriceCategory[], res
                 result.priceCategories.created++;
             }
         }
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof HttpError) {
             throw error;
         }
@@ -43,7 +43,7 @@ export const readPriceCategories = async (): Promise<PriceCategory[]> => {
             minutesPerDay: r.MinutesPerDay,
             pricePerUnit: r.PricePerUnit
         }));
-    } catch (error) {
+    } catch (error: any) {
         console.log('readPriceCategories', error);
         throw new HttpError(500, error.message ?? error.toString());
     }
@@ -58,7 +58,7 @@ const createPriceCategory = async (priceCategory: PriceCategory) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT PriceCategories: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('createPriceCategory', error);
         throw new HttpError(500, error.message ?? error.toString(), priceCategory);
     }
@@ -74,7 +74,7 @@ const updatePriceCategory = async (priceCategory: PriceCategory) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE PriceCategories: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('updatePriceCategory', error);
         throw new HttpError(500, error.message ?? error.toString(), priceCategory);
     }

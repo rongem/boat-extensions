@@ -15,7 +15,7 @@ export const readUser = async (name: string): Promise<IUser> => {
         }
         const user: IUser = { name: result.recordset[0].Username, isAuthorized: result.recordset[0].Allowed };
         return user;
-    } catch (error) {
+    } catch (error: any) {
         console.log('readUser', error);
         throw new HttpError(500, error.message ?? error.toString(), name);
     }
@@ -33,7 +33,7 @@ const createUser = async (name: string) => {
             name: '',
             isAuthorized: false,
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('createUser', error);
         throw new HttpError(500, error.message ?? error.toString(), name);
     }

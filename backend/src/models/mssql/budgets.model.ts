@@ -31,7 +31,7 @@ export const dbSyncBudgets = async (budgets: Budget[], contractId: number, resul
             const obsoleteBudgetPriceCategoryIds = existingBudgets.map(b => b.priceCategoryId);
             result.budgets.deleted = await deleteBudgets(contractId, obsoleteBudgetPriceCategoryIds);
         }
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof HttpError) {
             throw error;
         }
@@ -53,7 +53,7 @@ export const readBudgets = async (contractIds: string): Promise<Budget[]> => {
             minutesPerDay: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.minutesPerDay,
             pricePerUnit: priceCategories.find(pc => pc.priceCategoryId === r.PriceCategoryId)!.pricePerUnit,
         }));
-    } catch(error) {
+    } catch (error: any) {
         console.log('readBudgets', error);
         throw new HttpError(500, error.message ?? error.toString(), contractIds);
     }
@@ -68,7 +68,7 @@ const createBudget = async (budget: Budget) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Budgets: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('createBudgets', error);
         throw new HttpError(500, error.message ?? error.toString(), budget);
     }
@@ -84,7 +84,7 @@ const updateBudget = async (budget: Budget) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE Budgets: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('updateBudgets', error);
         throw new HttpError(500, error.message ?? error.toString(), budget);
     }
@@ -100,7 +100,7 @@ const deleteBudgets = async (contractId: number, priceCategoryIds: number[]) => 
             throw new Error('DELETE Budgets: Daten wurden nicht gelöscht (nur ' + result.rowsAffected[0] + ' von ' + priceCategoryIds.length + ')' );
         }
         return result.rowsAffected[0];
-    } catch (error) {
+    } catch (error: any) {
         console.log('deleteBudgets', error);
         throw new HttpError(500, error.message ?? error.toString(), contractId);
     }

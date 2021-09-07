@@ -32,7 +32,7 @@ export const dbSyncDeliverables = async (deliverables: Deliverable[], contractId
             result.deleted = await deleteDeliverables(obsoleteDeliverableIds);
         }
         return result;
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof HttpError) {
             throw error;
         }
@@ -59,7 +59,7 @@ const readDeliverables = async (contractId: number): Promise<Deliverable[]> => {
             text: r.Text ?? undefined,
             person: r.Person ?? undefined,
         }));
-    } catch(error) {
+    } catch (error: any) {
         console.log('readDeliverables', error);
         throw new HttpError(500, error.message ?? error.toString(), contractId);
     }
@@ -75,7 +75,7 @@ const createDeliverable = async (deliverable: Deliverable) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('INSERT Deliverables: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         if (error instanceof HttpError) {
             throw error;
         }
@@ -95,7 +95,7 @@ const updateDeliverable = async (deliverable: Deliverable) => {
         if (result.rowsAffected.length !== 1 || result.rowsAffected[0] !== 1) {
             throw new Error('UPDATE Deliverables: Daten wurden nicht geschrieben.');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.log('updateDeliverable', error);
         throw new HttpError(500, error.message ?? error.toString(), deliverable);
     }
@@ -110,7 +110,7 @@ const deleteDeliverables = async (ids: number[]) => {
             throw new Error('DELETE Budgets: Daten wurden nicht gelöscht (nur ' + result.rowsAffected[0] + ' von ' + ids.length + ')' );
         }
         return result.rowsAffected[0];
-    } catch (error) {
+    } catch (error: any) {
         console.log('deleteDeliverables', error);
         throw new HttpError(500, error.message ?? error.toString());
     }
