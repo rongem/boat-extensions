@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators'
-import { forkJoin, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, take, tap, forkJoin, Observable, of } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { Contract } from '../models/contract.model';

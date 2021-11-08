@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { interval } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { interval, map, withLatestFrom } from 'rxjs';
 import { Boat3Service } from './lib/services/boat3.service';
 import { EnvService } from './lib/services/env.service';
 

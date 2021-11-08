@@ -6,9 +6,8 @@ import {
   HttpEvent,
   HttpResponse
 } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { tap } from 'rxjs/operators';
 
 import * as StoreActions from '../lib/store/store.actions';
 

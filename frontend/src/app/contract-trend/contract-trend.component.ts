@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { Subscription } from 'rxjs';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { Subscription, map, withLatestFrom } from 'rxjs';
 import { Budget } from '../lib/models/budget.model';
 
 import * as StoreSelectors from '../lib/store/store.selectors';

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { forkJoin } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs';
 
 import { BackendService } from '../lib/services/backend.service';
 import { Boat3Service } from '../lib/services/boat3.service';

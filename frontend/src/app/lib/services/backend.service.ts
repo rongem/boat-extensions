@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, from, of } from 'rxjs';
-import { catchError, concatMap, map, take, tap } from 'rxjs/operators'
+import { BehaviorSubject, from, of, catchError, concatMap, map, take, tap } from 'rxjs'
 import { Store } from '@ngrx/store';
 import { Authorization } from '../models/rest-backend/authorization.model';
 import { BackendContract } from '../models/rest-backend/contract.model';

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Store } from '@ngrx/store';
-import { map, take, withLatestFrom } from 'rxjs/operators';
+import { map, take, withLatestFrom } from 'rxjs';
 import { ExportService } from '../lib/services/export.service';
 import { Contract } from '../lib/models/contract.model';
 

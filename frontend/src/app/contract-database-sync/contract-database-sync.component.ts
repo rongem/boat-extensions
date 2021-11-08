@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { map, switchMap, take } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs';
 import { ContractResult } from '../lib/models/rest-backend/contract-result.model';
 import { BackendService } from '../lib/services/backend.service';
 
