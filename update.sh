@@ -6,6 +6,7 @@ npm audit fix
 ng build
 cd ../backend/
 npm update
+npm audit fix
 tsc --declaration && npm run test
 npm outdate
 read -n 1
