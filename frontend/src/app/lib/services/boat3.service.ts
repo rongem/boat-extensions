@@ -40,6 +40,10 @@ export class Boat3Service {
        }
     }
 
+    login(email: string, passwort: string) {
+        return this.http.post<void>(this.env.authUrl, { email, passwort }, { observe: 'response'}).pipe(take(1));
+    }
+
     logout() {
         this.store.dispatch(StoreActions.logout());
         if (this.tokenTimeOut) {

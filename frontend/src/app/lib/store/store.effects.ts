@@ -1,20 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
-import { of, switchMap, map, catchError, take, tap } from 'rxjs';
-import { EnvService } from '../services/env.service';
+import { of, switchMap, map, catchError, tap } from 'rxjs';
 
 import * as StoreActions from './store.actions';
 import * as StoreSelectors from './store.selectors';
+import { Boat3Service } from '../services/boat3.service';
 
 @Injectable()
 export class StoreEffects {
     // Führt einen Login durch
     login$ = createEffect(() => this.actions$.pipe(
         ofType(StoreActions.boatLogin),
-        switchMap(login => this.http.post<void>(this.env.authUrl, { email: login.username, passwort: login.password }, { observe: 'response'}).pipe(
-            take(1),
+        switchMap(login => this.boat.login(login.username, login.password).pipe(
             tap(response => {
                 const token = response.headers.get('Authorization') ?? undefined;
                 if (token) {
@@ -53,7 +52,6 @@ export class StoreEffects {
     ), { dispatch: false });
 
     constructor(private actions$: Actions,
-        private store: Store,
-        private env: EnvService,
-        private http: HttpClient) {}
+                private store: Store,
+                private boat: Boat3Service) {}
 }

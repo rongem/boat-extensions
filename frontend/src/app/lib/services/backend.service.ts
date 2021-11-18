@@ -18,6 +18,7 @@ import * as StoreActions from '../store/store.actions';
 @Injectable({providedIn: 'root'})
 export class BackendService {
     syncIsAuthorized = new BehaviorSubject(false);
+    noConnection = new BehaviorSubject(false);
 
     constructor(private http: HttpClient,
                 private boat: Boat3Service,
@@ -32,6 +33,7 @@ export class BackendService {
             map(result => result.isAuthorized),
             catchError((error: HttpErrorResponse) => {
                 console.log(error.status, error.statusText, error.message);
+                this.noConnection.next(true);
                 return of(false);
             }),
         ).subscribe(result => this.syncIsAuthorized.next(result));

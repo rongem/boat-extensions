@@ -14,6 +14,7 @@ import { LoginActivate } from './lib/guards/auth.guard';
 import { SyncActivate } from './lib/guards/sync.guard';
 import { ContractsResolver } from './lib/resolvers/contracts.resolver';
 import { DeliverablesResolver } from './lib/resolvers/deliverables.resolver';
+import { SmoketestComponent } from './smoketest/smoketest.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'contracts', pathMatch: 'full'},
@@ -40,6 +41,7 @@ const routes: Routes = [
     }  ] },
   { path: 'login', component: LoginComponent },
   { path: 'settings', component: SettingsComponent },
+  { path: 'smoketest', component: SmoketestComponent },
   { path: '**', redirectTo: 'contracts' },
 ];
 

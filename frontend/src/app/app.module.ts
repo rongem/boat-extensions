@@ -28,6 +28,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { ContractDatabaseSyncComponent } from './contract-database-sync/contract-database-sync.component';
 import { SyncActivate } from './lib/guards/sync.guard';
 import { ContractDatabaseComponent } from './contract-database/contract-database.component';
+import { SmoketestComponent } from './smoketest/smoketest.component';
 
 registerLocaleData(localeDe);
 
@@ -44,6 +45,7 @@ registerLocaleData(localeDe);
     SettingsComponent,
     ContractDatabaseSyncComponent,
     ContractDatabaseComponent,
+    SmoketestComponent,
   ],
   imports: [
     BrowserModule,

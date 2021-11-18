@@ -1,0 +1,16 @@
+<p>
+    <span>Pr&uuml;fe Verbindung zu BOAT: </span>
+    <b>
+        {{ boatConnection }}
+    </b>
+</p>
+
+<p>
+    <span>Pr&uuml;fe Verbindung zum Backend: </span>
+    <b>
+        {{ backendConnection }}
+    </b>
+</p>
+<p *ngIf="boatConnection !== 'Bitte warten' && backendConnection !== 'Bitte warten'">
+    <a [routerLink]="'/'">Zur Anwendung wechseln</a>
+</p>
