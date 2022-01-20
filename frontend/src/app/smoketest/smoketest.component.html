@@ -14,3 +14,15 @@
 <p *ngIf="boatConnection !== 'Bitte warten' && backendConnection !== 'Bitte warten'">
     <a [routerLink]="'/'">Zur Anwendung wechseln</a>
 </p>
+<h2>
+    Voraussetzungen für den erfolgreichen Backend-Zugriff
+</h2>
+<p>
+    Das Backend muss dasselbe Protokoll verwenden wie das Frontend. Wenn für das Frontend https verwendet wurde,
+    muss das auch für das Backend geschehen. Zudem muss im Frontend in der Datei conf/env.js das korrekte Protokoll
+    und der korrekte Netzwerkport für den Zugriff auf das Backend angegeben werden.
+</p>
+<p>
+    Es besteht auch die Möglichkeit, das Backend hinter dem Reverse Proxy des Frontend zu platzieren. Dafür kann im Container
+    des Frontends die Umgebungsvariable BACKEND_URL gesetzt werden. Auch in diesem Fall muss die Datei conf/env.js angepasst werden.
+</p>
