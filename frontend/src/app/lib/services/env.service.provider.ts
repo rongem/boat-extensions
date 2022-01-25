@@ -20,9 +20,14 @@ export const EnvServiceFactory = () => {
 
         for (const key in browserWindowEnv) {
             if (browserWindowEnv.hasOwnProperty(key)) {
+                let backendUrl = browserWindow.__env.backendBaseUrl ?? env.backendBaseUrl;
+                if (!backendUrl.endsWith('/'))
+                {
+                    backendUrl += '/';
+                }
                 env.apiBaseUrl = browserWindow.__env.apiBaseUrl ?? env.apiBaseUrl;
                 env.authUrl = browserWindow.__env.authUrl ?? env.authUrl;
-                env.backendBaseUrl = browserWindow.__env.backendBaseUrl ?? env.backendBaseUrl;
+                env.backendBaseUrl = backendUrl;
                 env.headerText = browserWindow.__env.headerText ?? env.headerText;
             }
         }
