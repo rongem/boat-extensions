@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { interval, map, withLatestFrom } from 'rxjs';
 import { Boat3Service } from './lib/services/boat3.service';
 import { EnvService } from './lib/services/env.service';
-
+import packageJson from '../../package.json';
 import * as StoreSelectors from './lib/store/store.selectors';
 
 @Component({
@@ -13,6 +13,7 @@ import * as StoreSelectors from './lib/store/store.selectors';
 })
 export class AppComponent implements OnInit {
   title = 'BOAT3 Erweiterungen';
+  version = packageJson.version;
   // Formularfelder
   remainingTime?: string;
   busy = false;
