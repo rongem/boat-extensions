@@ -17,5 +17,6 @@ grunt bump
 tsc --declaration && npm run test
 npm outdate
 read -n 1
+cd ..
 ./docker-create.sh
 
