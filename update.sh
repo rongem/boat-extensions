@@ -1,4 +1,3 @@
-sc start com.docker.service
 echo Updating global libraries
 npm update -g
 cd frontend
