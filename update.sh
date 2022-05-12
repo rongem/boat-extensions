@@ -1,5 +1,7 @@
-echo Updating global libraries
-npm update -g
+if [ "$1" == "-g" ]; then
+	echo Updating global libraries
+	npm update -g
+fi
 cd frontend
 echo Updating @angular
 ng update @angular/cli @angular/core @ngrx/store
