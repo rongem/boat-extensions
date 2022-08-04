@@ -20,13 +20,13 @@ export class Deliverable{
         this.id = d.id;
         this.version = d.version;
         this.contract = d.einzelauftrag.id;
-        this.person = d.leistungserbringer.nachname + ', ' + d.leistungserbringer.vorname;
+        this.person = (d.leistungserbringer.nachname + ', ' + d.leistungserbringer.vorname).substring(0, 100);
         this.dateString = d.datum;
         const dateParts = d.datum.split('-').map(x => +x);
         this.date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
         this.startTime = d.startzeit;
         this.endTime = d.endzeit;
-        this.text = d.beschreibung;
+        this.text = d.beschreibung?.substring(0, 1000);
         if (d.duration.startsWith('PT')) {
             const mr = new RegExp('[0-9]{1,2}M');
             const hr = new RegExp('[0-9]{1,2}H');
@@ -36,15 +36,15 @@ export class Deliverable{
         } else {
             console.log(d.duration);
         }
-        let keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}'); // Ursprüngliche Art des Schlüssels
+        let keyRegex = new RegExp('^[0-9]{14,15}[A-Z]{3}'); // Ursprüngliche Art des Schlüssels, 15 Ziffern und drei Buchstaben
         let key = keyRegex.exec(d.beschreibung);
-        if (!key || key.length === 0) { // Zweite Art des Schlüssels
-            keyRegex = new RegExp('^[0-9]{15}:');
+        if (!key || key.length === 0) { // Zweite Art des Schlüssels: 5 bis 15 Ziffern mit Doppelpunkt
+            keyRegex = new RegExp('^[0-9]{5,15}:');
             key = keyRegex.exec(d.beschreibung);
         }
         if (key && key.length > 0) {
             this.key = key[0];
-            this.text = d.beschreibung.substr(this.key.length + 1).trim();
+            this.text = d.beschreibung.substring(this.key.length + 1).trim();
             if (this.key.endsWith(':')) {
                 this.key = this.key.substring(0, this.key.length - 1);
             }
@@ -53,7 +53,7 @@ export class Deliverable{
             }
         }
         this.priceCategoryId = d.preisstufe.id;
-        this.priceCategory = d.preisstufe.bezeichnung;
+        this.priceCategory = d.preisstufe.bezeichnung?.substring(0, 50);
         this.price = d.preisstufe.kostenProPT * this.duration / 100;
     }
 }

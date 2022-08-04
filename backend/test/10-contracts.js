@@ -163,8 +163,8 @@ describe('Contracts', function() {
                 description: 'test description',
                 start: '2020-11-21',
                 end: '01-01-2021',
-                organization: 'Test-Org',
-                organizationalUnit: 'OU',
+                organization: 'Test-Org13450973145987314459871435986314598631459ß864315ß986314598631459ß631458631445ß9634596345896314563145ß63145ß63563145',
+                organizationalUnit: 'OU12345678912345960115971359ß73158971358731458135489431598143589431598431598143598643159813459831456314596533534535345345255',
                 responsiblePerson: 'Person Name',
                 budgets: []
             }])
@@ -173,8 +173,10 @@ describe('Contracts', function() {
                 expect(res.status).to.be.equal(400);
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');
-                expect(res.body.data.errors.length).to.be.equal(2);
+                expect(res.body.data.errors.length).to.be.equal(4);
                 const params = res.body.data.errors.map(e => e.param);
+                expect(params).to.include('[0].organization');
+                expect(params).to.include('[0].organizationalUnit');
                 expect(params).to.include('[0].budgets');
                 expect(params).to.include('[0].end');
                 done();

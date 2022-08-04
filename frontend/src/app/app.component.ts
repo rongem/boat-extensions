@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     interval(1000).pipe(
       withLatestFrom(this.store.select(StoreSelectors.expiryDate)),
       map(([, value]) => value ?
-        new Date(value.valueOf() - Date.now()).toISOString().substr(11, 8) : undefined
+        new Date(value.valueOf() - Date.now()).toISOString().substring(11, 19) : undefined
       ),
     ).subscribe(value => this.remainingTime = value);
     this.store.select(StoreSelectors.working).subscribe(working => {

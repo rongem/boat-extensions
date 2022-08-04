@@ -41,7 +41,7 @@ router.post('/contracts', [
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
     body('*.organizationalUnit', 'Organisationseinheit ist falsch').if(body().isArray({min: 1}))
         .isString().bail().trim()
-        .isLength({min: 1, max: 20}).withMessage('Mindestlänge: 1, Maximallänge: 20'),
+        .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),
     body('*.responsiblePerson', 'Falsche oder fehlende Verantwortliche').if(body().isArray({min: 1}))
         .isString().bail().trim()
         .isLength({min: 1, max: 50}).withMessage('Mindestlänge: 1, Maximallänge: 50'),

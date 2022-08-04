@@ -25,7 +25,7 @@ export class Contract{
     constructor(restContract: RestContract) {
         this.name = 'EA' + restContract.id;
         this.id = restContract.id;
-        this.description = restContract.stammdaten.projektTitel;
+        this.description = restContract.stammdaten.projektTitel?.substring(0, 200);
         // Datum wird als String geliefert und kann undefiniert sein, daher wird das morgige Datum als Ersatz angeboten
         this.startDate = restContract.stammdaten.projektBeginn ?? dateString(1);
         let dateParts = this.startDate.split('-').map(x => +x);
@@ -34,9 +34,9 @@ export class Contract{
         this.endDate = restContract.stammdaten.projektEnde ?? dateString(100);
         dateParts = this.endDate.split('-').map(x => +x);
         this.end = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
-        this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung;
-        this.organizationalUnit = restContract.stammdaten.orgE;
-        this.responsiblePerson = restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname;
+        this.organization = restContract.stammdaten.bedarfstraeger.bezeichnung?.substring(0, 50);
+        this.organizationalUnit = restContract.stammdaten.orgE?.substring(0, 50);
+        this.responsiblePerson = (restContract.stammdaten.projektleiterBedarfstraeger.nachname + ', ' + restContract.stammdaten.projektleiterBedarfstraeger.vorname).substring(0, 50);
         this.status = restContract.stammdaten.status;
         this.inactive = this.start.valueOf() <= Date.now() && this.end.valueOf() >= Date.now();
         const map = new Map<number, number>();

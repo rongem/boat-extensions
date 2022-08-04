@@ -14,7 +14,7 @@ CREATE TABLE [DV5_Controlling].[BoatExt_Contracts](
 	[Start] [date] NOT NULL,
 	[End] [date] NOT NULL,
 	[Organization] [nvarchar](50) NOT NULL,
-	[OrganizationalUnit] [nvarchar](20) NOT NULL,
+	[OrganizationalUnit] [nvarchar](50) NOT NULL,
 	[ResponsiblePerson] [nvarchar](50) NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
