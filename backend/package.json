@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "BOAT3 importer backend",
   "main": "src/app.ts",
   "scripts": {
@@ -37,6 +37,6 @@
     "express": "^4.17.1",
     "express-ntlm": "^2.6.2",
     "express-validator": "^6.13.0",
-    "mssql": "^8.1.1"
+    "mssql": "^9.0.1"
   }
 }

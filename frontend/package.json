@@ -1,6 +1,6 @@
 {
   "name": "boat3_extensions_frontend",
-  "version": "2.2.29",
+  "version": "2.2.30",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
