@@ -9,14 +9,17 @@ echo Updating other libraries
 npm update
 npm audit fix
 grunt bump
+npm install
+npm outdated
 ng build
 cd ../backend/
 echo Updating backend
 npm update
 npm audit fix
 grunt bump
+npm install
 tsc --declaration && npm run test
-npm outdate
+npm outdated
 read -n 1
 cd ..
 ./docker-create.sh
