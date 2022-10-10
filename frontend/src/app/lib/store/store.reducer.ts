@@ -20,6 +20,7 @@ export interface State {
     working: boolean;
     login: Login;
     error?: string;
+    passwordExpired: boolean;
 };
 
 const emptyLogin: Login = {
@@ -36,6 +37,7 @@ const initialState: State = {
     working: false,
     login: emptyLogin,
     error: undefined,
+    passwordExpired: false,
 };
 
 interface IToken {
@@ -117,7 +119,11 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
         })),
         on(StoreActions.logout, (state, action) => ({
             ...initialState,
-        }))
+        })),
+        on(StoreActions.passwordExpired, (state, action) => ({
+            ...state,
+            passwordExpired: action.expired,
+        })),
     )(appState, appAction);
 };
 

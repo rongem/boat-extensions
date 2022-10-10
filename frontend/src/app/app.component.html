@@ -17,9 +17,16 @@
 </main>
 
 <footer>
-  <p *ngIf="(errorPresent | async) === true" class="error">
+  <p *ngIf="(errorPresent | async) === true && (passwordExpired | async) === false" class="error">
     {{error | async}}
   </p>
+  <ng-container *ngIf="(passwordExpired | async) === true">
+    <div class="backdrop"></div>
+    <div class="busy">
+      Ihr Kennwort ist abgelaufen. Sie müssen zu <a href="https://www.boat.bva.bund.de/login">BOAT (https://www.boat.bva.bund.de)</a> wechseln, um es zu erneuern.
+      Danach können Sie hierher zurückkehren und sich mit dem neuen Passwort anmelden.
+    </div>
+  </ng-container>
 </footer>
 
 <ng-container *ngIf="busy === true">

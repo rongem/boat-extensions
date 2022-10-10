@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, map, switchMap, take, tap, forkJoin, Observable, of } from 'rxjs';
+import { catchError, map, switchMap, take, tap, forkJoin, Observable, of, throwError } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { Contract } from '../models/contract.model';
@@ -41,7 +41,19 @@ export class Boat3Service {
     }
 
     login(email: string, passwort: string) {
-        return this.http.post<void>(this.env.authUrl, { email, passwort }, { observe: 'response'}).pipe(take(1));
+        return this.http.post<void>(this.env.authUrl, { email, passwort }, { observe: 'response'}).pipe(
+            take(1),
+            catchError((error: HttpErrorResponse) => {
+                if (error.status === 401 && error.error.exceptionType === 'CredentialsExpiredException') {
+                    console.log('Password expired');
+                    this.store.dispatch(StoreActions.passwordExpired({expired: true}));
+                } else {
+                    console.log(error);
+                    this.store.dispatch(StoreActions.setError({ error: error.message ?? error }));
+                }
+                return throwError(() => error);
+            }),
+        );
     }
 
     logout() {

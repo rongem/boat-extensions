@@ -25,6 +25,8 @@ export const expiryDate = createSelector(appState, state => state.login.expiryDa
 
 export const error = createSelector(appState, state => state.error);
 
+export const passwordExpired = createSelector(appState, state => state.passwordExpired);
+
 // gibt alle Leistungseinträge für den angegebenen Leistungszeitraum zurück
 export const filteredDeliverables = (year: number, month: number) => createSelector(deliverables, deliverables =>
     deliverables.filter(d => d.date.getFullYear() === year && d.date.getMonth() + 1 === month)

@@ -34,4 +34,8 @@ export const boatLogin = createAction('[BOAT] Login',
     props<{ username: string, password: string }>()
 );
 
+export const passwordExpired = createAction('[BOAT] Password expired',
+    props<{expired: boolean}>()
+);
+
 export const logout = createAction('[BOAT] Logout');

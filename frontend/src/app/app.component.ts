@@ -24,6 +24,10 @@ export class AppComponent implements OnInit {
     return this.error.pipe(map(error => !!error));
   }
 
+  get passwordExpired() {
+    return this.store.select(StoreSelectors.passwordExpired);
+  }
+
   get authenticated() {
     return this.store.select(StoreSelectors.isAuthenticated);
   }
