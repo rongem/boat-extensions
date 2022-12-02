@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "description": "BOAT3 importer backend",
   "main": "src/app.ts",
   "scripts": {
