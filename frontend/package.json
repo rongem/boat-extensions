@@ -1,6 +1,6 @@
 {
   "name": "boat3_extensions_frontend",
-  "version": "2.2.45",
+  "version": "2.2.46",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,9 +20,9 @@
     "@angular/platform-browser": "^15.0.4",
     "@angular/platform-browser-dynamic": "^15.0.4",
     "@angular/router": "^15.0.4",
-    "@ngrx/effects": "^15.0.0",
-    "@ngrx/store": "^15.0.0",
-    "@ngrx/store-devtools": "^15.0.0",
+    "@ngrx/effects": "^15.1.0",
+    "@ngrx/store": "^15.1.0",
+    "@ngrx/store-devtools": "^15.1.0",
     "rxjs": "^7.4.0",
     "tslib": "^2.3.1",
     "xlsx": "^0.18.5",
