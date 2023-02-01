@@ -28,6 +28,10 @@ export class AppComponent implements OnInit {
     return this.store.select(StoreSelectors.passwordExpired);
   }
 
+  get noContracts() {
+    return this.store.select(StoreSelectors.noContracts);
+  }
+
   get authenticated() {
     return this.store.select(StoreSelectors.isAuthenticated);
   }

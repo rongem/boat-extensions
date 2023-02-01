@@ -27,6 +27,12 @@
       Danach können Sie hierher zurückkehren und sich mit dem neuen Passwort anmelden.
     </div>
   </ng-container>
+  <ng-container *ngIf="(noContracts | async) === true">
+    <div class="backdrop"></div>
+    <div class="busy">
+      Sie verfügen über keinerlei aktive Verträge.
+    </div>
+  </ng-container>
 </footer>
 
 <ng-container *ngIf="busy === true">

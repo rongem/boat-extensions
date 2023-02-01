@@ -15,6 +15,7 @@ interface Login {
 export interface State {
     contracts: Contract[];
     contractsLoaded: boolean;
+    noContracts: boolean;
     deliverables: Deliverable[];
     selectedContractId: number;
     working: boolean;
@@ -32,6 +33,7 @@ const emptyLogin: Login = {
 const initialState: State = {
     contracts: [],
     contractsLoaded: false,
+    noContracts: false,
     deliverables: [],
     selectedContractId: -1,
     working: false,
@@ -124,6 +126,11 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
             ...state,
             passwordExpired: action.expired,
         })),
+        on(StoreActions.noContracts, (state, action) => ({
+            ...state,
+            contracts: [],
+            noContracts: true,
+        }))
     )(appState, appAction);
 };
 

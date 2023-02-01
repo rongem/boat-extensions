@@ -145,6 +145,9 @@ export class Boat3Service {
         this.store.dispatch(StoreActions.setError({ error: error.message ?? error }));
         if (error.status === 401 || error.status === 403) {
             this.store.dispatch(StoreActions.logout());
+        } else if (error.status === 404) {
+            console.log('No contracts found');
+            this.store.dispatch(StoreActions.noContracts());
         }
         return of(undefined);
     }

@@ -38,4 +38,6 @@ export const passwordExpired = createAction('[BOAT] Password expired',
     props<{expired: boolean}>()
 );
 
+export const noContracts = createAction('[BOAT] No contracts found');
+
 export const logout = createAction('[BOAT] Logout');
