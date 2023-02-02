@@ -130,6 +130,8 @@ export function storeReducer(appState: State | undefined, appAction: Action) {
             ...state,
             contracts: [],
             noContracts: true,
+            contractsLoaded: true,
+            working: false,
         }))
     )(appState, appAction);
 };
