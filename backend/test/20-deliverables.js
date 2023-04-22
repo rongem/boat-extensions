@@ -92,7 +92,7 @@ describe('Deliverables', function() {
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');
                 expect(res.body.data.errors.length).to.be.greaterThan(1);
-                const params = res.body.data.errors.map(e => e.param);
+                const params = res.body.data.errors.map(e => e.path);
                 expect(params).to.include('contractId');
                 expect(params).to.include('deliverables[0].id');
                 expect(params).to.include('deliverables[0].version');

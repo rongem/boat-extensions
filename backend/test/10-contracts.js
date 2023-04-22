@@ -136,7 +136,7 @@ describe('Contracts', function() {
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');
                 expect(res.body.data.errors.length).to.be.greaterThan(0);
-                const params = res.body.data.errors.map(e => e.param);
+                const params = res.body.data.errors.map(e => e.path);
                 expect(params).to.include('[0]');
                 expect(params).to.include('[0].id');
                 expect(params).to.include('[0].description');
@@ -174,7 +174,7 @@ describe('Contracts', function() {
                 expect(res.body.data).to.have.property('errors');
                 expect(res.body.data.errors).to.be.a('array');
                 expect(res.body.data.errors.length).to.be.equal(4);
-                const params = res.body.data.errors.map(e => e.param);
+                const params = res.body.data.errors.map(e => e.path);
                 expect(params).to.include('[0].organization');
                 expect(params).to.include('[0].organizationalUnit');
                 expect(params).to.include('[0].budgets');
