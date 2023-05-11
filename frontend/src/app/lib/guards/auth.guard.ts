@@ -1,19 +1,15 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { Injectable, inject } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { Observable, tap } from 'rxjs';
-import { Boat3Service } from '../services/boat3.service';
+import { tap } from 'rxjs';
 
 import * as StoreSelectors from '../store/store.selectors';
 
 @Injectable()
-export class LoginActivate implements CanActivate {
-  constructor(private boat: Boat3Service, private router: Router, private store: Store) {}
+export class LoginActivate  {
+  constructor(private router: Router, private store: Store) {}
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean>|Promise<boolean>|boolean {
+  canActivate() {
     return this.store.select(StoreSelectors.isAuthenticated).pipe(
       tap(isAuthenticated => {
         if (!isAuthenticated) {
@@ -23,3 +19,5 @@ export class LoginActivate implements CanActivate {
     );
   }
 }
+
+export const canActivateLogin: CanActivateFn = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => inject(LoginActivate).canActivate();

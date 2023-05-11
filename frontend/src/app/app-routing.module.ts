@@ -10,24 +10,24 @@ import { ContractUtilizationComponent } from './contract-utilization/contract-ut
 import { ContractDatabaseComponent } from './contract-database/contract-database.component';
 import { ContractDatabaseSyncComponent } from './contract-database-sync/contract-database-sync.component';
 import { SettingsComponent } from './settings/settings.component';
-import { LoginActivate } from './lib/guards/auth.guard';
-import { SyncActivate } from './lib/guards/sync.guard';
-import { ContractsResolver } from './lib/resolvers/contracts.resolver';
-import { DeliverablesResolver } from './lib/resolvers/deliverables.resolver';
+import { canActivateLogin } from './lib/guards/auth.guard';
+import { canActivateSync } from './lib/guards/sync.guard';
+import { resolveContracts } from './lib/resolvers/contracts.resolver';
+import { resolveDeliverables } from './lib/resolvers/deliverables.resolver';
 import { SmoketestComponent } from './smoketest/smoketest.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'contracts', pathMatch: 'full'},
-  { path: 'contracts', canActivate: [LoginActivate], resolve: { contracts: ContractsResolver }, children: [ {
+  { path: 'contracts', canActivate: [canActivateLogin], resolve: { contracts: resolveContracts }, children: [ {
       path: '', component: ContractListComponent, pathMatch: 'full'
     }, {
-      path: 'sync', canActivate: [SyncActivate], children: [{
+      path: 'sync', canActivate: [canActivateSync], children: [{
         path: '', component: ContractDatabaseComponent, pathMatch: 'full'
       }, {
         path: 'start', component: ContractDatabaseSyncComponent
       }]
     }, {
-      path: ':id', resolve: { deliverables: DeliverablesResolver }, children: [ {
+      path: ':id', resolve: { deliverables: resolveDeliverables }, children: [ {
         path: '', component: ContractListComponent, pathMatch: 'full'
       }, {
         path: 'names', component: ContractNamesComponent
