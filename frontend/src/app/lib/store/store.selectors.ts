@@ -1,5 +1,4 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import { Deliverable } from '../models/deliverable.model';
 
 import { State, STORE } from './store.reducer';
 
