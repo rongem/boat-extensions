@@ -9,7 +9,7 @@ echo Updating other libraries
 npm update
 npm audit fix
 grunt bump
-npm install
+npm install https://cdn.sheetjs.com/xlsx-latest/xlsx-latest.tgz
 npm outdated
 ng build
 cd ../backend/
