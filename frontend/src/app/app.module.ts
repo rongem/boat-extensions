@@ -54,7 +54,7 @@ registerLocaleData(localeDe);
     AppRoutingModule,
     StoreModule.forRoot(appReducer),
     EffectsModule.forRoot([StoreEffects]),
-    StoreDevtoolsModule.instrument({ logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({ logOnly: environment.production , connectInZone: true}),
   ],
   providers: [
     Title,
