@@ -2,8 +2,8 @@ FROM node:lts AS build
 WORKDIR /usr/app
 
 COPY ./frontend/package*.json ./
-#RUN npm update --location=global # only if image was too old
-RUN npm install --force
+RUN npm update --location=global # only if image was too old
+RUN npm install --force --verbose
 COPY ./frontend/ ./
 RUN npm run build:prod
 
